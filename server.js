@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.json());
 const port = process.env.PORT || 8000
+//comment to git master brance
 
 const sequelize = require('./config/database')
 //Define Routes
