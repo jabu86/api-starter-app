@@ -8,7 +8,6 @@ const roleMiddleware = (...allowedRoles) => {
           const user = await User.findByPk(req.user.id, {
               include: Role
           });
-
           const userRoles = user.Roles?.map(role => role.name) || [];
 
           console.log(userRoles)

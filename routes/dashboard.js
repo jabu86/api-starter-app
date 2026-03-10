@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const dashboardController = require('../controllers/dashboardController');
 //index route
-router.get('/dashboard', authMiddleware, roleMiddleware('admin') ,dashboardController.index);
+router.get('/dashboard', authMiddleware, roleMiddleware('admin', 'user') ,dashboardController.index);
 
 
 module.exports = router

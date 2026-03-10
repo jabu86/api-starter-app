@@ -11,7 +11,11 @@ const sequelize = require('./config/database')
 const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
-app.use('/api', indexRoutes, authRoutes ,dashboardRoutes);
+const profileRoutes = require('./routes/profile');
+app.use('/api', indexRoutes);
+app.use('/api/auth', authRoutes);
+
+app.use('/api/admin',dashboardRoutes, profileRoutes);
 
 async function connectDB(){
     try {
