@@ -14,6 +14,7 @@ exports.profileUpdate =async (req, res) => {
     try{
         const user = await User.findOne({
             where:{id : user_id},
+            include: "profile"
         });
         if(!user){
             return res.status(400).json({message:"User not found"});
