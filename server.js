@@ -12,10 +12,15 @@ const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const profileRoutes = require('./routes/profile');
+const categoryRoutes = require('./routes/categories');
 app.use('/api', indexRoutes);
 app.use('/api/auth', authRoutes);
 
-app.use('/api/admin',dashboardRoutes, profileRoutes);
+app.use('/api/admin',
+    dashboardRoutes,
+    profileRoutes,
+    categoryRoutes
+);
 
 async function connectDB(){
     try {
@@ -31,8 +36,7 @@ async function connectDB(){
 async function startSever(){
     await connectDB();
     app.listen(port, () => {
-        console.log(`E-commerce api listening on port http://localhost:${port}`)
-    })
+        console.log(`E-commerce api listening on port ${process.env.URL}:${port}`)
+    });
 }
-
 startSever();

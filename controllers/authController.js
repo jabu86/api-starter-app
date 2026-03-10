@@ -48,7 +48,7 @@ exports.forgotPassword = async (req, res) => {
         user.resetToken = resetToken;
         user.resetTokenExpire = Date.now() + 3600000;
         await user.save();
-        const resetLink = `http://localhost:8000/api/auth/reset-password/${resetToken}`;
+        const resetLink = `${process.env.URL}/api/auth/reset-password/${resetToken}`;
         res.status(200).send({message:"Password reset link generated.", resetLink});
 
     }catch(err) {

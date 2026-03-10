@@ -1,4 +1,5 @@
 const {User , Profile} = require('../models');
+const {logout} = require("./authController");
 exports.index = async (req, res) => {
     try {
         const user = req.user;
@@ -23,23 +24,23 @@ exports.profileUpdate =async (req, res) => {
         user.email = email;
         user.save();
         const profile = await Profile.findOne({
-            where:{user_id : user.id}
+            where:{user_id : user.id},
+            include: "user"
         });
         if(!profile){
             //CREATE PROFILE
-            const newProfile = await Profile.create({
+             await Profile.create({
                 user_id : user.id,
                 bio : bio,
                 image : `/images/${req.file.filename}`,
             });
-            return res.status(200).json({user, newProfile, message:"Profile created successfully"});
+            return res.status(200).json({ profile, message:"Profile created successfully"});
         }else{
             profile.bio = bio;
             profile.image = `/images/${req.file.filename}`;
             profile.save();
-            return res.status(200).send({ user,profile, message:"Profile updated successfully"});
+            return res.status(200).send({ profile, message:"Profile updated successfully"});
         }
-
     }catch(err) {
         console.error(err)
         return res.status(400).json({message:"Error occured"});
