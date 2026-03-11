@@ -1,8 +1,13 @@
 const {User , Profile} = require('../models');
 const {logout} = require("./authController");
+const {where} = require("sequelize");
 exports.index = async (req, res) => {
     try {
-        const user = req.user;
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['id', 'email', 'name'],
+            include: "profile",
+
+        });
         res.status(200).json({user, message:"Profile User"});
     }catch(err) {
         console.error(err)
@@ -29,15 +34,15 @@ exports.profileUpdate =async (req, res) => {
         });
         if(!profile){
             //CREATE PROFILE
-             await Profile.create({
+             const newProfile =await Profile.create({
                 user_id : user.id,
                 bio : bio,
-                image : `/images/${req.file.filename}`,
+                image : `/profile/${req.file.filename}`,
             });
-            return res.status(200).json({ profile, message:"Profile created successfully"});
+            return res.status(200).json({ newProfile, message:"Profile created successfully"});
         }else{
             profile.bio = bio;
-            profile.image = `/images/${req.file.filename}`;
+            profile.image = `/profile/${req.file.filename}`;
             profile.save();
             return res.status(200).send({ profile, message:"Profile updated successfully"});
         }

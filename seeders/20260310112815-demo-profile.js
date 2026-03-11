@@ -15,19 +15,19 @@ module.exports = {
     await queryInterface.bulkInsert('profiles', [{
         user_id: '1',
         bio: "John Doe bio must go here",
-        image: "/images/profile.png",
+        image: "/profile/profile.png",
         createdAt: new Date(),
         updatedAt: new Date()
     },{
         user_id: '2',
         bio: "Mary Smith's bio must go here",
-        image: "/images/profile.png",
+        image: "/profile/profile.png",
         createdAt: new Date(),
         updatedAt: new Date()
     },{
         user_id: '3',
         bio: "Admin User's bio must go here",
-        image: "/images/profile.png",
+        image: "/profile/profile.png",
         createdAt: new Date(),
         updatedAt: new Date()
     }], {});

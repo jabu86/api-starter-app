@@ -1,4 +1,4 @@
-const {User} = require('../models');
+const {User, User_Role} = require('../models');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -29,8 +29,12 @@ exports.register = async (req, res) => {
         //check if user alread exits
         const user = await User.findOne({where:{email}});
         if(user) return res.status(401).send({error: 'User already exists'});
-         const newUser =await User.create({name, email,  password});
-         res.status(200).json({newUser});
+         const newUser = await User.create({name, email,  password});
+         const assignRole = await User_Role.create({
+             user_id: newUser.id,
+             role_id: 3,
+         });
+         res.status(200).json({newUser, assignRole});
     }catch(err) {
         console.error(err)
     }
@@ -57,7 +61,7 @@ exports.forgotPassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
-    console.log('get here')
+
     // const {password} = req.body;
         const {password} = req.body;
         const {token} = req.params;
