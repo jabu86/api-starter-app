@@ -14,13 +14,17 @@ const authRoutes = require('./routes/auth');
 const dashboardRoutes = require('./routes/dashboard');
 const profileRoutes = require('./routes/profile');
 const categoryRoutes = require('./routes/categories');
+const colorsRoutes = require('./routes/colors');
+const brandRoutes = require('./routes/brands');
 app.use('/api', indexRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use('/api/admin',
     dashboardRoutes,
     profileRoutes,
-    categoryRoutes
+    categoryRoutes,
+    brandRoutes,
+    colorsRoutes,
 );
 
 async function connectDB(){
