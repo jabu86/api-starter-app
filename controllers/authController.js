@@ -16,10 +16,11 @@ exports.login = async (req, res) => {
         const token = jwt.sign({
             id:user.id,email:user.email
         },process.env.JWT_SECRET,{expiresIn: '1h'});
-         res.status(200).json({token,user:{id:user.id, email:user.email, name:user.name}});
+        return res.status(200).json({token,user:{id:user.id, email:user.email, name:user.name}});
 
     }catch(err) {
         console.error(err)
+        return res.status(401).send({error: err.message});
     }
 }
 
@@ -34,7 +35,7 @@ exports.register = async (req, res) => {
              user_id: newUser.id,
              role_id: 3,
          });
-         res.status(200).json({newUser, assignRole});
+         return  res.status(200).json({newUser, assignRole});
     }catch(err) {
         console.error(err)
     }
@@ -53,10 +54,10 @@ exports.forgotPassword = async (req, res) => {
         user.resetTokenExpire = Date.now() + 3600000;
         await user.save();
         const resetLink = `${process.env.URL}/api/auth/reset-password/${resetToken}`;
-        res.status(200).send({message:"Password reset link generated.", resetLink});
+        return  res.status(200).send({message:"Password reset link generated.", resetLink});
 
     }catch(err) {
-        res.status(401).send({error: err.message});
+        return  res.status(401).send({error: err.message});
     }
 }
 
@@ -79,12 +80,12 @@ exports.resetPassword = async (req, res) => {
             user.resetToken = null;
             user.resetTokenExpiry = null;
             await user.save();
-            res.json({
+            return  res.json({
                 message: "Password reset successful"
             });
 
         }catch(err) {
-            res.status(401).send({error: err.message});
+            return res.status(401).send({error: err.message});
         }
 
 }
@@ -94,10 +95,11 @@ exports.logout = async (req, res) => {
         if (!authHeader) return res.status(400).send({error: 'Unauthorized'});
         const token =authHeader.split(' ')[1];
         tokenBlacklist.push(token);
-        res.status(200).json({message: 'Logout successfully'});
+        return res.status(200).json({message: 'Logout successfully'});
 
     }catch(err) {
         console.error(err)
+        return res.status(401).send({error: err.message});
     }
 }
 

@@ -58,6 +58,7 @@ exports.delete = async (req, res) => {
         return res.status(200).json({category, message : "Sub category removed successfully."});
     }catch(err) {
         console.error(err)
+        return res.status(401).send({error: err.message});
     }
 }
 
