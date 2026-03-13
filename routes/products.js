@@ -29,14 +29,18 @@ router.post(
     processProductImages,
     validateProduct,
     productController.create
-
 );
 
 /**
  * update routes
  * update products
  */
-router.put('/products' ,upload.single("brand"),productController.update);
+router.post('/products/:id' ,
+    uploadProductImages,
+    processProductImages,
+    validateProduct,
+    productController.update
+);
 
 
 /**

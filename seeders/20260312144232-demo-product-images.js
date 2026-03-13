@@ -16,6 +16,8 @@ module.exports = {
       await queryInterface.bulkInsert('product_images', [{
           product_id: 1,
           image:'product/image.png',
+          thumbnail: 'product/thumbnail.png',
+          active: true,
           createdAt: new Date(),
           updatedAt: new Date(),
       },{
@@ -23,31 +25,44 @@ module.exports = {
           image:'product/image2.png',
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: false,
       },{
           product_id: 1,
           image:'product/image3.png',
+
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: false,
       },{
           product_id: 1,
           image:'product/image4.png',
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: false,
       },{
           product_id: 2,
           image:'product/image.png',
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: true,
       },{
           product_id: 2,
           image:'product/image1.png',
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: false,
       },{
           product_id: 2,
           image:'product/image2.png',
           createdAt: new Date(),
           updatedAt: new Date(),
+          thumbnail: 'product/thumbnail.png',
+          active: false,
       }], {});
   },
 

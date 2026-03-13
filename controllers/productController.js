@@ -1,11 +1,12 @@
 const { Products , product_images, product_colors, product_size} = require('../models');
 const {body, validationResult} = require('express-validator');
-
+const sequelize = require("../config/database");
 
 exports.index = async (req, res) => {
     try {
         const products = await Products.findAll({
             order: [['createdAt', 'DESC']],
+            include: ['category', 'brand','images', 'sizes' , 'colors' ],
         });
         return res.status(200).json({products, message:"Get Products" });
     }catch(err) {
@@ -14,9 +15,8 @@ exports.index = async (req, res) => {
 }
 
 exports.create =  async(req, res) => {
-
     const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
-
+    const t = await sequelize.transaction();
     try {
         const newProduct = await  Products.create({
             name : name,
@@ -27,64 +27,153 @@ exports.create =  async(req, res) => {
             quantity : quantity,
             in_stock : in_stock,
             active : active,
-        });
-        for (const image of req.processedImages) {
-            await product_images.create({
-                product_id:newProduct.id,
-                image:image.image,
-            })
+        },{transaction : t});
+        if(req.processedImages && req.processedImages.length > 0) {
+            for (const image of req.processedImages) {
+                await product_images.create({
+                    product_id: newProduct.id,
+                    image: image.image,
+                }, { transaction : t});
+            }
         }
 
-        const colorsArray = Array.isArray(colors)
-            ? colors.flatMap(c => c.split(","))
-            : colors.split(",");
+        if(colors){
+            const colorsArray = Array.isArray(colors)
+                ? colors.flatMap(c => c.split(","))
+                : colors.split(",");
+            const validColors = colorsArray.filter(c => c && c !== "0");
+            if(validColors.length > 0){
+                await product_colors.bulkCreate(
+                    colorsArray.map(color => ({
+                        product_id: newProduct.id,
+                        color_id: color
+                    }, {transaction : t}))
+                );
+            }
+        }
 
-        const sizeArray = Array.isArray(size)
-            ? size.flatMap(s => s.split(","))
-            : size.split(",");
+        if(size){
+            const sizeArray = Array.isArray(size)
+                ? size.flatMap(s => s.split(","))
+                : size.split(",");
 
-        await product_colors.bulkCreate(
-            colorsArray.map(color => ({
-                product_id: newProduct.id,
-                color_id: color
-            }))
-        );
+            const validSizes = sizeArray.filter(s => s && s !== "0");
+            if(validSizes.length > 0){
 
-        await product_size.bulkCreate(
-            sizeArray.map(s => ({
-                product_id: newProduct.id,
-                size_id: s
-            }))
-        );
+                await product_size.bulkCreate(
+                    sizeArray.map(s => ({
+                        product_id: newProduct.id,
+                        size_id: s
+                    },{transaction : t}))
+                );
+            }
+        }
+        // console.log("Product ID:", newProduct.id);
+        // console.log("Colors:", colors);
+        // console.log("Colors array:", colorsArray);
+        await t.commit();
+        return  res.status(200).json({newProduct, message : "Product created successfully."});
+    }catch(err) {
+        await t.rollback();
+        console.error(err);
+        return res.status(500).json({
+            message: "Product creation failed"
+        });
+    }
+}
+
+
+
+exports.update =  async(req, res) => {
+    const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
+    const t = await sequelize.transaction();
+    try {
+        const product = await Products.findByPk(req.params.id,
+            {include: ['category', 'brand','images', 'sizes' , 'colors' ]});
+        product.name = name;
+        product.category_id = category_id;
+        product.brand_id = brand_id;
+        product.description = description;
+        product.price = price;
+        product.quantity = quantity;
+        product.in_stock = in_stock;
+        product.active= active;
+        await product.save();
+
+
+        if(req.processedImages && req.processedImages.length > 0) {
+            for (const image of req.processedImages) {
+                await product_images.create({
+                    product_id: newProduct.id,
+                    image: image.image,
+                }, { transaction : t});
+            }
+        }
+
+        if(colors){
+            const getColors = await product_colors.findAll( {where : {product_id :product.id}})
+            if(getColors){
+                await product_colors.destroy({
+                    where: {product_id:product.id},
+                    transaction : t
+                })
+            }
+            const colorsArray = Array.isArray(colors)
+                ? colors.flatMap(c => c.split(","))
+                : colors.split(",");
+
+            const validColors = colorsArray.filter(c => c && c !== "0");
+            if(validColors.length > 0){
+                await product_colors.bulkCreate(
+                    colorsArray.map(color => ({
+                        product_id: product.id,
+                        color_id: color
+                    })), { transaction : t}
+                );
+            }
+        }
+
+        if(size){
+            const getSizes = await product_size.findAll({where : {product_id :product.id}})
+            if(getSizes){
+                if(getSizes){
+                    await product_size.destroy({
+                        where: {product_id:product.id},
+                        transaction : t
+                    })
+                }
+            }
+            const sizeArray = Array.isArray(size)
+                ? size.flatMap(s => s.split(","))
+                : size.split(",");
+
+            const validSizes = sizeArray.filter(s => s && s !== "0");
+            if(validSizes.length > 0){
+
+                await product_size.bulkCreate(
+                    sizeArray.map(s => ({
+                        product_id: product.id,
+                        size_id: s
+                    })), { transaction : t}
+                );
+            }
+        }
+
 
         // console.log("Product ID:", newProduct.id);
         // console.log("Colors:", colors);
         // console.log("Colors array:", colorsArray);
-        return  res.status(200).json({newProduct, message : "Product created successfully."});
+        await t.commit();
+        return  res.status(200).json({product, message : "Product updated successfully."});
     }catch(err) {
-        console.error(err)
+        await t.rollback();
+        console.error(err);
+        return res.status(500).json({
+            message: "Product creation failed"
+        });
     }
 }
 
-
-
-
-exports.update = async (req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
-    const {name , id } = req.body;
-    try {
-        const brand = await Brand.findByPk(id);
-        brand.name = name;
-        brand.image = `/brands/${req.file.filename}`;
-        await  brand.save()
-        return res.status(200).send({brand, message:"Brand updated successfully."});
-    }catch(err) {
-        console.error(err)
-    }
-}
 
 exports.delete = async (req, res) => {
     try {

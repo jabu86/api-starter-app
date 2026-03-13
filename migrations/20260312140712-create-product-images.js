@@ -15,6 +15,12 @@ module.exports = {
       image: {
         type: Sequelize.STRING
       },
+      thumbnail: {
+          type: Sequelize.STRING
+      },
+      active:{
+          type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

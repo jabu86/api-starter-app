@@ -10,6 +10,27 @@ const validateProduct = [
         .withMessage(
             "Product can't be less than 4 characters and can't be longer than 50 characters."
         ),
+    body("category_id")
+        .notEmpty()
+        .withMessage("Category  is required")
+        .trim(),
+    body("brand_id")
+        .notEmpty()
+        .withMessage("Brand  is required")
+        .trim(),
+    body("description")
+        .notEmpty()
+        .withMessage("Description  is required")
+        .trim(),
+    body("price")
+        .notEmpty()
+        .withMessage("Price  is required")
+        .trim(),
+    body("quantity")
+        .notEmpty()
+        .withMessage("Quantity  is required")
+        .trim(),
+
 
     // validate images
     // body("images").custom((value, { req }) => {
@@ -31,8 +52,6 @@ const validateProduct = [
                     if (err) console.error(err);
                 });
             }
-
-
             return res.status(400).json({
                 errors: errors.array(),
             });
