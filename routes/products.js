@@ -3,9 +3,12 @@ const router = express.Router()
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const productController = require('../controllers/productController');
-
-const { body } = require('express-validator');
+const validateProduct = require('../validation/productValidation');
 const upload = require("../middleware/upload");
+const {
+    uploadProductImages,
+    processProductImages,
+} = require("../middleware/uploadProductImages");
 
 /**
  * index route
@@ -13,27 +16,27 @@ const upload = require("../middleware/upload");
  */
 router.get('/products' ,productController.index);
 
+
+
 /**
  * create routes
  * Create products
  */
-router.post('/products' ,upload.single("brand"),[
-    body("name").notEmpty().withMessage('Product name is required')
-        .trim()
-        .isLength({min:4 , max:50 }).withMessage("Product can't be less than 4 characters and can't be longer than 50 characters.")
 
-],productController.create);
+router.post(
+    "/products",
+    uploadProductImages,
+    processProductImages,
+    validateProduct,
+    productController.create
+
+);
 
 /**
  * update routes
  * update products
  */
-router.put('/products' , [
-    body("name").notEmpty().withMessage('Product name is required')
-        .trim()
-        .isLength({min:4 , max:50 }).withMessage("Product can't be less than 4 characters and can't be longer than 50 characters.")
-        .withMessage("Category title is required")
-],upload.single("brand"),productController.update);
+router.put('/products' ,upload.single("brand"),productController.update);
 
 
 /**
@@ -41,6 +44,9 @@ router.put('/products' , [
  * delete products
  */
 router.delete('/prodcuts/:id' ,productController.delete);
+
+
+
 
 
 module.exports = router

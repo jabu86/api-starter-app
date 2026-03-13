@@ -28,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
     slug: DataTypes.STRING,
     description: DataTypes.TEXT,
     price: DataTypes.STRING,
+    quantity: DataTypes.STRING,
+    in_stock: DataTypes.BOOLEAN,
     active: DataTypes.BOOLEAN
   }, {
     sequelize,

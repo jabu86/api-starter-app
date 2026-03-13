@@ -20,7 +20,9 @@ module.exports = {
         category_id: 1,
         description: "This is a small phone number",
         price: '300',
+        in_stock: false,
         active: true,
+        quantity: 10,
         createdAt: new Date(),
         updatedAt: new Date(),
 
@@ -31,6 +33,8 @@ module.exports = {
         category_id: 2,
         description: "This are nice shoes to have for running and other activties",
         price: '500',
+        in_stock: true,
+        quantity: 10,
         active: true,
         createdAt: new Date(),
         updatedAt: new Date(),

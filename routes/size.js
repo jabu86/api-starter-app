@@ -16,19 +16,15 @@ router.get('/size' ,sizeController.index);
  * Create size
  */
 router.post('/size' ,[
-    body("name").notEmpty().withMessage('Size name is required')
-        .trim()
-        .isLength({min:2 , max:50 }).withMessage("Size can't be less than 2 characters and can't be longer than 50 characters.")
+    body("size").trim().notEmpty().withMessage('Size is required')
 ],sizeController.create);
 
 /**
  * update routes
  * update size
  */
-router.put('/size' , [
-    body("name").notEmpty().withMessage('Size name is required')
-        .trim()
-        .isLength({min:2 , max:50 }).withMessage("Size can't be less than 2 characters and can't be longer than 50 characters.")
+router.post('/size/:id' , [
+    body("size").trim().notEmpty().withMessage('Size is required')
 ],sizeController.update);
 
 

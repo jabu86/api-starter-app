@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Sizes',
       hooks:{
           beforeCreate: (size) => {
-              size.slug = createSlug(size.name);
+              size.slug = createSlug(size.size);
           },
           beforeUpdate: (size) => {
-              if (size.changed("name")) {
-                  size.slug = createSlug(size.name);
+              if (size.changed("size")) {
+                  size.slug = createSlug(size.size);
               }
           }
       }

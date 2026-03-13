@@ -1,12 +1,12 @@
-const {Colors} = require('../models');
+const {Sizes} = require('../models');
 const {body, validationResult} = require('express-validator');
 
 exports.index = async (req, res) => {
     try {
-        const colors = await Colors.findAll({
+        const sizes = await Sizes.findAll({
             order: [['createdAt', 'DESC']],
         });
-        return res.status(200).json({colors, message:"Get Categories" });
+        return res.status(200).json({sizes, message:"Get Categories" });
     }catch(err) {
         console.error(err)
     }
@@ -17,14 +17,15 @@ exports.create =  async(req, res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    const {name} = req.body;
+    const {size} = req.body;
     try {
-        const color = await Colors.findOne({where:{name}});
-        if(color) return res.status(400).json({errors: 'Color already exists'});
-        const newCategory = await  Colors.create({
-            name : name
+        const sizes = await Sizes.findOne({where:{size}});
+
+        if(sizes) return res.status(400).json({errors: 'Size already exists'});
+        const newSize = await  Sizes.create({
+            size:size
         });
-        return  res.status(200).json({newCategory, message : "Color created successfully."});
+        return  res.status(200).json({newSize, message : "Size created successfully."});
     }catch(err) {
         console.error(err)
     }
@@ -35,14 +36,14 @@ exports.update = async (req, res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
-    const {name} = req.body;
+    const {size} = req.body;
     const {id}= req.params;
     try {
-        const color = await Colors.findByPk(id);
-        color.name = name;
+        const getSize = await Sizes.findByPk(id);
+        getSize.size = size;
 
-        await  color.save()
-        return res.status(200).send({color, message:"Color updated successfully."});
+        await  getSize.save()
+        return res.status(200).send({getSize, message:"Size updated successfully."});
     }catch(err) {
         console.error(err)
     }
@@ -50,11 +51,12 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const color = await Colors.findByPk(req.params.id);
-        await color.destroy();
-        return res.status(200).json({color, message : "Color removed successfully."});
+        const size = await Sizes.findByPk(req.params.id);
+        await size.destroy();
+        return res.status(200).json({size, message : "Size removed successfully."});
     }catch(err) {
         console.error(err)
+        return res.status(401).json({errors:err});
     }
 }
 

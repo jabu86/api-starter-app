@@ -18,12 +18,6 @@ module.exports = {
       brand_id: {
         type: Sequelize.INTEGER
       },
-      color_id: {
-        type: Sequelize.INTEGER
-      },
-      size_id: {
-        type: Sequelize.INTEGER
-      },
       slug: {
         type: Sequelize.STRING
       },
@@ -32,6 +26,12 @@ module.exports = {
       },
       price: {
         type: Sequelize.STRING
+      },
+      quantity: {
+          type: Sequelize.STRING
+      },
+      in_stock: {
+          type: Sequelize.BOOLEAN
       },
       active: {
         type: Sequelize.BOOLEAN

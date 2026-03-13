@@ -1,23 +1,52 @@
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+const {now} = require("sequelize/lib/utils");
 
+const folders = {
+    brands:"public/images/brands",
+    products:"public/images/products",
+    profile:"public/images/profile",
+}
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
-       if(req.path == '/brands'){
-           cb(null, "public/images/brands");
+       const type = req.uploadType;
+       const uploadPath = folders[type];
+       if(!uploadPath){
+          return  cb(new Error("Invalid upload type"));
        }
 
-        if(req.path == '/image'){
-            cb(null, "public/images/profile");
-        }
+        fs.mkdirSync(uploadPath, { recursive: true });
+
+        cb(null, uploadPath);
+
     },
     filename: function (req, file, cb) {
         const ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext);
+        const uniqueName =Date.now() + "-"+Math.random(Math.random() * 1e9) + ext;
+        cb(null, uniqueName);
     }
 });
+// // File filter (only images)
+const fileFilter = (req, file, cb) => {
+    const allowed = /jpg|jpeg|png|webp/;
+    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mime = allowed.test(file.mimetype);
 
-const upload = multer({ storage });
+    if (ext && mime) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only image files are allowed"));
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    // fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024, //5mb
+    }
+});
 
 module.exports = upload;

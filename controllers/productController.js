@@ -1,36 +1,71 @@
-const { Brand} = require('../models');
+const { Products , product_images, product_colors, product_size} = require('../models');
 const {body, validationResult} = require('express-validator');
+
 
 exports.index = async (req, res) => {
     try {
-        const brands = await Brand.findAll({
+        const products = await Products.findAll({
             order: [['createdAt', 'DESC']],
         });
-        return res.status(200).json({brands, message:"Get Brands" });
+        return res.status(200).json({products, message:"Get Products" });
     }catch(err) {
         console.error(err)
     }
 }
 
 exports.create =  async(req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
-    const {name } = req.body;
-    try {
-        const brand = await Brand.findOne({where:{name}});
-        if(brand) return res.status(400).json({errors: 'Brand already exists'});
-        const newCategory = await  Brand.create({
-            name : name,
-            image:`/brands/${req.file.filename}`
 
+    const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
+
+    try {
+        const newProduct = await  Products.create({
+            name : name,
+            category_id : category_id,
+            brand_id : brand_id,
+            description : description,
+            price : price,
+            quantity : quantity,
+            in_stock : in_stock,
+            active : active,
         });
-        return  res.status(200).json({newCategory, message : "Brand created successfully."});
+        for (const image of req.processedImages) {
+            await product_images.create({
+                product_id:newProduct.id,
+                image:image.image,
+            })
+        }
+
+        const colorsArray = Array.isArray(colors)
+            ? colors.flatMap(c => c.split(","))
+            : colors.split(",");
+
+        const sizeArray = Array.isArray(size)
+            ? size.flatMap(s => s.split(","))
+            : size.split(",");
+
+        await product_colors.bulkCreate(
+            colorsArray.map(color => ({
+                product_id: newProduct.id,
+                color_id: color
+            }))
+        );
+
+        await product_size.bulkCreate(
+            sizeArray.map(s => ({
+                product_id: newProduct.id,
+                size_id: s
+            }))
+        );
+
+        // console.log("Product ID:", newProduct.id);
+        // console.log("Colors:", colors);
+        // console.log("Colors array:", colorsArray);
+        return  res.status(200).json({newProduct, message : "Product created successfully."});
     }catch(err) {
         console.error(err)
     }
 }
+
 
 
 
