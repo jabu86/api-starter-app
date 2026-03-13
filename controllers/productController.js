@@ -1,7 +1,8 @@
 const { Products , product_images, product_colors, product_size} = require('../models');
 const {body, validationResult} = require('express-validator');
 const sequelize = require("../config/database");
-
+const fs = require("fs-extra");
+const path = require("path");
 exports.index = async (req, res) => {
     try {
         const products = await Products.findAll({
@@ -102,13 +103,35 @@ exports.update =  async(req, res) => {
 
 
         if(req.processedImages && req.processedImages.length > 0) {
+
+            const getImages = await product_images.findAll({where:{product_id:product.id}});
+
+            if(getImages.length > 0){
+                await product_images.destroy({
+                    where: {product_id:product.id},
+                    transaction : t
+                })
+                for (const image of getImages) {
+
+                    const folder = path.dirname(image.image);
+
+                    const folderPath = path.join("public", folder);
+
+                    await fs.remove(folderPath);
+                }
+            }
+
+
             for (const image of req.processedImages) {
                 await product_images.create({
-                    product_id: newProduct.id,
+                    product_id: product.id,
                     image: image.image,
+                    thumbnail:image.thumbnail
                 }, { transaction : t});
             }
         }
+
+
 
         if(colors){
             const getColors = await product_colors.findAll( {where : {product_id :product.id}})
