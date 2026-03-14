@@ -1,4 +1,4 @@
-const { Brand} = require('../models');
+const { Brand} = require('../../models');
 const {body, validationResult} = require('express-validator');
 
 exports.index = async (req, res) => {

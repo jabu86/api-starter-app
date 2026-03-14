@@ -1,5 +1,5 @@
-const {User , Profile} = require('../models');
-const {logout} = require("./authController");
+const {User , Profile} = require('../../models');
+const {logout} = require("../auth/authController");
 const {where} = require("sequelize");
 exports.index = async (req, res) => {
     try {

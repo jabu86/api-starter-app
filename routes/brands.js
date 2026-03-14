@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
-const brandController = require('../controllers/brandController');
-const subCategoriesController = require('../controllers/subCategoryController');
+const brandController = require('../controllers/admin/brandController');
+
 const { body } = require('express-validator');
 const upload = require("../middleware/upload");
 

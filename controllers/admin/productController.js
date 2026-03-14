@@ -1,6 +1,6 @@
-const { Products , product_images, product_colors, product_size} = require('../models');
+const { Products , product_images, product_colors, product_size} = require('../../models');
 const {body, validationResult} = require('express-validator');
-const sequelize = require("../config/database");
+const sequelize = require("../../config/database");
 const fs = require("fs-extra");
 const path = require("path");
 exports.index = async (req, res) => {
@@ -29,11 +29,13 @@ exports.create =  async(req, res) => {
             in_stock : in_stock,
             active : active,
         },{transaction : t});
+
         if(req.processedImages && req.processedImages.length > 0) {
             for (const image of req.processedImages) {
                 await product_images.create({
                     product_id: newProduct.id,
                     image: image.image,
+                    thumbnail:image.thumbnail
                 }, { transaction : t});
             }
         }
@@ -42,13 +44,15 @@ exports.create =  async(req, res) => {
             const colorsArray = Array.isArray(colors)
                 ? colors.flatMap(c => c.split(","))
                 : colors.split(",");
+
+
             const validColors = colorsArray.filter(c => c && c !== "0");
             if(validColors.length > 0){
                 await product_colors.bulkCreate(
                     colorsArray.map(color => ({
                         product_id: newProduct.id,
                         color_id: color
-                    }, {transaction : t}))
+                    })),{ transaction : t}
                 );
             }
         }
@@ -65,18 +69,28 @@ exports.create =  async(req, res) => {
                     sizeArray.map(s => ({
                         product_id: newProduct.id,
                         size_id: s
-                    },{transaction : t}))
+                    })),{ transaction : t}
                 );
             }
         }
+
         // console.log("Product ID:", newProduct.id);
         // console.log("Colors:", colors);
         // console.log("Colors array:", colorsArray);
         await t.commit();
-        return  res.status(200).json({newProduct, message : "Product created successfully."});
+
+        //Get create product
+        const product = await Products.findByPk(newProduct.id, {
+            include: ['category', 'brand','images', 'sizes' , 'colors' ]
+        });
+        return  res.status(200).json({product, message : "Product created successfully."});
     }catch(err) {
-        await t.rollback();
+        if (!t.finished) {
+            await t.rollback();
+        }
+
         console.error(err);
+
         return res.status(500).json({
             message: "Product creation failed"
         });
@@ -182,7 +196,6 @@ exports.update =  async(req, res) => {
             }
         }
 
-
         // console.log("Product ID:", newProduct.id);
         // console.log("Colors:", colors);
         // console.log("Colors array:", colorsArray);
@@ -199,10 +212,43 @@ exports.update =  async(req, res) => {
 
 
 exports.delete = async (req, res) => {
+    const t = await sequelize.transaction();
     try {
-        const brand = await Brand.findByPk(req.params.id);
-        await brand.destroy();
-        return res.status(200).json({brand, message : "Brand removed successfully."});
+        const product = await Products.findByPk(req.params.id,{
+            include: ['images', 'sizes' , 'colors']
+        });
+
+        const getImages = product.images;
+        const getColors = product.colors;
+        const getSizes = product.sizes;
+        if(getImages.length > 0){
+            for (const image of getImages) {
+                await product_images.destroy({
+                    where: {id:image.id},
+                })
+                const folder = path.dirname(image.image);
+
+                const folderPath = path.join("public", folder);
+
+                await fs.remove(folderPath);
+            }
+        }
+        if(getColors.length > 0){
+            for(let color of getColors) {
+                await product_colors.destroy({
+                    where: {id:color.id},
+                })
+            }
+        }
+
+        if(getSizes.length > 0){
+            for(let size of getSizes) {
+                await product_size.destroy({where: {id:size.id}});
+            }
+        }
+
+        await product.destroy();
+        return res.status(200).json({product, message : "Brand removed successfully."});
     }catch(err) {
         console.error(err)
     }

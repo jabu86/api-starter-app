@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
-const colorsController = require('../controllers/colorsController');
+const colorsController = require('../controllers/admin/colorsController');
 
 const { body } = require('express-validator');
 //index route

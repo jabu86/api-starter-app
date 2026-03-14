@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
-const categoriesController = require('../controllers/categoryController');
-const subCategoriesController = require('../controllers/subCategoryController');
+const categoriesController = require('../controllers/admin/categoryController');
+const subCategoriesController = require('../controllers/admin/subCategoryController');
 const { body } = require('express-validator');
 //index route
 //Get Categories and SubCategories

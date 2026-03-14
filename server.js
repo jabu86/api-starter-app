@@ -30,7 +30,7 @@ app.use('/api/admin',
     productRoutes,
     sizeRoutes,
 );
-
+console.log(process.env.URL);
 async function connectDB(){
     try {
         await sequelize.authenticate();
@@ -45,7 +45,9 @@ async function connectDB(){
 async function startSever(){
     await connectDB();
     app.listen(port, () => {
-        console.log(`E-commerce api listening on port ${process.env.URL}:${port}`)
+        console.log(`E-commerce api listening on port  ${process.env.URL}:${process.env.PORT}`);
     });
 }
+
+
 startSever();

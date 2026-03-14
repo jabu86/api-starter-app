@@ -1,4 +1,4 @@
-const {User , SubCategory, Category} = require('../models');
+const {User , SubCategory, Category} = require('../../models');
 const {body, validationResult} = require('express-validator');
 exports.index = async (req, res) => {
     try {

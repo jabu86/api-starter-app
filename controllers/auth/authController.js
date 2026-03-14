@@ -1,8 +1,8 @@
-const {User, User_Role} = require('../models');
+const {User, User_Role} = require('../../models');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const tokenBlacklist = require("../utils/tokenBlacklist");
+const tokenBlacklist = require("../../utils/tokenBlacklist");
 
 exports.login = async (req, res) => {
     const {email, password} = req.body;
@@ -53,7 +53,7 @@ exports.forgotPassword = async (req, res) => {
         user.resetToken = resetToken;
         user.resetTokenExpire = Date.now() + 3600000;
         await user.save();
-        const resetLink = `${process.env.URL}/api/auth/reset-password/${resetToken}`;
+        const resetLink = `${process.env.URL}:${process.env.PORT}/api/auth/reset-password/${resetToken}`;
         return  res.status(200).send({message:"Password reset link generated.", resetLink});
 
     }catch(err) {
@@ -89,6 +89,7 @@ exports.resetPassword = async (req, res) => {
         }
 
 }
+
 exports.logout = async (req, res) => {
     try {
         const  authHeader = req.headers.authorization;

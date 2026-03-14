@@ -1,4 +1,4 @@
-const {Sizes} = require('../models');
+const {Sizes} = require('../../models');
 const {body, validationResult} = require('express-validator');
 
 exports.index = async (req, res) => {
