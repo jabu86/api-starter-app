@@ -11,6 +11,8 @@ const folders = {
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
+
+
        const type = req.uploadType;
        const uploadPath = folders[type];
        if(!uploadPath){

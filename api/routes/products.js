@@ -17,12 +17,10 @@ const {
 router.get('/products' ,productController.index);
 
 
-
 /**
  * create routes
  * Create products
  */
-
 router.post(
     "/products",
     uploadProductImages,
@@ -48,9 +46,5 @@ router.post('/products/:id' ,
  * delete products
  */
 router.delete('/products/:id' ,productController.delete);
-
-
-
-
 
 module.exports = router

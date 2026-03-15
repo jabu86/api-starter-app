@@ -15,8 +15,10 @@ exports.index = async (req, res) => {
 }
 
 exports.profileUpdate =async (req, res) => {
+
     const {name, email, bio} = req.body;
     const user_id = req.user.id;
+
     try{
         const user = await User.findOne({
             where:{id : user_id},
@@ -37,14 +39,14 @@ exports.profileUpdate =async (req, res) => {
              const newProfile =await Profile.create({
                 user_id : user.id,
                 bio : bio,
-                image : `/profile/${req.file.filename}`,
+                image : req.file ? `/profile/${req.file.filename}` : `profile/profile.png`,
             });
-            return res.status(200).json({ newProfile, message:"Profile created successfully"});
+            return res.status(200).json({ user, message:"Profile created successfully"});
         }else{
             profile.bio = bio;
-            profile.image = `/profile/${req.file.filename}`;
+            profile.image = req.file ? `/profile/${req.file.filename}` : `profile/profile.png`;
             profile.save();
-            return res.status(200).send({ profile, message:"Profile updated successfully"});
+            return res.status(200).send({ user, message:"Profile updated successfully"});
         }
     }catch(err) {
         console.error(err)

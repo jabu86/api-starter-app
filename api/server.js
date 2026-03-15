@@ -30,7 +30,7 @@ app.use('/api/admin',
     productRoutes,
     sizeRoutes,
 );
-console.log(process.env.URL);
+
 async function connectDB(){
     try {
         await sequelize.authenticate();

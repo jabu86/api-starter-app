@@ -3,6 +3,7 @@ const router = express.Router()
 const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const brandController = require('../controllers/admin/brandController');
+const brandValidation = require('../validation/brandValidation');
 
 const { body } = require('express-validator');
 const upload = require("../middleware/upload");
@@ -17,24 +18,22 @@ router.get('/brands' ,brandController.index);
  * create routes
  * Create brand and sub-categories
  */
-router.post('/brands' ,upload.single("brand"),[
-    body("name").notEmpty().withMessage('Brand name is required')
-        .trim()
-        .isLength({min:4 , max:50 }).withMessage("Brand can't be less than 4 characters and can't be longer than 50 characters.")
+router.post('/brands' ,(req, res, next) => {
+    req.uploadType = 'brands';
+    next();
 
-],brandController.create);
+},upload.single('image') ,brandValidation, brandController.create);
+
 
 /**
  * update routes
  * update brand and sub-categories
  */
-router.put('/brands' , [
-    body("name").notEmpty().withMessage('Brand name is required')
-        .trim()
-        .isLength({min:4 , max:50 }).withMessage("Brand can't be less than 4 characters and can't be longer than 50 characters.")
-        .withMessage("Category title is required")
-],upload.single("brand"),brandController.update);
+router.put('/brands' ,(req, res, next) => {
+    req.uploadType = 'brands';
+    next();
 
+},upload.single('image') ,brandValidation, brandController.update);
 
 /**
  * delete brand
