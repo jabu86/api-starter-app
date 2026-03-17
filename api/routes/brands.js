@@ -10,7 +10,7 @@ const upload = require("../middleware/upload");
 
 /**
  * index route
- * Get brand and SubCategories
+ * Get brand and SubCategories.jsx
  */
 router.get('/brands' ,brandController.index);
 

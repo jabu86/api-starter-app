@@ -1,0 +1,59 @@
+@use '../_mixins' as *;
+$primary-color:#030239f7;
+$link-color: #b5b3b3;
+$header-bg-color:#ececee;
+$header-color: #131313;
+.container{
+  .row{
+    .sidebar {
+      background:$primary-color;
+      color:$link-color;
+      min-height:100vh;
+      overflow: hidden;
+      transition: width 0.3s ease;
+      h2, p{
+        padding: .5rem 1rem;
+      }
+      a {
+        display:block;
+        padding:.6rem 1rem;
+        color:$link-color;
+        text-decoration:none;
+        &:hover {
+          color: #f1f1f1;
+        }
+
+      }
+
+      &.open{
+        width: 250px;
+
+      }
+      &.close{
+        width:0;
+      }
+
+    }
+
+    .admin-header{
+       @include header($header-bg-color , $header-color);
+      .header-toggle-button{
+        font-size: 30px;
+        cursor: pointer;
+      }
+
+    }
+
+    .admin-footer {
+      position: fixed;
+      bottom: 0;
+      padding: .6rem 1rem;
+      text-decoration: none;
+      font-size: 18px;
+      color: inherit;
+      background-color:$header-bg-color;
+      text-align: center;
+      width: 100%;
+    }
+  }
+}

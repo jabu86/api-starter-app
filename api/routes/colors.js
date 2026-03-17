@@ -6,7 +6,7 @@ const colorsController = require('../controllers/admin/colorsController');
 
 const { body } = require('express-validator');
 //index route
-//Get Categories and SubCategories
+//Get Categories and SubCategories.jsx
 router.get('/colors' ,colorsController.index);
 
 /**

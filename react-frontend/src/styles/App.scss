@@ -1,0 +1,31 @@
+@use './_mixins' as *;
+$primary-color: #030239f7;
+
+$link-hover-color: #c4c4c5;
+$header-color: #ececec;
+.header{
+  @include header($primary-color , $header-color);
+  ul{
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-top: 1rem ;
+    margin-bottom: 1rem ;
+    color:$header-color;
+    li a{
+      padding: 14px 16px;
+      font-size: 17px;
+      &:hover{
+        text-decoration: underline;
+        color: $link-hover-color;
+      }
+      &:active{
+        color: #010373;
+      }
+    }
+  }
+
+}
+
+
+

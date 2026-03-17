@@ -1,0 +1,55 @@
+.container .row .sidebar {
+  background: rgba(3, 2, 57, 0.968627451);
+  color: #b5b3b3;
+  min-height: 100vh;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+.container .row .sidebar h2, .container .row .sidebar p {
+  padding: 0.5rem 1rem;
+}
+.container .row .sidebar a {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: #b5b3b3;
+  text-decoration: none;
+}
+.container .row .sidebar a:hover {
+  color: #f1f1f1;
+}
+.container .row .sidebar.open {
+  width: 250px;
+}
+.container .row .sidebar.close {
+  width: 0;
+}
+.container .row .admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: #131313;
+  padding: 1rem;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #ececee;
+}
+.container .row .admin-header .header-toggle-button {
+  font-size: 30px;
+  cursor: pointer;
+}
+.container .row .admin-footer {
+  position: fixed;
+  bottom: 0;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  font-size: 18px;
+  color: inherit;
+  background-color: #ececee;
+  text-align: center;
+  width: 100%;
+}
+
+/*# sourceMappingURL=App.css.map */

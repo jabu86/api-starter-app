@@ -6,7 +6,7 @@ const categoriesController = require('../controllers/admin/categoryController');
 const subCategoriesController = require('../controllers/admin/subCategoryController');
 const { body } = require('express-validator');
 //index route
-//Get Categories and SubCategories
+//Get Categories and SubCategories.jsx
 router.get('/categories' ,categoriesController.index);
 router.get('/sub-categories' ,subCategoriesController.index);
 
