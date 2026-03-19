@@ -9,6 +9,7 @@ function Brands({openModal, show}) {
 
     const [selectedBrand, setSelectedBrand] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [errors, setErrors] = useState({});
     const getBrands = async () =>{
         const res = await fetch(`/api/admin/brands`,{
             method: "GET",
@@ -27,17 +28,19 @@ function Brands({openModal, show}) {
     const handleAddBrand = () => {
         setSelectedBrand(null);
         setIsEditing(false);
+        setErrors({});
         openModal(show);
     };
 
     const handleEditBrand = (brand) => {
         setSelectedBrand(brand);
         setIsEditing(true);
+        setErrors({});
         openModal(show);
     };
 
     const handleSaveBrand = async (form) => {
-
+        setErrors({});
         const formData = new FormData();
         formData.append("name", form.name);
         formData.append("image", form.image);
@@ -46,8 +49,15 @@ function Brands({openModal, show}) {
             method: "POST",
             body: formData,
         });
+        const data = await res.json();
+        if(res.status === 400 && data.errors){
 
-        console.log(res)
+            setErrors(data.errors || {});
+            return;
+        }
+        setErrors({});
+        getBrands();
+
     }
 
     const handleUpdateBrand = async () => {
@@ -75,7 +85,13 @@ function Brands({openModal, show}) {
             </div>
             {show && (
                 <Modal openModal={openModal} show={show} title={isEditing? "Edit Brand" : "Add Brand"}  closeModal={() => openModal(false)}>
-                   <BrandForm  initialData={selectedBrand} onSubmit={isEditing ? handleUpdateBrand : handleSaveBrand } show={show}  closeModal={() => openModal(false)}/>
+                   <BrandForm
+                       initialData={selectedBrand}
+                       onSubmit={isEditing ? handleUpdateBrand : handleSaveBrand }
+                       show={show}
+                       closeModal={() => openModal(false)}
+                       errors={errors}
+                   />
                 </Modal>
             )}
         </div>

@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react";
 
-function BrandForm({initialData , onSubmit ,closeModal, show}) {
+function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
+    console.log(errors)
     const [form, setForm] = useState({
         name: '',
         image: null,
@@ -31,10 +32,15 @@ function BrandForm({initialData , onSubmit ,closeModal, show}) {
     }
     return (
         <form onSubmit={handleSubmit}>
+            {errors.length > 0 ? errors.map((error) => (
+                <div key={error} className="alert alert-danger">{error.msg}</div>
+            )): null}
             <div className="form-group">
                 <label htmlFor="name">Product Name</label>
-                <input type="text" className="form-control" value={form.name} onChange={handleChange} id="name"
+                <input type="text" className={`form-control ${errors ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
                        placeholder="Brand name"/>
+                {/*<div className="text-danger" >{errors[0].msg}</div>*/}
+                {/*{errors && (<div className="text-danger">{errors[0].msg}</div>)}*/}
             </div>
             <div className="form-group">
                 <label htmlFor="image">Brand Image / Logo</label>
