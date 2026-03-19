@@ -1,12 +1,15 @@
 require('dotenv').config()
 const express = require('express')
-const bodyParser = require('body-parser')
-const app = express()
+ const path = require('path')
+ const cors =require("cors");
+const app = express();
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT || 8000
 
-
+// Serve static files from public folder
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 const sequelize = require('./config/database')
 //Admin Routes
 const indexRoutes = require('./routes/index');
