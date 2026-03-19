@@ -9,7 +9,39 @@ function Dashboard() {
 
     return (
         <>
-            <h1>Dashboard</h1>
+            <div className="main-wrapper">
+
+                    <div className="main-header mb-1">
+                        <h2>Dashboard</h2>
+                    </div>
+
+                <div className="dashboard-sub-header">
+                    <div className="well">
+                        <h4>Users</h4>
+                        <p>1 Million</p>
+                    </div>
+                    <div className="well">
+                        <h4>Customers</h4>
+                        <p>1 Million</p>
+                    </div>
+                    <div className="well">
+                        <h4>In Stock</h4>
+                        <p>1 Million</p>
+                    </div>
+                    <div className="well">
+                        <h4>Orders</h4>
+                        <p>1 Million</p>
+                    </div>
+                </div>
+
+                <div className="content">
+                    <div className="well">
+                        <p>Dashboard Graph!!!!</p>
+                    </div>
+                </div>
+
+
+            </div>
         </>
     )
 }

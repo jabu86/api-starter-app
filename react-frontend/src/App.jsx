@@ -1,10 +1,8 @@
 import  {BrowserRouter, Routes, Route, Link} from "react-router-dom";
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
-
+import 'bootstrap/dist/css/bootstrap.css';
 import './styles/admin/App.scss'
 import './styles/App.scss'
+
 // import './assets/css/fonts/Montserrat,Roboto.zip'
 //Index
 import Home from "./pages/Home.jsx";
@@ -34,9 +32,14 @@ import { useState } from 'react'
 import Categories from "./pages/admin/Categories.jsx";
 function App() {
 
+    // Modal control
     const [sideBarOpen, setSetBarOpen] = useState(true)
+    const [show, setShow] = useState(false);
     function handleSideBarClick(e){
         setSetBarOpen(!sideBarOpen);
+    }
+    function handleOpenModal() {
+         setShow(!show);
     }
   return (
     <>
@@ -61,8 +64,8 @@ function App() {
 
                     } >
                         <Route style={{ padding: "20px", flex: 1 }} path="/admin" element={<Dashboard />} />
-                        <Route path="/admin/products" element={<Products />} />
-                        <Route path="/admin/brands" element={<Brands />} />
+                        <Route path="/admin/products" element={<Products openModal={handleOpenModal} show={show} />}  />
+                        <Route path="/admin/brands" element={<Brands openModal={handleOpenModal} show={show} />} />
                         <Route path="/admin/categories" element={<Category />} />
                         <Route path="/admin/sub-categories" element={<SubCategories />} />
                         <Route path="/admin/colors" element={<Colors />} />

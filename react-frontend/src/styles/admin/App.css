@@ -1,31 +1,38 @@
-.container .row .sidebar {
+.container-fluid {
+  padding: 0;
+  margin: 0;
+}
+.container-fluid .row .sidebar {
   background: rgba(3, 2, 57, 0.968627451);
   color: #b5b3b3;
   min-height: 100vh;
   overflow: hidden;
   transition: width 0.3s ease;
 }
-.container .row .sidebar h2, .container .row .sidebar p {
+.container-fluid .row .sidebar h2, .container-fluid .row .sidebar p {
   padding: 0.5rem 1rem;
 }
-.container .row .sidebar a {
+.container-fluid .row .sidebar a {
   display: block;
-  padding: 0.6rem 1rem;
+  padding: 0.5rem 1rem;
   color: #b5b3b3;
   text-decoration: none;
 }
-.container .row .sidebar a:hover {
+.container-fluid .row .sidebar a:hover {
   color: #f1f1f1;
 }
-.container .row .sidebar.open {
-  width: 250px;
+.container-fluid .row .sidebar.open {
+  display: block;
 }
-.container .row .sidebar.close {
-  width: 0;
+.container-fluid .row .sidebar.close {
+  display: none;
 }
-.container .row .admin-header {
+.container-fluid .row .content {
+  flex: 1;
+}
+.container-fluid .row .admin-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
   color: #131313;
@@ -34,22 +41,61 @@
   padding-left: 1.5rem;
   margin-right: auto;
   margin-left: auto;
-  background-color: #ececee;
+  background-color: #f1f1f1;
 }
-.container .row .admin-header .header-toggle-button {
-  font-size: 30px;
-  cursor: pointer;
+
+.image-loader {
+  display: flex;
+  justifyContent: center;
+  alignItems: center;
+  height: 100px;
 }
-.container .row .admin-footer {
+
+.btn-primary {
+  background: rgba(3, 2, 57, 0.968627451);
+  border: 1px solid #010373;
+  border-radius: 0;
+}
+
+.btn-danger {
+  border-radius: 0;
+}
+
+.btn-info {
+  border-radius: 0;
+}
+
+.btn-success {
+  border-radius: 0;
+}
+
+.btn-primary:hover {
+  background: #010373;
+}
+
+.modal-overlay {
   position: fixed;
-  bottom: 0;
-  padding: 0.6rem 1rem;
-  text-decoration: none;
-  font-size: 18px;
-  color: inherit;
-  background-color: #ececee;
-  text-align: center;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.admin-modal {
+  background: #f1f1f1;
+  padding: 20px;
+  margin: 100px auto;
+  width: 50%;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {
+    padding-top: 15px;
+  }
+  .sidenav a {
+    font-size: 18px;
+  }
 }
 
 /*# sourceMappingURL=App.css.map */

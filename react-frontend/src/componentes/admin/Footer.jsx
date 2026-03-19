@@ -1,6 +1,6 @@
 function  Footer() {
     return (
-        <div className="admin-footer">Footer</div>
+        <div className="admin-footer">Footer &copy;</div>
     )
 }
 

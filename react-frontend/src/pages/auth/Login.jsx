@@ -12,7 +12,7 @@ function Login(props) {
     return (
         <div>
             <h1>Admin Login</h1>
-            <button onClick={login}>Login</button>
+            <button onClick={login} className="btn btn-primary">Login</button>
         </div>
     )
 }

@@ -1,6 +1,6 @@
-@mixin header($bg-color,$color) {
+@mixin header($bg-color, $color, $justify:center) {
   display: flex;
-  justify-content: space-between;
+  justify-content: $justify;
   align-items: center;
   width: 100%;
   color: $color;
@@ -10,4 +10,16 @@
   margin-right: auto;
   margin-left: auto;
   background-color: $bg-color;
+}
+
+@mixin content($bg-color, $color) {
+  flex-wrap: nowrap;
+  min-height: 20px;
+  padding:  19px;
+  margin-bottom: 20px;
+  background-color: $bg-color;
+  border: 1px solid $color;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
 }

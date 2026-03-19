@@ -8,15 +8,17 @@ function AdminLayout({handleSideBarClick, sideBarOpen}) {
 
 
     return (
-        <div className="container">
-            <div className="row">
-                <SideBar sideBarOpen={sideBarOpen}/>
-                <main  style={{ flex:1}} >
-                    <Header handleSideBarClick={handleSideBarClick}/>
-                    <Outlet />
-                    <Footer />
-                </main>
-            </div>
+        <div className="container-fluid">
+
+                <div className="row g-0">
+                    <SideBar sideBarOpen={sideBarOpen}/>
+                    <main  className="content col-sm-10" >
+                        <Header handleSideBarClick={handleSideBarClick}/>
+                        <Outlet />
+                        <Footer />
+                    </main>
+                </div>
+
 
         </div>
     )
