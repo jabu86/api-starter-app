@@ -3,16 +3,23 @@ const fs = require("fs");
 
 const validateBrand = [
     body("name")
+        .trim()
         .notEmpty()
         .withMessage("Brand name is required")
-        .trim()
         .isLength({ min: 4, max: 50 })
         .withMessage(
             "Brand name can't be less than 4 characters and can't be longer than 50 characters."
         ),
+    body("image")
+        .custom((value, { req }) => {
+            if (!req.file) {
+                throw new Error("Image is required");
+            }
+            return true;
+        }),
     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
+        const result = validationResult(req);
+        if (!result.isEmpty()) {
             // delete uploaded images if validation fails
             if (req.file) {
                 const folderPath = `public/images/brands/${req.file.filename}`;
@@ -20,9 +27,22 @@ const validateBrand = [
                     if (err) console.error(err);
                 });
             }
-            return res.status(400).json({
-                errors: errors.array(),
-            });
+            const formatErrors = (errorsArray) => {
+                const formatted = {};
+
+                errorsArray.forEach(err => {
+                    if (!formatted[err.field]) {
+                        formatted[err.field] = [];
+                    }
+                    formatted[err.field].push(err);
+                });
+
+                return res.status(400).json({
+                    errors: formatted,
+
+                });
+            };
+
         }
 
         next();

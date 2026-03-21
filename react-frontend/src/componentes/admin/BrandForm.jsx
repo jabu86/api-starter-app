@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 
 function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
-    console.log(errors)
+
     const [form, setForm] = useState({
         name: '',
         image: null,
@@ -24,28 +24,22 @@ function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
         }
     }
     const handleSubmit = (e) => {
-
         e.preventDefault();
         onSubmit(form);
-
-
     }
     return (
         <form onSubmit={handleSubmit}>
-            {errors.length > 0 ? errors.map((error) => (
-                <div key={error} className="alert alert-danger">{error.msg}</div>
-            )): null}
-            <div className="form-group">
+            <div className="form-group mb-1">
                 <label htmlFor="name">Product Name</label>
-                <input type="text" className={`form-control ${errors ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
+                <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
                        placeholder="Brand name"/>
-                {/*<div className="text-danger" >{errors[0].msg}</div>*/}
-                {/*{errors && (<div className="text-danger">{errors[0].msg}</div>)}*/}
+                {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
             </div>
-            <div className="form-group">
+            <div className="form-group mb-1">
                 <label htmlFor="image">Brand Image / Logo</label>
                 <div className="custom-file">
                     <input type="file" className="custom-file-input" id="image" onChange={handleChange} id="image" />
+                    {errors.image && (<div className="text-danger">{errors.image}</div>)}
                 </div>
             </div>
             <div className="modal-footer mt-3">

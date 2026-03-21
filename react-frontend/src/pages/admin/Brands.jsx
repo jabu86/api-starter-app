@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import BrandList from "../../componentes/admin/BrandList.jsx";
 import Modal from "../../componentes/admin/Modal.jsx";
 import BrandForm from "../../componentes/admin/BrandForm.jsx";
+import Swal from 'sweetalert2'
 
 function Brands({openModal, show}) {
 
@@ -51,17 +52,106 @@ function Brands({openModal, show}) {
         });
         const data = await res.json();
         if(res.status === 400 && data.errors){
-
-            setErrors(data.errors || {});
+            const groupedErrors = data.errors.reduce((acc, err) =>{
+               if(!acc[err.path]){
+                  acc[err.path] = [];
+               }
+               acc[err.path].push(err.msg);
+               return acc;
+            },{})
+            setErrors(groupedErrors || {});
             return;
         }
-        setErrors({});
-        getBrands();
+        if(data.success){
+            setErrors({});
+            openModal(show);
+            getBrands();
+            await Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            }).fire({
+                icon: "success",
+                title: data.message,
+            });
+        }
 
     }
 
-    const handleUpdateBrand = async () => {
-        alert('update...');
+    const handleUpdateBrand = async (form) => {
+        setErrors({});
+        const formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("image", form.image);
+        formData.append("id", selectedBrand.id);
+
+        const res = await fetch(`/api/admin/brands`, {
+            method: "PUT",
+            body: formData,
+        });
+        const data = await res.json();
+        if(res.status === 400 && data.errors){
+            const groupedErrors = data.errors.reduce((acc, err) =>{
+                if(!acc[err.path]){
+                    acc[err.path] = [];
+                }
+                acc[err.path].push(err.msg);
+                return acc;
+            },{})
+            setErrors(groupedErrors || {});
+            return;
+        }
+        if(data.success){
+            setErrors({});
+            openModal(show);
+            getBrands();
+           await Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            }).fire({
+                icon: "success",
+                title: data.message,
+            });
+        }
+    }
+
+    const handleDeleteBrand = async (id) => {
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
+            const res = await fetch(`/api/admin/brands/${id}`, {
+                method: "DELETE",
+            });
+            const data = await res.json();
+            if(data.success){
+                getBrands();
+            }
+            if (data.success) Swal.fire({
+                title: "Deleted!",
+                text: data.message,
+                icon: "success"
+            });
+        });
     }
 
     return (
@@ -79,7 +169,7 @@ function Brands({openModal, show}) {
                     </tr>
                     </thead>
                     <tbody className="table-group-divider">
-                        <BrandList brands={brands} handleEditBrand={handleEditBrand} show={show}/>
+                        <BrandList brands={brands} handleEditBrand={handleEditBrand} show={show} handleDeleteBrand={handleDeleteBrand}/>
                     </tbody>
                 </table>
             </div>
