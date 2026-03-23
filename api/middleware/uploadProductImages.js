@@ -22,6 +22,7 @@ const upload = multer({
 });
 
 const processProductImages = async (req, res, next) => {
+
     if (!req.files || req.files.length === 0) return next();
 
     try {

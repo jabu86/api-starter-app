@@ -33,4 +33,5 @@ function SideBar({sideBarOpen}){
         </aside>
     )
 }
+
 export default SideBar;

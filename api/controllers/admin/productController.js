@@ -9,7 +9,7 @@ exports.index = async (req, res) => {
             order: [['createdAt', 'DESC']],
             include: ['category', 'brand','images', 'sizes' , 'colors' ],
         });
-        return res.status(200).json({products, message:"Get Products" });
+        return res.status(200).json({products, message:"Get Products" , success: true });
     }catch(err) {
         console.error(err)
     }
@@ -18,6 +18,7 @@ exports.index = async (req, res) => {
 exports.create =  async(req, res) => {
     const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
     const t = await sequelize.transaction();
+
     try {
         const newProduct = await  Products.create({
             name : name,
@@ -44,7 +45,6 @@ exports.create =  async(req, res) => {
             const colorsArray = Array.isArray(colors)
                 ? colors.flatMap(c => c.split(","))
                 : colors.split(",");
-
 
             const validColors = colorsArray.filter(c => c && c !== "0");
             if(validColors.length > 0){
@@ -83,7 +83,7 @@ exports.create =  async(req, res) => {
         const product = await Products.findByPk(newProduct.id, {
             include: ['category', 'brand','images', 'sizes' , 'colors' ]
         });
-        return  res.status(200).json({product, message : "Product created successfully."});
+        return  res.status(200).json({product, message : "Product created successfully." , success: true});
     }catch(err) {
         if (!t.finished) {
             await t.rollback();
@@ -200,7 +200,7 @@ exports.update =  async(req, res) => {
         // console.log("Colors:", colors);
         // console.log("Colors array:", colorsArray);
         await t.commit();
-        return  res.status(200).json({product, message : "Product updated successfully."});
+        return  res.status(200).json({product, message : "Product updated successfully.",success: true});
     }catch(err) {
         await t.rollback();
         console.error(err);
@@ -248,7 +248,7 @@ exports.delete = async (req, res) => {
         }
 
         await product.destroy();
-        return res.status(200).json({product, message : "Brand removed successfully."});
+        return res.status(200).json({product, message : "Brand removed successfully.",success: true});
     }catch(err) {
         console.error(err)
     }

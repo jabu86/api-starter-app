@@ -44,7 +44,6 @@ const validateProduct = [
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-
             // delete uploaded images if validation fails
             if (req.productImageFolder) {
                 const folderPath = `public/images/products/${req.productImageFolder}`;

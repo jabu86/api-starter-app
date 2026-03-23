@@ -8,6 +8,8 @@
   min-height: 100vh;
   overflow: hidden;
   transition: width 0.3s ease;
+  font-size: 16px;
+  font-weight: 600;
 }
 .container-fluid .row .sidebar h2, .container-fluid .row .sidebar p {
   padding: 0.5rem 1rem;

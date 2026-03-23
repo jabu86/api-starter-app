@@ -12,12 +12,7 @@ function Modal({closeModal, show , title, children}) {
                             <div className="modal-body mb-2">
                                 {children}
                             </div>
-                            {/*<div className="modal-footer">*/}
-                            {/*    <button type="button" className="btn btn-primary" onClick={(e) => onSave(e)}>Save</button>*/}
-                            {/*    <button type="button" className="btn btn-danger"*/}
-                            {/*            onClick={() => closeModal(show)}>Close*/}
-                            {/*    </button>*/}
-                            {/*</div>*/}
+
                         </div>
                     </div>
 
