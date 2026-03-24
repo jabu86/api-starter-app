@@ -12,13 +12,17 @@ exports.index = async (req, res) => {
         return res.status(200).json({products, message:"Get Products" , success: true });
     }catch(err) {
         console.error(err)
+        return res.status(500).json({
+            message: "Product creation failed",err
+        });
     }
 }
 
 exports.create =  async(req, res) => {
-    const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
-    const t = await sequelize.transaction();
 
+    const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size } = req.body;
+    const activeImage = req.body.active_image_index ? JSON.parse(req.body.active_image_index) : null;
+    const t = await sequelize.transaction();
     try {
         const newProduct = await  Products.create({
             name : name,
@@ -32,13 +36,19 @@ exports.create =  async(req, res) => {
         },{transaction : t});
 
         if(req.processedImages && req.processedImages.length > 0) {
-            for (const image of req.processedImages) {
+            for (const [index, image] of req.processedImages.entries()) {
+                const isActive =
+                    activeImage?.type === "new" &&
+                    index === activeImage?.value;
+
                 await product_images.create({
                     product_id: newProduct.id,
                     image: image.image,
-                    thumbnail:image.thumbnail
+                    thumbnail:image.thumbnail,
+                    active:  isActive,
                 }, { transaction : t});
             }
+
         }
 
         if(colors){
@@ -48,6 +58,7 @@ exports.create =  async(req, res) => {
 
             const validColors = colorsArray.filter(c => c && c !== "0");
             if(validColors.length > 0){
+
                 await product_colors.bulkCreate(
                     colorsArray.map(color => ({
                         product_id: newProduct.id,
@@ -83,16 +94,15 @@ exports.create =  async(req, res) => {
         const product = await Products.findByPk(newProduct.id, {
             include: ['category', 'brand','images', 'sizes' , 'colors' ]
         });
-        return  res.status(200).json({product, message : "Product created successfully." , success: true});
+        return  res.status(201).json({product, message : "Product created successfully." , success: true});
     }catch(err) {
         if (!t.finished) {
             await t.rollback();
         }
 
-        console.error(err);
-
         return res.status(500).json({
-            message: "Product creation failed"
+            message: "Product creation failed",
+            err
         });
     }
 }
@@ -101,6 +111,10 @@ exports.create =  async(req, res) => {
 
 exports.update =  async(req, res) => {
     const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size} = req.body;
+    const activeImage = req.body.active_image_index
+        ? JSON.parse(req.body.active_image_index)
+        : null;
+
     const t = await sequelize.transaction();
     try {
         const product = await Products.findByPk(req.params.id,
@@ -115,45 +129,57 @@ exports.update =  async(req, res) => {
         product.active= active;
         await product.save();
 
+        await product_images.update(
+            { active: false },
+            { where: { product_id: product.id }, transaction: t }
+        );
 
-        if(req.processedImages && req.processedImages.length > 0) {
-
-            const getImages = await product_images.findAll({where:{product_id:product.id}});
-
-            if(getImages.length > 0){
-                await product_images.destroy({
-                    where: {product_id:product.id},
-                    transaction : t
-                })
-                for (const image of getImages) {
-
-                    const folder = path.dirname(image.image);
-
-                    const folderPath = path.join("public", folder);
-
-                    await fs.remove(folderPath);
+        if (activeImage?.type === "existing") {
+            await product_images.update(
+                { active: true },
+                {
+                    where: {
+                        id: activeImage.value,
+                        product_id: product.id
+                    },
+                    transaction: t
                 }
-            }
-
-
-            for (const image of req.processedImages) {
-                await product_images.create({
-                    product_id: product.id,
-                    image: image.image,
-                    thumbnail:image.thumbnail
-                }, { transaction : t});
-            }
+            );
         }
 
+        if(req.processedImages && req.processedImages.length > 0) {
+            if(req.processedImages && req.processedImages.length > 0) {
+
+                for (const [index, image] of req.processedImages.entries()) {
+                    const isActive =
+                        activeImage?.type === "new" &&
+                        index === activeImage.value;
+
+                    // console.log("NEW IMAGE LOOP HIT");
+                    // console.log("index:", index);
+                    // console.log("isActive:", isActive);
+
+                    await product_images.create({
+                        product_id: product.id,
+                        image: image.image,
+                        thumbnail: image.thumbnail,
+                        active: isActive,
+                    }, { transaction: t });
+                }
+            }
+        }
 
 
         if(colors){
             const getColors = await product_colors.findAll( {where : {product_id :product.id}})
             if(getColors){
-                await product_colors.destroy({
-                    where: {product_id:product.id},
-                    transaction : t
-                })
+                if(getColors.length > 0){
+                    for(let color of getColors) {
+                        await product_colors.destroy({
+                            where: {product_id:product.id},
+                        })
+                    }
+                }
             }
             const colorsArray = Array.isArray(colors)
                 ? colors.flatMap(c => c.split(","))
@@ -174,10 +200,10 @@ exports.update =  async(req, res) => {
             const getSizes = await product_size.findAll({where : {product_id :product.id}})
             if(getSizes){
                 if(getSizes){
-                    await product_size.destroy({
-                        where: {product_id:product.id},
-                        transaction : t
-                    })
+                    for(let size of getSizes) {
+                        await product_size.destroy({where: {product_id:product.id}});
+                    }
+
                 }
             }
             const sizeArray = Array.isArray(size)
@@ -200,12 +226,12 @@ exports.update =  async(req, res) => {
         // console.log("Colors:", colors);
         // console.log("Colors array:", colorsArray);
         await t.commit();
-        return  res.status(200).json({product, message : "Product updated successfully.",success: true});
+        return  res.status(201).json({product, message : "Product updated successfully.",success: true});
     }catch(err) {
         await t.rollback();
-        console.error(err);
+
         return res.status(500).json({
-            message: "Product creation failed"
+            message: "Product creation failed",err
         });
     }
 }
@@ -248,9 +274,12 @@ exports.delete = async (req, res) => {
         }
 
         await product.destroy();
-        return res.status(200).json({product, message : "Brand removed successfully.",success: true});
+        return res.status(201).json({product, message : "Brand removed successfully.",success: true});
     }catch(err) {
         console.error(err)
+        return res.status(500).json({
+            message: "Product creation failed",err
+        });
     }
 }
 
