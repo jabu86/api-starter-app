@@ -232,6 +232,10 @@ function Products({openModal ,show}) {
         });
     }
 
+    const handleDeleteImage = async id => {
+        alert("Are you sure?" +id);
+    }
+
 
 
     return (
@@ -273,6 +277,7 @@ function Products({openModal ,show}) {
                             brands={brands}
                             sizes={sizes}
                             colors={colors}
+                            handleDeleteImage={handleDeleteImage}
                         />
                     </Modal>
                 )}

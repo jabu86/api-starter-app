@@ -11,7 +11,8 @@ function ProductForm(
         subCategories,
         brands,
         colors,
-        sizes
+        sizes,
+        handleDeleteImage
     }){
 
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -31,7 +32,7 @@ function ProductForm(
         activeImage: null,
     });
 
-    console.log(initialData);
+
     useEffect(() => {
         if (initialData && colors?.length > 0 && sizes?.length > 0) {
             setForm({
@@ -283,6 +284,7 @@ function ProductForm(
                                 padding: "5px"
                             }}
                         >
+
                             <img
                                 src={`http://localhost:8000${img.image}`}
                                 alt=""
@@ -305,6 +307,7 @@ function ProductForm(
                                     }
                                 />
                                 <label className="form-check-label p-1"> <strong>Active</strong></label>
+                                <span className="float-end btn btn-danger btn-sm" onClick={() =>handleDeleteImage(img.id)}>x</span>
                             </div>
                         </div>
                     )

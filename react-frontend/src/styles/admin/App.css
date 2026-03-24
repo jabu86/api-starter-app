@@ -82,6 +82,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
 }
 
 .admin-modal {
@@ -89,6 +90,14 @@
   padding: 20px;
   margin: 100px auto;
   width: 50%;
+}
+
+.modal-footer {
+  position: sticky;
+  bottom: 0;
+  background: #e4e4e4;
+  padding: 10px;
+  margin-top: 5px;
 }
 
 @media screen and (max-height: 450px) {

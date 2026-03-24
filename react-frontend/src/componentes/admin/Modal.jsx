@@ -9,7 +9,7 @@ function Modal({closeModal, show , title, children}) {
                                 <h1 className="modal-title fs-5">{title}</h1>
                                 <button type="button" className="btn-close" onClick={() => closeModal(show)}></button>
                             </div>
-                            <div className="modal-body mb-2">
+                            <div className="modal-body" style={{ maxHeight: "70vh", overflowY: "auto"  ,overflowX:"clip"}}>
                                 {children}
                             </div>
 
