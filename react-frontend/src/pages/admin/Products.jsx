@@ -132,16 +132,14 @@ function Products({openModal ,show}) {
 
     }
     const handleUpdateProduct = async product =>{
+        setErrors({});
         openModal(show)
-
         setIsEditing(true);
         setSelectedProducts(product);
 
     }
 
     const handleSaveProducts = async (form) =>{
-         console.log(isEditing)
-        console.log(form);
         setErrors({});
         const formData = new FormData();
         formData.append("name", form.name);
@@ -154,13 +152,23 @@ function Products({openModal ,show}) {
         formData.append("active", form.active);
         formData.append("colors", form.colors);
         formData.append("size", form.sizes);
+        form.newImages.forEach((file) => {
+            formData.append("images", file); // ✅ correct
+        });
+        form.existingImages.forEach((file) => {
+            formData.append("images[]", file); // ✅ correct
+        });
+
+        formData.append("active_image_index",JSON.stringify(form.activeImage));
         try {
             let url = isEditing ? `/api/admin/products/${form.id}` : `/api/admin/products`;
-            let method = {
+            let payload = {
                 method: "POST",
                 body:formData,
             }
-            const res = await fetch(url,method);
+
+
+            const res = await fetch(url,payload);
             const data = await res.json();
             if(res.status === 400 && data.errors){
                 const groupedErrors = data.errors.reduce((acc, err) =>{
@@ -171,7 +179,6 @@ function Products({openModal ,show}) {
                     return acc;
                 },{})
                 setErrors(groupedErrors || {});
-
                 return;
             }
             if(data.success){
@@ -196,7 +203,6 @@ function Products({openModal ,show}) {
         }catch(err){
             console.log(err);
         }
-
 
     }
 

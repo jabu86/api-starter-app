@@ -22,15 +22,18 @@ function ProductForm(
         price: 0,
         quantity: 0,
         description: '',
-        image: null,
         categoryId: '',
         subCategoryId: '',
         colors:[],
         sizes: [],
+        newImages: [],
+        existingImages: [],
+        activeImage: null,
     });
 
+    console.log(initialData);
     useEffect(() => {
-        if (initialData) {
+        if (initialData && colors?.length > 0 && sizes?.length > 0) {
             setForm({
                 id : initialData.id || '',
                 name: initialData.name || '',
@@ -40,21 +43,21 @@ function ProductForm(
                 description: initialData.description || '',
                 categoryId: initialData.category.id || '',
                 subCategoryId: initialData.subCategory?.id || '',
-                color: initialData.subCategory?.color || '',
-                size: initialData.brand.size || '',
                 in_stock: initialData.in_stock || false,
                 active:initialData.active || false,
-                colors:initialData.colors?.map(color => color.id) || [],
-                sizes:initialData.sizes?.map(size => size.id) || [],
-                image:null,
+                colors:initialData.colors?.map(color => String( color.color_id)) || [],
+                sizes:initialData.sizes?.map(size => String(size.size_id)) || [],
+                existingImages:initialData.images || [],
+                newImages: [],
+                activeImage: initialData.images?.find(img => img.active)
+                    ? { type: "existing", value: initialData.images.find(img => img.active).id } :null,
             });
             const foundCategory = categories.find(
                 c => c.id === initialData.category.id
             );
-
             setSelectedCategory(foundCategory);
         }
-    }, [initialData , categories]);
+    }, [initialData , categories , colors, sizes]);
 
     const handleChange = (e) => {
         const { name, type, checked, value, files } = e.target;
@@ -77,7 +80,6 @@ function ProductForm(
         const categoryId = Number( e.target.value);
         const foundSubCategories = categories.find(category => category.id == categoryId);
         setSelectedCategory(foundSubCategories);
-        // setForm({ ...form, categoryId: categoryId, subCategoryId: null });
         setForm((prev) => ({
             ...prev,
             categoryId,
@@ -89,7 +91,6 @@ function ProductForm(
     const handleChangeSubCategories = (e) => {
         const subCategoryId = Number( e.target.value);
         // setForm({ ...form, subCategoryId: subCategoryId });
-
         setForm((prev) => ({
             ...prev,
             subCategoryId
@@ -101,10 +102,19 @@ function ProductForm(
 
     const values = Array.from(options)
         .filter(option => option.selected)
-        .map(option => option.value);
+        .map(option => String(option.value));
         setForm((prev) => ({
             ...prev,
             [name]: values
+        }));
+    }
+
+    const handleImageChange = (e) => {
+        const files = Array.from(e.target.files);
+        setForm((prev) => ({
+            ...prev,
+            newImages:files,
+            //activeImageIndex: 1 // default first image active
         }));
     }
 
@@ -171,7 +181,7 @@ function ProductForm(
                     <select className="form-control" name="colors" multiple value={form.colors} onChange={handleMultiSelect} >
                         <option value="" disabled>Select Color</option>
                         {colors && colors.map(color => (
-                            <option key={color.id} value={color.id}>{color.name}</option>
+                            <option key={color.id} value={String(color.id)}>{color.name}</option>
                         ))}
                     </select>
                 </div>
@@ -180,7 +190,7 @@ function ProductForm(
                     <select className="form-control" name="sizes" multiple value={form.sizes} onChange={handleMultiSelect} >
                         <option value="" disabled>Select Size</option>
                         {sizes && sizes.map(size => (
-                            <option key={size.id} value={size.id}>{size.size}</option>
+                            <option key={size.id} value={String(size.id)}>{size.size}</option>
                         ))}
                     </select>
                 </div>
@@ -198,6 +208,7 @@ function ProductForm(
                 <input type="number" min="0" className={`form-control ${errors.quantity ? "is-invalid" : ""}`} name="quantity"
                        placeholder="Product quantity" value={form.quantity} onChange={handleChange}/>
                 {errors.quantity && (<div className="text-danger">{errors.quantity[0]}</div>)}
+
             </div>
             <div className="form-group mb-2">
                 <label ><strong>Description</strong></label>
@@ -209,7 +220,96 @@ function ProductForm(
                     value={form.description}/>
                 {errors.description && (<div className="text-danger">{errors.description[0]}</div>)}
             </div>
+            <div className="form-group mb-3">
+                <label><strong>Upload Images</strong></label>
+                <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    className="form-control"
+                    onChange={handleImageChange}
+                />
+            </div>
+            <div className="d-flex flex-wrap">
+                {form.newImages && form.newImages.map((img, index) => {
+                    const imageUrl = URL.createObjectURL(img)
+                    return (
+                        <div
+                            key={`existing-${index}`}
+                            style={{
+                                margin: "10px",
+                                border: form.activeImage === index
+                                    ? "3px solid green"
+                                    : "1px solid #ccc",
+                                padding: "5px"
+                            }}
+                        >
+                            <img
+                                src={imageUrl}
+                                alt=""
+                                width="100"
+                                height="100"
 
+                                style={{ objectFit: "cover" }}
+                            />
+                            <div className="mt-1">
+                                <input
+                                    type="radio"
+                                    name="activeImage"
+                                    className="form-check-input position-static"
+                                    checked={form.activeImage?.type === "new" &&
+                                        form.activeImage?.value === index}
+                                    onChange={() =>
+                                        setForm(prev => ({
+                                            ...prev,
+                                            activeImage: {type:"new", value:index}
+                                        }))
+                                    }
+                                />
+                                <label className="form-check-label p-1"> <strong>Active</strong></label>
+                            </div>
+                        </div>
+                    )
+                })}
+                {form.existingImages && form.existingImages.map((img, index) => {
+                    return (
+                        <div
+                            key={`existing-${index}`}
+                            style={{
+                                margin: "10px",
+                                border: form.activeImage === index
+                                    ? "3px solid green"
+                                    : "1px solid #ccc",
+                                padding: "5px"
+                            }}
+                        >
+                            <img
+                                src={`http://localhost:8000${img.image}`}
+                                alt=""
+                                width="100"
+                                height="100"
+                                style={{ objectFit: "cover" }}
+                            />
+                            <div className="mt-1" >
+                                <input
+                                    type="radio"
+                                    name="activeImage"
+                                    className="form-check-input position-static"
+                                    checked
+                                    checked={form.activeImage?.type  === "existing" &&  form.activeImage?.value === img.id}
+                                    onChange={() =>
+                                        setForm(prev => ({
+                                            ...prev,
+                                            activeImage: { type: "existing", value: img.id }
+                                        }))
+                                    }
+                                />
+                                <label className="form-check-label p-1"> <strong>Active</strong></label>
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
             <div className="row mb-2">
                 <div className="col-3">
                     <div className="form-check">
