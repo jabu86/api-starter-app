@@ -129,7 +129,6 @@ function Brands({openModal, show}) {
     }
 
     const handleDeleteBrand = async (id) => {
-
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -139,6 +138,7 @@ function Brands({openModal, show}) {
             cancelButtonColor: "#d33",
             confirmButtonText: "Yes, delete it!"
         }).then(async (result) => {
+            if(!result.isConfirmed) return;
             const res = await fetch(`/api/admin/brands/${id}`, {
                 method: "DELETE",
             });
@@ -157,7 +157,7 @@ function Brands({openModal, show}) {
     return (
         <div className="row g-0 mt-1 p-3" >
             <div className="col-12 mb-1">
-                <button className="btn btn-danger float-end" type="button" onClick={() => handleAddBrand(show)}>Add Brand</button>
+                <button className="btn btn-primary float-end" type="button" onClick={() => handleAddBrand(show)}>Add Brand</button>
                 <h2>Brands</h2>
                 <table className="table table-responsive mt-4">
                     <caption>List of brands</caption>

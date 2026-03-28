@@ -4,10 +4,11 @@ import {
     faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
-function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
+function SubCategoryList({sub_categories, handleEditCategory , handleDeleteSubCategory}) {
+
     return (
         <>
-            {!categories.length > 0 ?
+            {!sub_categories.subCategory?.length > 0 ?
                 <tr>
                     <td style={{ textAlign: "center", padding: "20px" }} colSpan={9}>
                         <img
@@ -17,13 +18,12 @@ function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
                         />
                     </td>
                 </tr>
-                : categories.map((category) => (
-                <tr key={category.id}>
+                : sub_categories.subCategory?.map((category ,index) => (
+                <tr key={index}>
                     <td>{category.name}</td>
-
-                    <td className="table-active text-center">
+                    <td className="text-center">
                         <button className="btn btn-info" onClick={() => handleEditCategory(category)}><FontAwesomeIcon icon={faPencilAlt}/></button>
-                        <button className="btn btn-danger" onClick={() =>handleDeleteCategory(category.id)}><FontAwesomeIcon icon={faTrash} /></button>
+                        <button className="btn btn-danger" onClick={() =>handleDeleteSubCategory(category.id)}><FontAwesomeIcon icon={faTrash} /></button>
                     </td>
                 </tr>
             ))}
@@ -31,4 +31,4 @@ function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
     )
 }
 
-export default CategoryList;
+export default SubCategoryList;

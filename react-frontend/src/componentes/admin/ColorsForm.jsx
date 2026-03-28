@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 
-function CategoryForm({initialData , onSubmit ,closeModal , errors}) {
+function ColorsForm({initialData , onSubmit ,closeModal , errors}) {
 
     const [form, setForm] = useState({
         id:'',
@@ -13,7 +13,7 @@ function CategoryForm({initialData , onSubmit ,closeModal , errors}) {
             setForm({
                 id : initialData.id ||'',
                 name: initialData.name || '',
-                description: initialData.description || '',
+
             });
         }
     }, [initialData]);
@@ -28,22 +28,12 @@ function CategoryForm({initialData , onSubmit ,closeModal , errors}) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group mb-1">
-                <label htmlFor="name">Category Name</label>
+                <label htmlFor="name">Color</label>
                 <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} name="name"
-                       placeholder="Category name"/>
+                       placeholder="Color"/>
                 {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
             </div>
-            <div className="form-group mb-1">
-                <label htmlFor="name">Category Name</label>
-                <textarea
-                    value={form.description}
-                    onChange={handleChange}
-                    name="description"
-                    placeholder="Category description"
-                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
-                    rows={5}
-                />
-            </div>
+
             <div className="modal-footer mt-3">
                 <button type="submit" className="btn btn-primary" >Save</button>
                 <button type="button" className="btn btn-danger"
@@ -54,4 +44,4 @@ function CategoryForm({initialData , onSubmit ,closeModal , errors}) {
     )
 }
 
-export default CategoryForm
+export default ColorsForm
