@@ -34,7 +34,7 @@ router.post('/colors/:id' , [
  * delete categories and sub-categories
  */
 router.delete('/colors/:id' ,colorsController.delete);
-;
+
 
 
 module.exports = router

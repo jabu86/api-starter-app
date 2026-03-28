@@ -13,7 +13,7 @@ exports.index = async (req, res) => {
     }catch(err) {
         console.error(err)
         return res.status(500).json({
-            message: "Product creation failed",err
+            message: "Getting Product Error: ",err
         });
     }
 }
@@ -274,12 +274,55 @@ exports.delete = async (req, res) => {
         }
 
         await product.destroy();
-        return res.status(201).json({product, message : "Brand removed successfully.",success: true});
+        return res.status(201).json({product, message : "Product removed successfully.",success: true});
     }catch(err) {
         console.error(err)
         return res.status(500).json({
-            message: "Product creation failed",err
+            message: "Product removal failed",err
         });
     }
 }
+
+exports.deleteImage = async (req, res) => {
+    const t = await sequelize.transaction();
+    try {
+        const image = await product_images.findByPk(req.params.id);
+
+        if (!image) {
+            return res.status(404).json({
+                message: "Image not found",
+                success: false
+            });
+        }
+        if(image.image){
+                const filePath = path.join(__dirname,
+                    __dirname,
+                    "..", // 👈 IMPORTANT (go up from controller folder)
+                    "public",
+                    "images",
+                    "products",
+                    path.basename(image.image));
+            try {
+               const exists = await fs.exists(filePath);
+               if(exists){
+                   await fs.remove(filePath);
+               }else{
+                   console.log("File not found, skipping:", filePath);
+               }
+            }catch(err) {
+                return res.status(400).json({
+                    message: "Error deleting image:",err
+                });
+            }
+        }
+        await image.destroy();
+        return res.status(201).json({image, message : "Product image removed successfully.",success: true});
+    }catch(err) {
+        console.error(err)
+        return res.status(500).json({
+            message: "image removal failed",err
+        });
+    }
+}
+
 

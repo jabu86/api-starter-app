@@ -47,4 +47,6 @@ router.post('/products/:id' ,
  */
 router.delete('/products/:id' ,productController.delete);
 
+router.delete('/products/:id/image' ,productController.deleteImage);
+
 module.exports = router

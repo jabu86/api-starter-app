@@ -9,6 +9,8 @@ exports.index = async (req, res) => {
         return res.status(200).json({brands, message:"Get Brands" , success: true});
     }catch(err) {
         console.error(err)
+        return res.status(500).json({errors: err , message: "Sever Error"});
+
     }
 }
 
@@ -31,6 +33,7 @@ exports.create =  async(req, res) => {
         return  res.status(200).json({newCategory, message : "Brand created successfully." , success: true});
     }catch(err) {
         console.error(err)
+        return res.status(500).json({errors: err , message: "Sever Error"});
     }
 }
 
@@ -50,6 +53,7 @@ exports.update = async (req, res) => {
         return res.status(200).send({brand, message:"Brand updated successfully." ,success: true});
     }catch(err) {
         console.error(err)
+        return res.status(500).send({errors: err , message: "Server Error"});
     }
 }
 
@@ -60,7 +64,7 @@ exports.delete = async (req, res) => {
         return res.status(200).json({brand, message : "Brand removed successfully." ,success: true});
     }catch(err) {
         console.error(err)
-        return res.status(401).send({error: err.message});
+        return res.status(500).send({error: err.message});
     }
 }
 

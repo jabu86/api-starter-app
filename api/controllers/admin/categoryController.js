@@ -7,35 +7,46 @@ exports.index = async (req, res) => {
             order: [['createdAt', 'DESC']],
             include:"subCategory"
         });
-        return res.status(200).json({categories, message:"Get Categories" });
+
+        return res.status(200).json({categories, message:"Get Categories", success: true });
+    }catch(err) {
+        return res.status(500).json({message:"Something went wrong" , err});
+        console.error(err)
+    }
+}
+
+exports.category = async (req, res) => {
+    try {
+        const category = await Category.findOne({where:{slug : req.params.slug},
+            include:"subCategory"
+        });
+
+        if (!category) {
+            return res.status(404).json({message:"Not Found"});
+        }
+        return res.status(200).json({category, message:"Get Categories", success: true });
     }catch(err) {
         console.error(err)
+        return res.status(500).json({message:"Something went wrong" , err});
     }
 }
 
 exports.create =  async(req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
-    const {name} = req.body;
+    const {name , description} = req.body;
     try {
-        const category = await Category.findOne({where:{name}});
-        if(category) return res.status(400).json({errors: 'Category already exists'});
         const newCategory = await  Category.create({
-            name : name
+            name,
+            description
         });
-        return  res.status(200).json({newCategory, message : "Category created successfully."});
+        return  res.status(201).json({newCategory, message : "Category created successfully.", success: true });
     }catch(err) {
         console.error(err)
+        return res.status(500).json({message: 'Error creating categories', error: err});
     }
 }
 
 exports.update = async (req, res) => {
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
+
     const {name ,description} = req.body;
     const {id}= req.params;
     try {
@@ -44,10 +55,11 @@ exports.update = async (req, res) => {
         });
         category.name = name;
         category.description = description;
-        await  category.save()
-        return res.status(200).send({category, message:"Category updated successfully."});
+        await  category.save();
+        return res.status(201).send({category, message:"Category updated successfully.",  success: true });
     }catch(err) {
-        console.error(err)
+        return res.status(500).json({message: 'Error updating category', error: err});
+
     }
 }
 
@@ -55,10 +67,9 @@ exports.delete = async (req, res) => {
     try {
         const category = await Category.findByPk(req.params.id);
         await category.destroy();
-        return res.status(200).json({category, message : "Category removed successfully."});
+        return res.status(201).json({category, message : "Category removed successfully." ,  success: true });
     }catch(err) {
         console.error(err)
-        return res.status(401).send({error: err.message});
+        return res.status(500).send({error: err, message :'Error deleting category'});
     }
 }
-
