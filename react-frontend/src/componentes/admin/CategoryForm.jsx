@@ -1,27 +1,25 @@
 import {useState, useEffect} from "react";
 
-function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
+function CategoryForm({initialData , onSubmit ,closeModal , errors}) {
 
     const [form, setForm] = useState({
+        id:'',
         name: '',
-        image: null,
+        description: '',
+
     });
     useEffect(() => {
         if (initialData) {
             setForm({
+                id : initialData.id ||'',
                 name: initialData.name || '',
-                image:null,
+                description: initialData.description || '',
             });
         }
     }, [initialData]);
 
     const handleChange = (e) => {
-
-        if (e.target.type === "file") {
-            setForm({ ...form, image: e.target.files[0] });
-        } else {
-            setForm({ ...form, [e.target.id]: e.target.value });
-        }
+        setForm({ ...form, [e.target.name]: e.target.value });
     }
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -30,26 +28,30 @@ function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group mb-1">
-                <label htmlFor="name">Product Name</label>
-                <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
-                       placeholder="Brand name"/>
+                <label htmlFor="name">Category Name</label>
+                <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} name="name"
+                       placeholder="Category name"/>
                 {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
             </div>
             <div className="form-group mb-1">
-                <label htmlFor="image">Brand Image / Logo</label>
-                <div className="custom-file">
-                    <input type="file" className="custom-file-input" id="image" onChange={handleChange} id="image" />
-                    {errors.image && (<div className="text-danger">{errors.image}</div>)}
-                </div>
+                <label htmlFor="name">Category Name</label>
+                <textarea
+                    value={form.description}
+                    onChange={handleChange}
+                    name="description"
+                    placeholder="Category description"
+                    className={`form-control ${errors.description ? "is-invalid" : ""}`}
+                    rows={5}
+                />
             </div>
             <div className="modal-footer mt-3">
                 <button type="submit" className="btn btn-primary" >Save</button>
                 <button type="button" className="btn btn-danger"
-                        onClick={() => closeModal(show)}>Close
+                        onClick={() => closeModal(false)}>Close
                 </button>
             </div>
         </form>
     )
 }
 
-export default BrandForm
+export default CategoryForm

@@ -21,7 +21,7 @@ function BrandList({brands, handleEditBrand , handleDeleteBrand}) {
                 <tr key={brand.id}>
                     <td>{brand.name}</td>
                     <td><img src={`http://localhost:8000/images${brand.image}`} width={100} alt={brand.name}/> </td>
-                    <td className="table-active text-center">
+                    <td className="text-center">
                         <button className="btn btn-info" onClick={() => handleEditBrand(brand)}><FontAwesomeIcon icon={faPencilAlt}/></button>
                         <button className="btn btn-danger" onClick={() =>handleDeleteBrand(brand.id)}><FontAwesomeIcon icon={faTrash} /></button>
                     </td>

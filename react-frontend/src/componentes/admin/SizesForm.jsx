@@ -1,18 +1,17 @@
 import {useState, useEffect} from "react";
 
-function ColorsForm({initialData , onSubmit ,closeModal , errors}) {
+function SizesForm({initialData , onSubmit ,closeModal , errors}) {
 
     const [form, setForm] = useState({
         id:'',
-        name: '',
-        description: '',
+        size: '',
 
     });
     useEffect(() => {
         if (initialData) {
             setForm({
                 id : initialData.id ||'',
-                name: initialData.name || '',
+                size: initialData.size || '',
 
             });
         }
@@ -28,10 +27,10 @@ function ColorsForm({initialData , onSubmit ,closeModal , errors}) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group mb-1">
-                <label htmlFor="name">Color</label>
-                <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} name="name"
-                       placeholder="Category name"/>
-                {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
+                <label htmlFor="name">Size</label>
+                <input type="text" className={`form-control ${errors.size ? "is-invalid" : ""}`} value={form.size} onChange={handleChange} name="size"
+                       placeholder="Size"/>
+                {errors.size && (<div className="text-danger">{errors.size[0]}</div>)}
             </div>
 
             <div className="modal-footer mt-3">
@@ -44,4 +43,4 @@ function ColorsForm({initialData , onSubmit ,closeModal , errors}) {
     )
 }
 
-export default ColorsForm
+export default SizesForm

@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 
-function CategoryForm({initialData , onSubmit ,closeModal, show , errors}) {
+function SubCategoryForm({initialData , onSubmit ,closeModal, show , errors}) {
 
     const [form, setForm] = useState({
         name: '',
@@ -28,8 +28,14 @@ function CategoryForm({initialData , onSubmit ,closeModal, show , errors}) {
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group mb-1">
-                <label htmlFor="name">Category Name</label>
+                <label htmlFor="name">Sub Category Name</label>
                 <input type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
+                       placeholder="Brand name"/>
+                {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
+            </div>
+            <div className="form-group mb-1">
+                <label htmlFor="name">Sub Category Name</label>
+                <tex type="text" className={`form-control ${errors.name ? "is-invalid" : ""}`} value={form.name} onChange={handleChange} id="name"
                        placeholder="Brand name"/>
                 {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
             </div>
@@ -44,4 +50,4 @@ function CategoryForm({initialData , onSubmit ,closeModal, show , errors}) {
     )
 }
 
-export default CategoryForm
+export default SubCategoryForm

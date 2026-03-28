@@ -9,7 +9,6 @@ function Header({handleSideBarClick}){
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
                 <button className="btn btn-dark text-bg-light p-lg-2 m-1" onClick={handleSideBarClick}><span className="navbar-toggler-icon"></span></button>
-
                 <div className="collapse navbar-collapse float-end">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0 float-end">
                         <li className="nav-item dropdown ">

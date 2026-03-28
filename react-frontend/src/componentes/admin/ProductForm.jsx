@@ -12,8 +12,10 @@ function ProductForm(
         brands,
         colors,
         sizes,
-        handleDeleteImage
+        handleDeleteImage,
+
     }){
+
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [form, setForm] = useState({
@@ -236,10 +238,10 @@ function ProductForm(
                     const imageUrl = URL.createObjectURL(img)
                     return (
                         <div
-                            key={`existing-${index}`}
+                            key={`new-${img.id}`}
                             style={{
                                 margin: "10px",
-                                border: form.activeImage === index
+                                border: form.activeImage === img.id
                                     ? "3px solid green"
                                     : "1px solid #ccc",
                                 padding: "5px"
@@ -275,14 +277,15 @@ function ProductForm(
                 {form.existingImages && form.existingImages.map((img, index) => {
                     return (
                         <div
-                            key={`existing-${index}`}
+                            key={`existing-${img.id}`}
                             style={{
                                 margin: "10px",
-                                border: form.activeImage === index
+                                border: form.activeImage === img.id
                                     ? "3px solid green"
                                     : "1px solid #ccc",
                                 padding: "5px"
                             }}
+                            id={`image-zone-${img.id}`}
                         >
 
                             <img
@@ -297,7 +300,6 @@ function ProductForm(
                                     type="radio"
                                     name="activeImage"
                                     className="form-check-input position-static"
-                                    checked
                                     checked={form.activeImage?.type  === "existing" &&  form.activeImage?.value === img.id}
                                     onChange={() =>
                                         setForm(prev => ({
@@ -307,7 +309,16 @@ function ProductForm(
                                     }
                                 />
                                 <label className="form-check-label p-1"> <strong>Active</strong></label>
-                                <span className="float-end btn btn-danger btn-sm" onClick={() =>handleDeleteImage(img.id)}>x</span>
+                                <span className="float-end btn btn-danger btn-sm"
+                                      onClick={() =>handleDeleteImage(img.id,(removedId) =>{
+                                          setForm(prev => ({
+                                              ...prev,
+                                              existingImages: prev.existingImages.filter(
+                                                  img => img.id !== removedId
+                                              )
+                                          }));
+                                      })}
+                                >x</span>
                             </div>
                         </div>
                     )

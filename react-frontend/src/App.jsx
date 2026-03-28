@@ -11,7 +11,7 @@ import Contact from "./pages/Contact.jsx";
 
 //Auth
 import Login from "./pages/auth/Login.jsx";
-
+import Register from "./pages/auth/Register.jsx";
 //Admin
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/admin/Dashboad.jsx";
@@ -56,20 +56,20 @@ function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                     </Route>
                     <Route path="/admin" element={
                         <ProtectedRouter>
                             <AdminLayout handleSideBarClick={handleSideBarClick} sideBarOpen={sideBarOpen} />
                         </ProtectedRouter>
-
                     } >
                         <Route style={{ padding: "20px", flex: 1 }} path="/admin" element={<Dashboard />} />
                         <Route path="/admin/products" element={<Products openModal={handleOpenModal} show={show} />}  />
                         <Route path="/admin/brands" element={<Brands openModal={handleOpenModal} show={show} />} />
-                        <Route path="/admin/categories" element={<Category />} />
-                        <Route path="/admin/sub-categories" element={<SubCategories />} />
-                        <Route path="/admin/colors" element={<Colors />} />
-                        <Route path="/admin/sizes" element={<Sizes />} />
+                        <Route path="/admin/categories" element={<Category openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/sub-categories/:slug" element={<SubCategories openModal={handleOpenModal} show={show}/>} />
+                        <Route path="/admin/colors" element={<Colors openModal={handleOpenModal} show={show} />}  />
+                        <Route path="/admin/sizes" element={<Sizes openModal={handleOpenModal} show={show} />} />
                     </Route>
                 </Routes>
             </div>

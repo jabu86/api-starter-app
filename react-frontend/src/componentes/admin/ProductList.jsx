@@ -27,7 +27,7 @@ export default function ProductList({products, handleUpdateProduct ,handleDelete
                     <td>{product.images.length}</td>
                     <td>{product.in_stock ? <button className="badge text-bg-success">in stock</button> : <span className="badge text-bg-warning">out of stock</span>}</td>
                     <td>{product.active ? <button type="button" className="btn btn-success">Active</button> : <button type="button" className="btn btn-danger">In Active</button>}</td>
-                    <td className="table-active text-center">
+                    <td className="text-center">
                         <button className="btn btn-info" onClick={() => handleUpdateProduct(product)}><FontAwesomeIcon icon={faPencilAlt}/></button>
                         <button className="btn btn-danger" onClick={() => handleDelete(product.id)}><FontAwesomeIcon icon={faTrash}/></button>
                     </td>

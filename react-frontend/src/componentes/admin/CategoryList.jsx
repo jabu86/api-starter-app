@@ -1,13 +1,14 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faTrash,
-    faPencilAlt,
+    faPencilAlt, faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
-function BrandList({brands, handleEditBrand , handleDeleteBrand}) {
+import {Link} from "react-router-dom";
+function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
     return (
         <>
-            {!brands.length > 0 ?
+            {!categories.length > 0 ?
                 <tr>
                     <td style={{ textAlign: "center", padding: "20px" }} colSpan={9}>
                         <img
@@ -17,13 +18,13 @@ function BrandList({brands, handleEditBrand , handleDeleteBrand}) {
                         />
                     </td>
                 </tr>
-                : brands.map((brand) => (
-                <tr key={brand.id}>
-                    <td>{brand.name}</td>
-                    <td><img src={`http://localhost:8000/images${brand.image}`} width={100} alt={brand.name}/> </td>
-                    <td className="table-active text-center">
-                        <button className="btn btn-info" onClick={() => handleEditBrand(brand)}><FontAwesomeIcon icon={faPencilAlt}/></button>
-                        <button className="btn btn-danger" onClick={() =>handleDeleteBrand(brand.id)}><FontAwesomeIcon icon={faTrash} /></button>
+                : categories.map((category) => (
+                <tr key={category.id}>
+                    <td>{category.name}</td>
+                    <td className="text-center">
+                        <button className="btn btn-info" onClick={() => handleEditCategory(category)}><FontAwesomeIcon icon={faPencilAlt}/></button>
+                        <button className="btn btn-danger" onClick={() =>handleDeleteCategory(category.id)}><FontAwesomeIcon icon={faTrash} /></button>
+                        <Link to={`/admin/sub-categories/${category.slug}`} className="btn btn-link btn-primary"><FontAwesomeIcon icon={faEye} /></Link>
                     </td>
                 </tr>
             ))}
@@ -31,4 +32,4 @@ function BrandList({brands, handleEditBrand , handleDeleteBrand}) {
     )
 }
 
-export default BrandList;
+export default CategoryList;

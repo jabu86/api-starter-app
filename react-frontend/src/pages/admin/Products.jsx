@@ -16,6 +16,7 @@ function Products({openModal ,show}) {
     const [selectedProducts, setSelectedProducts] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState({});
+    const[images, setImages] = useState([]);
 
     const getProducts = async () =>{
        try {
@@ -122,7 +123,11 @@ function Products({openModal ,show}) {
         getSubCategories();
         getSize();
         getColors();
-    },[]);
+        if(selectedProducts){
+            setImages(selectedProducts.images);
+        }
+
+    },[selectedProducts]);
 
     const handleAddProduct = async e =>{
         setErrors({});
@@ -232,8 +237,33 @@ function Products({openModal ,show}) {
         });
     }
 
-    const handleDeleteImage = async id => {
-        alert("Are you sure?" +id);
+    const handleDeleteImage = async (id, onSuccess) => {
+
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then(async (result) => {
+            if (!result.isConfirmed) return;
+            const res = await fetch(`/api/admin/products/${id}/image`, {
+                method: "DELETE",
+            });
+            const data = await res.json();
+            if(data.success){
+              onSuccess(data.image.id)
+                getProducts();
+            }
+            Swal.fire({
+                title: "Deleted!",
+                text: data.message,
+                icon: "success"
+            });
+        });
     }
 
 
@@ -241,7 +271,7 @@ function Products({openModal ,show}) {
     return (
         <div className="row g-0 mt-1 p-3" >
             <div className="col-md-12">
-                <button className="btn btn-danger float-end" onClick={() => handleAddProduct()}>Add Product</button>
+                <button className="btn btn-primary float-end" onClick={() => handleAddProduct()}>Add Product</button>
                 <h2>Products</h2>
                 <table className="table table-responsive mt-4">
                     <caption>List of products</caption>
@@ -261,7 +291,6 @@ function Products({openModal ,show}) {
                     <tbody className="table-group-divider">
                         <ProductList products={products} handleUpdateProduct={handleUpdateProduct} handleDelete={handleDelete}/>
                     </tbody>
-
                 </table>
 
                 {show && (

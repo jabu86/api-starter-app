@@ -20,11 +20,11 @@ function SideBar({sideBarOpen}){
             </div>
             <nav className="mt-1">
 
-                    <><Link to="/admin"><FontAwesomeIcon icon={faGrip} /> Dashboard</Link></>
+                    <><Link to="/admin" activeStye={{color:'red'}}><FontAwesomeIcon icon={faGrip} /> Dashboard</Link></>
                     <><Link to="/admin/products"><FontAwesomeIcon icon={faStore}/> Products</Link></>
                     <><Link to="/admin/brands"><FontAwesomeIcon icon={faTrademark} /> Brand</Link></>
                     <><Link to="/admin/categories"><FontAwesomeIcon icon={faLayerGroup} /> Category</Link></>
-                    <li><Link to="/admin/sub-categories"><FontAwesomeIcon icon={faKaaba} /> Sub Category</Link></li>
+                    {/*<li><Link to="/admin/sub-categories"><FontAwesomeIcon icon={faKaaba} /> Sub Category</Link></li>*/}
                     <><Link to="/admin/colors"><FontAwesomeIcon icon={faPalette} /> Colors</Link></>
                     <><Link to="/admin/sizes"><FontAwesomeIcon icon={faRulerCombined} /> Sizes</Link></>
 
