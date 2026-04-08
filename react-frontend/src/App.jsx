@@ -10,8 +10,10 @@ import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 
 //Auth
+import AuthLayout from "./layouts/AuthLayout.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
+import Forgot from "./pages/auth/Forgot.jsx";
 //Admin
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/admin/Dashboad.jsx";
@@ -25,6 +27,7 @@ import Sizes from "./pages/admin/Sizes.jsx"
 //customer
 import CustomerLayout from "./layouts/CustomerLayout.jsx";
 import ProtectedRouter from "./componentes/ProtectedRouter.jsx";
+import PublicRouter from "./componentes/PublicRouter.jsx";
 
 
 
@@ -46,20 +49,27 @@ function App() {
         <BrowserRouter>
             <div>
                 <Routes>
-
+                    <Route exact element={
+                        <PublicRouter>
+                            <AuthLayout/>
+                        </PublicRouter>
+                    } >
+                        <Route  path="/login" element={<Login/>} />
+                        <Route  path="/register" element={<Register/>} />
+                        <Route  path="/forgot" element={<Forgot/>} />
+                    </Route>
                     <Route path="/" exact element={
-                        <ProtectedRouter>
+                        <ProtectedRouter  allowedRoles={['customer','user','admin']} >
                             <CustomerLayout />
                         </ProtectedRouter>
                     } >
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+
                     </Route>
                     <Route path="/admin" element={
-                        <ProtectedRouter>
+                        <ProtectedRouter  allowedRoles={['user', 'admin']}>
                             <AdminLayout handleSideBarClick={handleSideBarClick} sideBarOpen={sideBarOpen} />
                         </ProtectedRouter>
                     } >
