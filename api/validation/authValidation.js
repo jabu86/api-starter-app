@@ -1,52 +1,88 @@
 const { body, validationResult } = require("express-validator");
-const fs = require("fs");
+const { User} = require('../models');
 
-const validateBrand = [
-    body("name")
+
+const loginValidation = [
+    body("email")
         .trim()
         .notEmpty()
-        .withMessage("Brand name is required")
-        .isLength({ min: 4, max: 50 })
-        .withMessage(
-            "Brand name can't be less than 4 characters and can't be longer than 50 characters."
-        ),
-    body("image")
-        .custom((value, { req }) => {
-            if (!req.file) {
-                throw new Error("Image is required");
-            }
-            return true;
-        }),
+        .withMessage("Email is required.").bail()
+        .isEmail()
+        .withMessage("Please enter a valid email address.").bail(),
+    body("password").notEmpty().withMessage('Password is required.').bail(),
     (req, res, next) => {
-        const result = validationResult(req);
-        if (!result.isEmpty()) {
-            // delete uploaded images if validation fails
-            if (req.file) {
-                const folderPath = `public/images/brands/${req.file.filename}`;
-                fs.rm(folderPath, { recursive: true, force: true }, err => {
-                    if (err) console.error(err);
-                });
-            }
-            const formatErrors = (errorsArray) => {
-                const formatted = {};
-
-                errorsArray.forEach(err => {
-                    if (!formatted[err.field]) {
-                        formatted[err.field] = [];
-                    }
-                    formatted[err.field].push(err);
-                });
-
-                return res.status(400).json({
-                    errors: formatted,
-
-                });
-            };
-
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
         }
-
-        next();
+        next()
     },
 ];
 
-module.exports = validateBrand;
+const registerValidation = [
+    body("name")
+        .trim()
+        .notEmpty()
+        .withMessage("Name is required").bail(),
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required.").bail()
+        .isEmail()
+        .withMessage("Not a valid e-mail address.")
+        .bail()
+        .custom(async (value, {req}) => {
+            const existingUser = await User.findOne({ where: { email: value } });
+            if (existingUser) {
+                throw new Error("A user already exists with this email address.");
+            }
+            return true;
+        }),
+    body("password").notEmpty().withMessage('Password is required.').bail()
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long.").bail(),
+    body("confirm_password").notEmpty().withMessage("Please confirm your password.")
+        .bail()
+        .custom((value, {req, next}) => value === req.body.password)
+        .withMessage("Passwords do not match."),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+        next()
+    },
+];
+
+const forgotValidation = [
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required.").bail()
+        .isEmail()
+        .withMessage("Please enter a valid email address.").bail(),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+        next()
+    },
+];
+
+const resetValidation = [
+    body("password").notEmpty().withMessage('Password is required.').bail()
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long."),
+    body("confirm_password").notEmpty().withMessage("Please confirm your password.")
+        .bail()
+        .custom((value, {req, next}) => value === req.body.password)
+        .withMessage("Passwords do not match."),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+        next()
+    },
+];
+
+module.exports = {loginValidation, registerValidation , forgotValidation , resetValidation};

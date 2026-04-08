@@ -30,7 +30,6 @@ import ProtectedRouter from "./componentes/ProtectedRouter.jsx";
 import PublicRouter from "./componentes/PublicRouter.jsx";
 
 
-
 import { useState } from 'react'
 import Categories from "./pages/admin/Categories.jsx";
 function App() {
