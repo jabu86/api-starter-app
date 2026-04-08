@@ -4,8 +4,9 @@
   align-items: center;
   width: 100%;
   color: $color;
-  padding:.89rem;
-
+  padding:1rem;
+  padding-right: calc(3rem * .5);
+  padding-left: calc(3rem * .5);
   margin-right: auto;
   margin-left: auto;
   background-color: $bg-color;

@@ -4,7 +4,9 @@
   align-items: center;
   width: 100%;
   color: #ececec;
-  padding: 0.89rem;
+  padding: 1rem;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
   margin-right: auto;
   margin-left: auto;
   background-color: rgba(3, 2, 57, 0.968627451);
@@ -27,13 +29,6 @@
 }
 .header ul li a:active {
   color: #010373;
-}
-
-.auth-wrapper {
-  display: flex;
-  margin: 29px auto;
-  flex-wrap: nowrap;
-  gap: 2rem;
 }
 
 /*# sourceMappingURL=App.css.map */

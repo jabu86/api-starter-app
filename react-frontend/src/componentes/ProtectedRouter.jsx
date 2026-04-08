@@ -1,17 +1,12 @@
 import {Navigate} from 'react-router-dom';
-import {useAuth} from "../context/AuthContext.jsx";
-import admin_loader from "../assets/images/admin_loader.gif";
-function ProtectedRouter({children , allowedRoles}) {
+function ProtectedRouter({children}) {
+    const isAdmin =localStorage.getItem('admin');
+    // return isAdmin ? children : <Navigate to="/login" />;
 
-    const {user, loading} = useAuth();
-    if (loading) return <div><img src={admin_loader}/></div>;
-    if (!user) {
+    if (!isAdmin) {
         return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles && !user.roles.some(role => allowedRoles.includes(role))) {
-        return <Navigate to="/" replace />;
-    }
     return children;
 }
 
