@@ -3,8 +3,6 @@ import {Outlet} from "react-router-dom";
 
 function Header({handleSideBarClick}){
 
-
-
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
