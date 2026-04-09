@@ -69,7 +69,7 @@ function Forgot(props) {
                         <label htmlFor="email">Email address</label>
                         {errors.email && (<div className="text-danger">{errors.email[0]}</div>)}
                     </div>
-                    <button className="btn btn-primary w-100 py-2 mt-2" type="submit">Sign in</button>
+                    <button className="btn btn-primary w-100 py-2 mt-2" type="submit">Reset Password</button>
                     <p className="mt-1 mb-2 text-body-secondary text-center">Already have an account? <Link className="text-info" to="/login">Sign in</Link>.</p>
                     <p className="mt-1 mb-2 text-body-secondary text-center">Don't have an account? <Link to={'/register'} className="text-info">Sign up</Link>.</p>
                 </form>

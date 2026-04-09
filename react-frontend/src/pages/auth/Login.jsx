@@ -49,10 +49,13 @@ function Login(props) {
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     }
-
+    const content = [
+        'Shop all you can',
+        'A one stop shop for all your needs.',
+    ]
     return (
         <div className="auth-wrapper">
-            <AuthLeftContent image={logo}/>
+            <AuthLeftContent image={logo} heading={'Welcome Back'} content={content} />
             <div className="auth-content">
                 <h1 className="h3 mb-3 fw-normal ">Sign in</h1>
                 <p><small> Please fill in this form to create an account.</small></p>

@@ -13,7 +13,6 @@ function ResetPassword(props) {
         confirm_password:'',
     })
     const [errors, setErrors] = useState({})
-
     const handleReset = async (e) => {
         e.preventDefault();
         try {

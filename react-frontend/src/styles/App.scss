@@ -9,8 +9,7 @@ $header-color: #ececec;
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    margin-top: 1rem ;
-    margin-bottom: 1rem ;
+    padding: 1rem ;
     color:$header-color;
     li a{
       padding: 14px 16px;
@@ -21,6 +20,34 @@ $header-color: #ececec;
       }
       &:active{
         color: #010373;
+      }
+    }
+  }
+
+
+  .dropdown{
+
+    display: inline-block;
+    cursor: pointer;
+    .dropdown-item {
+      margin-top: 10px;
+      position: absolute;
+      background-color: $primary-color;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      right: 0;
+
+       a {
+        color: $link-hover-color;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+         &:hover{
+           text-decoration: underline;
+
+           color: $link-hover-color;
+         }
       }
     }
   }

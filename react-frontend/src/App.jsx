@@ -59,15 +59,13 @@ function App() {
                         <Route  path="/forgot-password" element={<Forgot/>} />
                         <Route  path="/reset-password/:token" element={<ResetPassword/>} />
                     </Route>
+
                     <Route path="/" exact element={
-                        <ProtectedRouter  allowedRoles={['customer','user','admin']} >
                             <CustomerLayout />
-                        </ProtectedRouter>
-                    } >
+                    }>
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-
                     </Route>
                     <Route path="/admin" element={
                         <ProtectedRouter  allowedRoles={['user', 'admin']}>

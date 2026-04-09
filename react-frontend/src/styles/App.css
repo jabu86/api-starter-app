@@ -13,8 +13,7 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  padding: 1rem;
   color: #ececec;
 }
 .header ul li a {
@@ -27,6 +26,29 @@
 }
 .header ul li a:active {
   color: #010373;
+}
+.header .dropdown {
+  display: inline-block;
+  cursor: pointer;
+}
+.header .dropdown .dropdown-item {
+  margin-top: 10px;
+  position: absolute;
+  background-color: rgba(3, 2, 57, 0.968627451);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  right: 0;
+}
+.header .dropdown .dropdown-item a {
+  color: #c4c4c5;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.header .dropdown .dropdown-item a:hover {
+  text-decoration: underline;
+  color: #c4c4c5;
 }
 
 .auth-wrapper {
