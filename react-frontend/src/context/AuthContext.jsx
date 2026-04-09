@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-
                 // Optional: check token expiry
                 if (decoded.exp * 1000 < Date.now()) {
                     logout();
@@ -21,10 +20,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(decoded);
                 }
             } catch (err) {
+                console.log(err);
                 logout();
             }
         }
-
         setLoading(false);
     }, []);
 

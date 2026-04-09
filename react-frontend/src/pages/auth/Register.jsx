@@ -16,28 +16,32 @@ function Register(props) {
     const handleRegiserer = async (e) => {
         e.preventDefault();
         setErrors({});
-        const res = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(form)
-        })
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(form)
+            });
+            const data = await res.json()
+            if(res.status === 400 && data.errors){
+                const groupedErrors = data.errors.reduce((acc, err) =>{
+                    if(!acc[err.path]){
+                        acc[err.path] = [];
+                    }
+                    acc[err.path].push(err.msg);
+                    return acc;
+                },{})
+                setErrors(groupedErrors || {});
+                return;
+            }
+            if(data.success === true){
+                navigate("/login");
+            }
 
-        const data = await res.json()
-        if(res.status === 400 && data.errors){
-            const groupedErrors = data.errors.reduce((acc, err) =>{
-                if(!acc[err.path]){
-                    acc[err.path] = [];
-                }
-                acc[err.path].push(err.msg);
-                return acc;
-            },{})
-            setErrors(groupedErrors || {});
-            return;
-        }
-        if(data.success === true){
-            navigate("/login");
+        }catch(err){
+            console.log(err);
         }
 
     }
@@ -97,7 +101,8 @@ function Register(props) {
                         {errors.confirm_password && (<div className="text-danger">{errors.confirm_password[0]}</div>)}
                     </div>
                     <button className="btn btn-primary w-100 py-2 mt-2" type="submit">Sign up</button>
-                    <p className="mt-1 mb-2 text-body-secondary text-center">Already have an account?   <Link to={'/login'} className="text-info">Sign In</Link>.</p>
+                    <p className="mt-1 mb-2 text-body-secondary text-center">Already have an account?  <Link to={'/login'} className="text-info">Sign In</Link>.</p>
+                    <p className="mt-1 mb-2 text-body-secondary text-center">Forgot password?  <Link to={'/forgot-password'} className="text-info">Reset</Link>.</p>
                 </form>
             </div>
 

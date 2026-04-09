@@ -15,8 +15,8 @@ router.post('/login', loginValidation, authController.login);
 router.post('/register',registerValidation, authController.register);
 
 //Forgot password route
-router.post('/forgot-password/',forgotValidation, authController.forgotPassword);
-router.post('/reset-password/:token',authController.resetPassword);
+router.post('/forgot-password/', forgotValidation, authController.forgotPassword);
+router.post('/reset-password/:token', resetValidation,authController.resetPassword);
 
-router.post('/logout',resetValidation, authController.logout);
+router.post('/logout', authController.logout);
 module.exports = router

@@ -14,6 +14,7 @@ import AuthLayout from "./layouts/AuthLayout.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import Forgot from "./pages/auth/Forgot.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
 //Admin
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import Dashboard from "./pages/admin/Dashboad.jsx";
@@ -55,7 +56,8 @@ function App() {
                     } >
                         <Route  path="/login" element={<Login/>} />
                         <Route  path="/register" element={<Register/>} />
-                        <Route  path="/forgot" element={<Forgot/>} />
+                        <Route  path="/forgot-password" element={<Forgot/>} />
+                        <Route  path="/reset-password/:token" element={<ResetPassword/>} />
                     </Route>
                     <Route path="/" exact element={
                         <ProtectedRouter  allowedRoles={['customer','user','admin']} >

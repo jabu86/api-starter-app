@@ -16,29 +16,33 @@ function Login(props) {
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrors({});
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(form)
-        })
-        const data = await res.json()
-        if(res.status === 400 && data.errors){
-            const groupedErrors = data.errors.reduce((acc, err) =>{
-                if(!acc[err.path]){
-                    acc[err.path] = [];
-                }
-                acc[err.path].push(err.msg);
-                return acc;
-            },{})
-            setErrors(groupedErrors || {});
-            return;
-        }
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(form)
+            })
+            const data = await res.json()
+            if(res.status === 400 && data.errors){
+                const groupedErrors = data.errors.reduce((acc, err) =>{
+                    if(!acc[err.path]){
+                        acc[err.path] = [];
+                    }
+                    acc[err.path].push(err.msg);
+                    return acc;
+                },{})
+                setErrors(groupedErrors || {});
+                return;
+            }
 
-        if(data.success === true){
-           login(data.token);
-            navigate("/");
+            if(data.success === true){
+               login(data.token);
+                navigate("/");
+            }
+        }catch(err){
+            console.log(err);
         }
     }
 
@@ -81,7 +85,7 @@ function Login(props) {
                     </div>
                     <button className="btn btn-primary w-100 py-2" type="submit">Sign in</button>
                     <p className="mt-1 mb-2 text-body-secondary text-center">Don't have an account?  <Link to={'/register'} className="text-info">Sign up</Link>.</p>
-                    <p className="mt-1 mb-2 text-body-secondary text-center">Forgot password?  <Link to={'/forgot'} className="text-info">Reset</Link>.</p>
+                    <p className="mt-1 mb-2 text-body-secondary text-center">Forgot password?  <Link to={'/forgot-password'} className="text-info">Reset</Link>.</p>
                 </form>
             </div>
         </div>

@@ -89,7 +89,7 @@ exports.forgotPassword = async (req, res) => {
         user.resetTokenExpire = Date.now() + 3600000;
         await user.save();
         const resetLink = `${process.env.URL}:${process.env.PORT}/api/auth/reset-password/${resetToken}`;
-        return  res.status(200).send({message:"Password reset link generated.", resetLink, success: true});
+        return  res.status(200).send({message:"Password reset link generated.", resetLink,token:resetToken,success: true});
 
     }catch(err) {
         return res.status(401).json({errors: err , message: "Sever Error"});

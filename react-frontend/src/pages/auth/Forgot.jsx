@@ -8,20 +8,40 @@ function Forgot(props) {
 
     const [form, setForm] = useState({
         email:'',
-
     })
+    const [errors, setErrors] = useState({})
 
     const handleForgot = async (e) => {
-        e.preventDefault();
-        const res = await fetch('/api/auth/forgot-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(form)
-        })
-        const data = await res.json();
-        console.log(data);
+        e.preventDefault()
+        setErrors({})
+        try {
+            const res = await fetch('/api/auth/forgot-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(form)
+            })
+            const data = await res.json();
+            if(res.status === 400 && data.errors){
+                const groupedErrors = data.errors.reduce((acc, err) =>{
+                    if(!acc[err.path]){
+                        acc[err.path] = [];
+                    }
+                    acc[err.path].push(err.msg);
+                    return acc;
+                },{})
+                setErrors(groupedErrors || {});
+                return;
+            }
+
+            if(data.success === true){
+                console.log(data);
+                navigate(`/reset-password/${data.token}`);
+            }
+        }catch(err){
+            console.log(err)
+        }
 
     }
 
@@ -40,13 +60,14 @@ function Forgot(props) {
                 <form onSubmit={handleForgot}>
                     <div className="form-floating mt-2">
                         <input type="email"
-                               className="form-control"
+                               className={`form-control ${errors.email ? "is-invalid" : ""}`}
                                id="email"
                                value={form.email}
                                name="email"
                                onChange={handleChange}
                         />
                         <label htmlFor="email">Email address</label>
+                        {errors.email && (<div className="text-danger">{errors.email[0]}</div>)}
                     </div>
                     <button className="btn btn-primary w-100 py-2 mt-2" type="submit">Sign in</button>
                     <p className="mt-1 mb-2 text-body-secondary text-center">Already have an account? <Link className="text-info" to="/login">Sign in</Link>.</p>
