@@ -7,7 +7,6 @@ function ResetPassword(props) {
     const navigate = useNavigate();
     const {token} =useParams();
 
-    console.log(token ,'token');
     const [form, setForm] = useState({
         password:'',
         confirm_password:'',

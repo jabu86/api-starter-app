@@ -2,12 +2,17 @@ import  {BrowserRouter, Routes, Route, Link} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.css';
 import './styles/admin/App.scss'
 import './styles/App.scss'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // import './assets/css/fonts/Montserrat,Roboto.zip'
 //Index
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
+import Profile from './pages/Profile.jsx';
+import Shop from './pages/Shop.jsx';
+
 
 //Auth
 import AuthLayout from "./layouts/AuthLayout.jsx";
@@ -46,6 +51,11 @@ function App() {
     }
   return (
     <>
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme="colored"
+      />
         <BrowserRouter>
             <div>
                 <Routes>
@@ -66,7 +76,18 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/shop" element={<Shop />} />
+                        
                     </Route>
+
+                    <Route path="/" exact element={
+                        <ProtectedRouter  allowedRoles={['user', 'admin' , 'customer']}>                            
+                            <CustomerLayout />
+                        </ProtectedRouter>
+                    }>                        
+                        <Route path="/profile/:name" element={<Profile />} />
+                    </Route>
+
                     <Route path="/admin" element={
                         <ProtectedRouter  allowedRoles={['user', 'admin']}>
                             <AdminLayout handleSideBarClick={handleSideBarClick} sideBarOpen={sideBarOpen} />
@@ -82,7 +103,7 @@ function App() {
                     </Route>
                 </Routes>
             </div>
-        </BrowserRouter>
+        </BrowserRouter>  
     </>
   )
 }

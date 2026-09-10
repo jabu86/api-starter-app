@@ -6,7 +6,7 @@ function Header() {
 
     const { user, logout } = useAuth();
     const [dropDown, setDropDown] = useState(false)
-    console.log(user);
+
     const navigate = useNavigate();
     const handleLogout = async () => {
         await logout();
@@ -19,6 +19,7 @@ function Header() {
         <header className="header">
             <ul>
                 <li><Link to="/">Home</Link></li>
+                <li><Link to="/shop">Shop</Link></li>
                 <li><Link to="/about">About</Link></li>
                 <li><Link to="/contact">Contact</Link></li>
             </ul>
@@ -27,10 +28,9 @@ function Header() {
                     <li><Link to="/login">Login</Link></li>
                     <li><Link to="/register">Register</Link></li>
                 </ul>
-
             ) : (
                 <ul className="dropdown">
-                    <li ><span onClick={handleDropDown}>{user.email}</span></li>
+                    <li ><span onClick={handleDropDown}>{user.name}</span></li>
                     <div className="dropdown-item">
 
                         {dropDown &&(
@@ -41,7 +41,6 @@ function Header() {
                             </>
                         )}
                     </div>
-
                 </ul>
             )}
         </header>

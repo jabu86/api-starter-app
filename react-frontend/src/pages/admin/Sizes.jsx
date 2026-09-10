@@ -34,6 +34,7 @@ function Sizes({openModal, show}) {
         setErrors({});
         setInitialData(size)
     }
+    
     const handleSaveSize = async (form) => {
         setErrors({});
         let url = isEditing ? `/api/admin/size/${form.id}` : `/api/admin/size`;

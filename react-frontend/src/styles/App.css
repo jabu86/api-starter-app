@@ -8,6 +8,7 @@
   margin-right: auto;
   margin-left: auto;
   background-color: rgba(3, 2, 57, 0.968627451);
+  margin-bottom: 2.5rem;
 }
 .header ul {
   display: flex;

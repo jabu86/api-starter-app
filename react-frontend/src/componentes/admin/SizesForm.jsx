@@ -5,7 +5,6 @@ function SizesForm({initialData , onSubmit ,closeModal , errors}) {
     const [form, setForm] = useState({
         id:'',
         size: '',
-
     });
     useEffect(() => {
         if (initialData) {

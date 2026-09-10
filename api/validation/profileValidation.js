@@ -22,9 +22,24 @@ const validateProfile = [
                 errors: errors.array(),
             });
         }
-
         next();
     },
 ];
 
-module.exports = validateProfile;
+const validateProfileUserPassword = [
+    body("password").notEmpty().withMessage('Password is required.').bail()
+        .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long."),
+    body("confirmPassword").notEmpty().withMessage("Please confirm your password.")
+        .bail()
+        .custom((value, {req, next}) => value === req.body.password)
+        .withMessage("Passwords do not match."),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+        next()
+    },
+];
+
+module.exports = {validateProfile , validateProfileUserPassword};
