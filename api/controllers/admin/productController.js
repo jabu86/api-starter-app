@@ -1,8 +1,9 @@
-const { Products , product_images, product_colors, product_size} = require('../../models');
+const { Products , product_images, product_colors, product_size , sub_category_product} = require('../../models');
 const {body, validationResult} = require('express-validator');
 const sequelize = require("../../config/database");
 const fs = require("fs-extra");
 const path = require("path");
+const { log } = require('console');
 exports.index = async (req, res) => {
     try {
         const products = await Products.findAll({
@@ -18,9 +19,12 @@ exports.index = async (req, res) => {
     }
 }
 
-exports.create =  async(req, res) => {
+exports.create =  async(req, res) => {     
 
-    const { name, description, price , category_id, brand_id, quantity, in_stock, active, colors, size } = req.body;
+
+    const { name, description, price , category_id, sub_category_id, brand_id, quantity, in_stock, active, colors, size } = req.body;
+
+
     const activeImage = req.body.active_image_index ? JSON.parse(req.body.active_image_index) : null;
     const t = await sequelize.transaction();
     try {
@@ -34,6 +38,26 @@ exports.create =  async(req, res) => {
             in_stock : in_stock,
             active : active,
         },{transaction : t});
+
+       
+    if(sub_category_id){
+            const productSubCategoryArray = Array.isArray(sub_category_id)
+                ? sub_category_id.flatMap(c => c.split(","))
+                : sub_category_id.split(",");               
+                
+            const validProductSubCategory = productSubCategoryArray.filter(c => c && c !== "0");              
+
+        if(validProductSubCategory.length > 0){
+            await sub_category_product.bulkCreate(
+                validProductSubCategory.map(proSubCat => ({
+                    product_id: newProduct.id,
+                    category_id : category_id,
+                    sub_category_id: proSubCat
+                })),{ transaction : t}
+            );
+            
+        }
+    }
 
         if(req.processedImages && req.processedImages.length > 0) {
             for (const [index, image] of req.processedImages.entries()) {

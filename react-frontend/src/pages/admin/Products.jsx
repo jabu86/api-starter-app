@@ -145,11 +145,13 @@ function Products({openModal ,show}) {
     }
 
     const handleSaveProducts = async (form) =>{
+
         setErrors({});
         const formData = new FormData();
         formData.append("name", form.name);
         formData.append("brand_id", form.brand);
         formData.append("category_id", form.categoryId);
+        formData.append("sub_category_id", form.subCategoryId);
         formData.append("description", form.description)
         formData.append("price", form.price);
         formData.append("quantity", form.quantity);

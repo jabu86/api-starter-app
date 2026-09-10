@@ -27,14 +27,22 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "product_id",
             as: "colors"
         });
+        
         Products.hasMany(models.product_size, {
             foreignKey: "product_id",
             as: "sizes"
         });
+
         Products.belongsTo(models.Category, {
             foreignKey: "category_id",
             as: "category"
         });
+
+        Products.hasMany(models.sub_category_product, {
+            foreignKey: "product_id",
+            as:"sub_category_products"
+        });
+
         Products.belongsTo(models.Brand, {
             foreignKey: "brand_id",
             as: "brand"

@@ -14,6 +14,10 @@ const validateProduct = [
         .notEmpty()
         .withMessage("Category  is required")
         .trim(),
+    body("sub_category_id")
+        .notEmpty()
+        .withMessage("Sub Category  is required")
+        .trim(),
     body("brand_id")
         .notEmpty()
         .withMessage("Brand  is required")

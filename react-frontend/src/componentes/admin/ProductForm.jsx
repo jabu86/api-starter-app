@@ -26,7 +26,7 @@ function ProductForm(
         quantity: 0,
         description: '',
         categoryId: '',
-        subCategoryId: '',
+        subCategoryId: [],
         colors:[],
         sizes: [],
         newImages: [],
@@ -45,10 +45,10 @@ function ProductForm(
                 quantity: initialData.quantity || '',
                 description: initialData.description || '',
                 categoryId: initialData.category.id || '',
-                subCategoryId: initialData.subCategory?.id || '',
+                subCategoryId: initialData.subCategory?.map(category => String(category.id))|| [],
                 in_stock: initialData.in_stock || false,
                 active:initialData.active || false,
-                colors:initialData.colors?.map(color => String( color.color_id)) || [],
+                colors:initialData.colors?.map(color => String(color.color_id)) || [],
                 sizes:initialData.sizes?.map(size => String(size.size_id)) || [],
                 existingImages:initialData.images || [],
                 newImages: [],
@@ -92,12 +92,24 @@ function ProductForm(
 
 
     const handleChangeSubCategories = (e) => {
-        const subCategoryId = Number( e.target.value);
-        // setForm({ ...form, subCategoryId: subCategoryId });
+        
+         const {name, options} = e.target;
+
+    const values = Array.from(options)
+        .filter(option => option.selected)
+        .map(option => String(option.value));
         setForm((prev) => ({
             ...prev,
-            subCategoryId
+            [name]: values
         }));
+        // setForm({ ...form, subCategoryId: subCategoryId });
+
+        /*
+        setForm((prev) => ({
+        ...prev,
+            subCategoryId
+        }));   
+        */ 
     }
 
     const handleMultiSelect = (e) => {
@@ -163,18 +175,20 @@ function ProductForm(
                 <div className="col">
                     <label><strong>Sub Categories</strong></label>
                     <select
-                        className="form-control"
+                        className={`form-control ${errors.sub_category_id ? "is-invalid" : ""}`}
                         name="subCategoryId"
                         value={form.subCategoryId}
                         onChange={handleChangeSubCategories}
+                        multiple
                     >
                         <option value="">Select Subcategory</option>
-                        {selectedCategory?.subCategory?.map(sub => (
-                            <option key={sub.id} value={sub.id}>
+                        {selectedCategory && selectedCategory.subCategory.map(sub => (
+                            <option key={sub.id} value={String(sub.id)} >
                                 {sub.name}
                             </option>
                         ))}
                     </select>
+                    {errors.sub_category_id && (<div className="text-danger">{errors.sub_category_id[0]}</div>)}
                 </div>
             </div>
 

@@ -10,4 +10,5 @@ router.get('/home', indexController.home);
 router.get('/about', indexController.about);
 // define the contact route
 router.get('/contact', indexController.contact);
+router.get('/shop', indexController.shop);
 module.exports = router
