@@ -8,7 +8,6 @@ function ProductForm(
         show ,
         errors,
         categories,
-        subCategories,
         brands,
         colors,
         sizes,
@@ -16,7 +15,7 @@ function ProductForm(
 
     }){
 
-
+        
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [form, setForm] = useState({
         id:'',
@@ -34,7 +33,9 @@ function ProductForm(
         activeImage: null,
     });
 
-
+    // console.log(initialData);
+    
+/*
     useEffect(() => {
         if (initialData && colors?.length > 0 && sizes?.length > 0) {
             setForm({
@@ -61,7 +62,61 @@ function ProductForm(
             setSelectedCategory(foundCategory);
         }
     }, [initialData , categories , colors, sizes]);
+*/
 
+useEffect(() => {
+    if (!initialData || !categories?.length) {
+        return;
+    }
+
+    const categoryId = String(initialData.category?.id || "");
+
+    const subCategoryIds =
+        initialData.sub_category_products?.map(
+            item => String(item.sub_category_id)
+        ) || [];
+
+    const foundCategory = categories.find(
+        category => String(category.id) === categoryId
+    );
+
+    setSelectedCategory(foundCategory || null);
+
+    setForm(prev => ({
+        ...prev,
+        id: initialData.id || "",
+        name: initialData.name || "",
+        brand: String(initialData.brand?.id || ""),
+        price: initialData.price || "",
+        quantity: initialData.quantity || "",
+        description: initialData.description || "",
+        categoryId,
+        subCategoryId: subCategoryIds,
+        in_stock: initialData.in_stock || false,
+        active: initialData.active || false,
+
+        colors:
+            initialData.colors?.map(
+                color => String(color.color_id)
+            ) || [],
+
+        sizes:
+            initialData.sizes?.map(
+                size => String(size.size_id)
+            ) || [],
+
+        existingImages: initialData.images || [],
+        newImages: [],
+
+        activeImage: initialData.images?.find(img => img.active)
+            ? {
+                type: "existing",
+                value: initialData.images.find(img => img.active).id
+            }
+            : null
+    }));
+
+}, [initialData, categories]);
     const handleChange = (e) => {
         const { name, type, checked, value, files } = e.target;
         setForm((prev) => ({
@@ -82,34 +137,30 @@ function ProductForm(
     const handleChangeCategories = (e) => {
         const categoryId = Number( e.target.value);
         const foundSubCategories = categories.find(category => category.id == categoryId);
+
+        // console.log(foundSubCategories)
+        // console.log(initialData.sub_category_products)
         setSelectedCategory(foundSubCategories);
         setForm((prev) => ({
             ...prev,
             categoryId,
-            subCategoryId: '' // reset subcategory
+            subCategoryId: [] // reset subcategory
         }));
     }
 
 
     const handleChangeSubCategories = (e) => {
         
-         const {name, options} = e.target;
+        const {name, options} = e.target;
 
-    const values = Array.from(options)
+        const values = Array.from(options)
         .filter(option => option.selected)
         .map(option => String(option.value));
         setForm((prev) => ({
             ...prev,
             [name]: values
         }));
-        // setForm({ ...form, subCategoryId: subCategoryId });
-
-        /*
-        setForm((prev) => ({
-        ...prev,
-            subCategoryId
-        }));   
-        */ 
+       
     }
 
     const handleMultiSelect = (e) => {
@@ -142,7 +193,7 @@ function ProductForm(
                     name="name"
                     className={`form-control ${errors.name ? "is-invalid" : ""}`}
                     placeholder="Product name" onChange={handleChange}  value={form.name}/>
-                {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
+                  {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
             </div>
             <div className="form-group mb-2">
                 <label htmlFor="brand"><strong>Brand</strong></label>
@@ -177,7 +228,7 @@ function ProductForm(
                     <select
                         className={`form-control ${errors.sub_category_id ? "is-invalid" : ""}`}
                         name="subCategoryId"
-                        value={form.subCategoryId}
+                        value={form.subCategoryId} 
                         onChange={handleChangeSubCategories}
                         multiple
                     >
@@ -190,7 +241,7 @@ function ProductForm(
                     </select>
                     {errors.sub_category_id && (<div className="text-danger">{errors.sub_category_id[0]}</div>)}
                 </div>
-            </div>
+            </div> 
 
             <div className="row mb-2">
                 <div className="col">
