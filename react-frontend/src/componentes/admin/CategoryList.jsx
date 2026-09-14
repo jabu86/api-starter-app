@@ -5,7 +5,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
 import {Link} from "react-router-dom";
-function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
+import Pagination from "../../componentes/admin/Pagination";
+
+function CategoryList({categories, handleEditCategory , handleDeleteCategory, pagination, handlePageChange}) {
     return (
         <>
             {!categories.length > 0 ?
@@ -27,7 +29,12 @@ function CategoryList({categories, handleEditCategory , handleDeleteCategory}) {
                         <Link to={`/admin/sub-categories/${category.slug}`} className="btn btn-link btn-primary"><FontAwesomeIcon icon={faEye} /></Link>
                     </td>
                 </tr>
+                
             ))}
+            <tr>                
+                {/* Pagination */}
+                <Pagination pagination={pagination} handlePageChange={handlePageChange} colSpan={2}/>
+            </tr>
         </>
     )
 }

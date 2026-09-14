@@ -16,7 +16,7 @@ export default function ProductList({
   return (
     <>
     
-      {!products || !products.length === 0 ? (
+      {!products || !products.length > 0 ? (
         <tr>
           <td style={{ textAlign: "center", padding: "20px" }} colSpan={9}>
             <img src={admin_loader} alt="Loading..." width="60" />
@@ -68,7 +68,9 @@ export default function ProductList({
       )}
 
       {/* Pagination */}
-      <Pagination pagination={pagination} handlePageChange={handlePageChange}/>
+      <tr>        
+        <Pagination pagination={pagination} handlePageChange={handlePageChange} colSpan={9}/>
+      </tr>
     
     </>
   );

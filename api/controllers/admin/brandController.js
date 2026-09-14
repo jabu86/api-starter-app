@@ -1,12 +1,53 @@
 const { Brand} = require('../../models');
 const {body, validationResult} = require('express-validator');
+const { Op } = require("sequelize");
 
 exports.index = async (req, res) => {
     try {
-        const brands = await Brand.findAll({
-            order: [['createdAt', 'DESC']],
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const search = req.query.search || "";
+            const offset = (page - 1) * limit;
+            const where = {};
+               
+            if (search.trim()) {
+                const searchTerm = search.trim();        
+                where[Op.or] = [{
+                    name: {
+                        [Op.like]: `%${searchTerm}%`,
+                    },
+                    },
+        
+                    {
+                    slug: {
+                        [Op.like]: `%${searchTerm}%`,
+                    },
+                },];
+            }
+        
+        const {count, rows} = await Brand.findAndCountAll({
+            where,
+            distinct: true,
+            subQuery: false,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]],
         });
-        return res.status(200).json({brands, message:"Get Brands" , success: true});
+        // console.log(rows)
+        const totalPages = Math.ceil(count / limit);
+        return res.status(200).json({
+        brands: rows,
+        pagination: {
+            currentPage: page,
+            perPage: limit,
+            totalItems: count,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
+        },
+            success: true,
+        });
+        // return res.status(200).json({brands, message:"Get Brands" , success: true});
     }catch(err) {
         console.error(err)
         return res.status(500).json({errors: err , message: "Sever Error"});

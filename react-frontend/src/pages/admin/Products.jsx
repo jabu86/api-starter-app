@@ -22,7 +22,6 @@ function Products({ openModal, show }) {
   // const [limit, setLimit] = useState(10);
   
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     perPage: 10,
@@ -53,10 +52,10 @@ function Products({ openModal, show }) {
     }
   };
 
-  const handleSearch = () => {
-    setCurrentPage(currentPage);
-    getProducts(1, search);
-  };
+//   const handleSearch = () => {
+//     setCurrentPage(currentPage);
+//     getProducts(1, search);
+//   };
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);
@@ -145,11 +144,11 @@ function Products({ openModal, show }) {
 
   useEffect(() => {
     getBrands();
-    getProducts(1, "");
     getCategories();
     getSubCategories();
     getSize();
     getColors();
+    getProducts(1, "");
     if (selectedProducts) {
       setImages(selectedProducts.images);
     }
@@ -302,7 +301,7 @@ function Products({ openModal, show }) {
         <SearchBar
             search={search}
             setSearch={setSearch}
-            getProducts={getProducts}
+            getData={getProducts}
         />
         <table className="table table-responsive mt-4">
           <caption>List of products</caption>

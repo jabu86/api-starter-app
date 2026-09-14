@@ -4,12 +4,12 @@ import {
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Pagination({ pagination, handlePageChange }) {
+function Pagination({ pagination, handlePageChange , colSpan }) {
   return (
     <>
       {pagination && pagination.totalPages > 1 && (
-        <tr>
-          <td colSpan={9}>
+        
+          <td colSpan={colSpan}>
             <div className="d-flex justify-content-between align-items-center">
 
               {/* Total products */}
@@ -64,7 +64,7 @@ function Pagination({ pagination, handlePageChange }) {
               </div>
             </div>
           </td>
-        </tr>
+        
       )}
     </>
   );

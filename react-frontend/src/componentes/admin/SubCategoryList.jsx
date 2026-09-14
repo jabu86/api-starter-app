@@ -4,7 +4,8 @@ import {
     faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
-function SubCategoryList({sub_categories, handleEditCategory , handleDeleteSubCategory}) {
+import Pagination from "../../componentes/admin/Pagination";
+function SubCategoryList({sub_categories, handleEditCategory , handleDeleteSubCategory, pagination, handlePageChange}) {
 
     return (
         <>
@@ -27,6 +28,11 @@ function SubCategoryList({sub_categories, handleEditCategory , handleDeleteSubCa
                     </td>
                 </tr>
             ))}
+            <tr>
+                
+                {/* Pagination */}
+                <Pagination pagination={pagination} handlePageChange={handlePageChange} colSpan={2}/>
+            </tr>
         </>
     )
 }

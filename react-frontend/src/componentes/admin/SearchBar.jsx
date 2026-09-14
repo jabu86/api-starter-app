@@ -1,11 +1,11 @@
 
 import { useEffect,  } from "react";
 
-function SearchBar({  getProducts , search , setSearch}) {
+function SearchBar({  getData , search , setSearch}) {
   
    useEffect(() => {
     const timer = setTimeout(() => {
-      getProducts(1, search);
+      getData(1, search);
     }, 500);
 
     return () => clearTimeout(timer);
