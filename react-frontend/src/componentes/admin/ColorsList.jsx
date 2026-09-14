@@ -1,14 +1,14 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faTrash,
-    faPencilAlt, faEye,
+    faPencilAlt, 
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
-import {Link} from "react-router-dom";
-function ColorsList({colors, handleEditColor , handleDeleteColor}) {
+import Pagination from '../../componentes/admin/Pagination.jsx';
+function ColorsList({colors, handleEditColor , handleDeleteColor , pagination, handlePageChange}) {
     return (
         <>
-            {!colors.length > 0 ?
+            {!colors || !colors.length > 0 ?
                 <tr>
                     <td style={{ textAlign: "center", padding: "20px" }} colSpan={9}>
                         <img
@@ -28,6 +28,10 @@ function ColorsList({colors, handleEditColor , handleDeleteColor}) {
                     </td>
                 </tr>
             ))}
+            <tr>                
+                {/* Pagination */}
+                <Pagination pagination={pagination} handlePageChange={handlePageChange} colSpan={2}/>
+            </tr>
         </>
     )
 }

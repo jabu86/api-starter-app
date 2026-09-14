@@ -41,7 +41,7 @@ function Categories({ openModal, show }) {
   };
 
   useEffect(() => {
-    getCategories();
+    getCategories(1, "");
   }, []);
 
   const handlePageChange = (page) => {
@@ -157,7 +157,7 @@ function Categories({ openModal, show }) {
           type="button"
           onClick={() => handleAddCategory(show)}
         >
-          Add Brand
+          Add Category
         </button>
         <h2>Categories</h2>
         <SearchBar

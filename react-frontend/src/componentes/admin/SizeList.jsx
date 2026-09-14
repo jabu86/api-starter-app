@@ -1,15 +1,14 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faTrash,
-    faPencilAlt, faEye,
+    faPencilAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
-import {Link} from "react-router-dom";
-import sizes from "../../pages/admin/Sizes.jsx";
-function CategorySize({sizes, handleEditSize , handleDeleteSize}) {
+import Pagination from '../../componentes/admin/Pagination.jsx';
+function CategorySize({sizes, handleEditSize , handleDeleteSize, pagination,  handlePageChange}) {
     return (
         <>
-            {!sizes.length > 0 ?
+            {!sizes || !sizes.length > 0 ?
                 <tr>
                     <td style={{ textAlign: "center", padding: "20px" }} colSpan={9}>
                         <img
@@ -29,6 +28,10 @@ function CategorySize({sizes, handleEditSize , handleDeleteSize}) {
                     </td>
                 </tr>
             ))}
+            <tr>                
+                {/* Pagination */}
+                <Pagination pagination={pagination} handlePageChange={handlePageChange} colSpan={2}/>
+            </tr>
         </>
     )
 }
