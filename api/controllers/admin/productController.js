@@ -6,12 +6,15 @@ const {
   sub_category_product,
   Category,
   Brand,
+  Colors,
+  Sizes
 } = require("../../models");
 const { body, validationResult } = require("express-validator");
 const sequelize = require("../../config/database");
 const fs = require("fs-extra");
 const path = require("path");
 const { Op } = require("sequelize");
+const { log } = require("console");
 exports.index = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -19,10 +22,7 @@ exports.index = async (req, res) => {
     const search = req.query.search || "";
     const offset = (page - 1) * limit;
     const where = {};
-
     
-
-
     if (search.trim()) {
       const searchTerm = search.trim();
 
@@ -82,13 +82,13 @@ exports.index = async (req, res) => {
 
         {
           model: product_colors,
-          as: "colors",
+          as: "productColors",
           separate: true,
         },
 
         {
           model: product_size,
-          as: "sizes",
+          as: "productSizes",
           separate: true,
         },
 
@@ -122,6 +122,66 @@ exports.index = async (req, res) => {
   }
 };
 
+exports.brands = async (req,res) => {
+  try {    
+    const brands = await Brand.findAll({
+      order: [["createdAt", "DESC"]],
+    });
+     
+    return res.status(200).json({brands :brands , success : true})
+  } catch (error) {
+    console.log(error);
+    
+  }
+  
+}
+
+exports.category = async (req,res) => {
+  try {    
+    const categories = await Category.findAll({
+      order: [["createdAt", "DESC"]],
+      include: "subCategory",
+    });      
+    return res.status(200).json({categories :categories , success : true})
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+}
+
+exports.subCategory = async (req,res) => {
+  res.status(200).json({subCategories :'getting SUB category' , success : true})
+}
+
+exports.colors = async (req,res) => {
+    try {    
+    const colors = await Colors.findAll({
+      order: [["createdAt", "DESC"]],
+    
+    });      
+    return res.status(200).json({colors , success : true})
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+}
+
+exports.sizes = async (req,res) => {
+  try {    
+    const sizes = await Sizes.findAll({
+      order: [["createdAt", "DESC"]],
+      
+    });      
+    return res.status(200).json({sizes , success : true})
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+}
+
 exports.create = async (req, res) => {
   const {
     name,
@@ -140,6 +200,9 @@ exports.create = async (req, res) => {
     ? JSON.parse(req.body.active_image_index)
     : null;
   const t = await sequelize.transaction();
+
+
+  
   try {
     const newProduct = await Products.create(
       {
@@ -233,7 +296,7 @@ exports.create = async (req, res) => {
 
     //Get create product
     const product = await Products.findByPk(newProduct.id, {
-      include: ["category", "brand", "images", "sizes", "colors"],
+      include: ["category", "brand", "images", "productSizes", "productColors"],
     });
     return res.status(201).json({
       product,
@@ -241,6 +304,8 @@ exports.create = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    console.log(err);
+    
     if (!t.finished) {
       await t.rollback();
     }
@@ -273,7 +338,7 @@ exports.update = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const product = await Products.findByPk(req.params.id, {
-      include: ["category", "brand", "images", "sizes", "colors"],
+      include: ["category", "brand", "images", "productSizes", "productColors"],
     });
     product.name = name;
     product.category_id = category_id;
@@ -423,6 +488,8 @@ exports.update = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    console.log(err);
+    
     await t.rollback();
 
     return res.status(500).json({
@@ -436,12 +503,12 @@ exports.delete = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const product = await Products.findByPk(req.params.id, {
-      include: ["images", "sizes", "colors", "sub_category_products"],
+       include: ["images", "productSizes", "productColors", "sub_category_products"],
     });
 
     const getImages = product.images;
-    const getColors = product.colors;
-    const getSizes = product.sizes;
+    const getColors = product.productColors;
+    const getSizes = product.productSizes;
     const subCategoryProducts = product.sub_category_products;
     if (subCategoryProducts.length > 0) {
       for (let subCatPro of subCategoryProducts) {
@@ -484,6 +551,7 @@ exports.delete = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    console.log(err);
     return res.status(500).json({
       message: "Product removal failed",
       err,

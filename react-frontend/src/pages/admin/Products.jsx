@@ -63,7 +63,7 @@ function Products({ openModal, show }) {
   };
   const getBrands = async () => {
     try {
-      const res = await fetch(`/api/admin/brands`, {
+      const res = await fetch(`/api/admin/products/brands`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +78,7 @@ function Products({ openModal, show }) {
 
   const getCategories = async () => {
     try {
-      const res = await fetch(`/api/admin/categories`, {
+      const res = await fetch(`/api/admin/products/category`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +111,7 @@ function Products({ openModal, show }) {
   };
   const getSize = async () => {
     try {
-      const res = await fetch(`/api/admin/size`, {
+      const res = await fetch(`/api/admin/products/sizes`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ function Products({ openModal, show }) {
   };
   const getColors = async () => {
     try {
-      const res = await fetch(`/api/admin/colors`, {
+      const res = await fetch(`/api/admin/products/colors`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

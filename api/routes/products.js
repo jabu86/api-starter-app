@@ -15,6 +15,11 @@ const {
  * Get all products
  */
 router.get('/products' ,productController.index);
+router.get('/products/category' ,productController.category);
+router.get('/products/brands' ,productController.brands);
+router.get('/products/sub-category' ,productController.subCategory);
+router.get('/products/colors' ,productController.colors);
+router.get('/products/sizes' ,productController.sizes);
 
 
 /**

@@ -53,6 +53,7 @@ exports.index = async (req, res) => {
         hasPreviousPage: page > 1,
       },
       success: true,
+      
     });
 
     // return res.status(200).json({categories, message:"Get Categories", success: true });
@@ -122,6 +123,7 @@ exports.category = async (req, res) => {
         hasPreviousPage: page > 1,
       },
       success: true,
+      
     });
 
     // return res.status(200).json({category, message:"Get Categories ssssss", success: true });

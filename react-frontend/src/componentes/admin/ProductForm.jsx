@@ -15,6 +15,7 @@ function ProductForm(
 
     }){
 
+
         
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [form, setForm] = useState({
@@ -96,12 +97,12 @@ useEffect(() => {
         active: initialData.active || false,
 
         colors:
-            initialData.colors?.map(
+            initialData.productColors?.map(
                 color => String(color.color_id)
             ) || [],
 
         sizes:
-            initialData.sizes?.map(
+            initialData.productSizes?.map(
                 size => String(size.size_id)
             ) || [],
 
@@ -202,6 +203,7 @@ useEffect(() => {
                     name="brand" value={form.brand}
                     onChange={handleChange}
                 >
+                    <option value="" disabled>Select Brand</option>
                     {brands && brands.map(brand => (
                         <option key={brand.id} value={brand.id}>{brand.name}</option>
                     ))}
@@ -217,7 +219,7 @@ useEffect(() => {
                         onChange={handleChangeCategories}
                         value={form.categoryId}>
                         <option value="" disabled>Select Category</option>
-                        {categories && categories.map(category => (
+                        {categories && categories?.map(category => (
                             <option key={category.id} value={category.id}>{category.name}</option>
                         ))}
                     </select>
@@ -233,7 +235,7 @@ useEffect(() => {
                         multiple
                     >
                         <option value="">Select Subcategory</option>
-                        {selectedCategory && selectedCategory.subCategory.map(sub => (
+                        {selectedCategory && selectedCategory?.subCategory?.map(sub => (
                             <option key={sub.id} value={String(sub.id)} >
                                 {sub.name}
                             </option>
