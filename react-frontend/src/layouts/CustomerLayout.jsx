@@ -5,9 +5,9 @@ function CustomerLayout () {
     return (
         <>
             <Header />
-            <main className="container">
+            <div className="main-wrapper">
                 <Outlet/>
-            </main>
+            </div>
         </>
     )
 }

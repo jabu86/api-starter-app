@@ -1,6 +1,13 @@
 const { where } = require("sequelize");
 
-const { Category,Brand,product_images, Products, Sizes, Colors} = require("../models");
+const {
+  Category,
+  Brand,
+  product_images,
+  Products,
+  Sizes,
+  Colors,
+} = require("../models");
 
 exports.index = async (req, res) => {
   try {
@@ -17,6 +24,7 @@ exports.home = (req, res) => {
     console.error(err);
   }
 };
+
 
 exports.about = (req, res) => {
   try {
@@ -40,53 +48,69 @@ exports.products = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || "";
     const offset = (page - 1) * limit;
-    const {count, rows} = await Products.findAndCountAll({
+    const { count, rows: productIds } = await Products.findAndCountAll({
       where: { active: true },
-      distinct: true,
-      subQuery: false,
+      attributes: ["id"],
       limit,
       offset,
       order: [["createdAt", "DESC"]],
+      distinct: true,
+    });
+
+    // 2. Extract IDs
+    const ids = productIds.map((product) => product.id);
+
+    // 3. Get the actual products + relationships
+    const rows = await Products.findAll({
+      where: {
+        id: ids,
+        active: true,
+      },
+
+      order: [["createdAt", "DESC"]],
+
       include: [
         {
-            model: Category,
-            as: "category"
+          model: Category,
+          as: "category",
         },
+
         {
-            model: Brand,
-            as: "brand"
+          model: Brand,
+          as: "brand",
         },
+
         {
-            model: product_images,
-            as: "images",
-            where: {
-                active: true
-            },
-            required: false
+          model: product_images,
+          as: "images",
+          where: {
+            active: true,
+          },
+          required: false,
         },
+
         {
-            model: Colors,
-            as: "colors",
-            through: {
-                attributes: []
-            }
+          model: Colors,
+          as: "colors",
+          through: {
+            attributes: [],
+          },
         },
+
         {
-            model: Sizes,
-            as: "sizes",
-            through: {
-                attributes: []
-            }
-        }
-      ]
+          model: Sizes,
+          as: "sizes",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
     });
 
     const totalPages = Math.ceil(count / limit);
-    return res
-      .status(200)
-      .json({ 
-        products : rows,
-        pagination: {
+    return res.status(200).json({
+      products: rows,
+      pagination: {
         currentPage: page,
         perPage: limit,
         totalItems: count,
@@ -94,7 +118,8 @@ exports.products = async (req, res) => {
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
       },
-      success: true });
+      success: true,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({
@@ -106,49 +131,46 @@ exports.products = async (req, res) => {
 
 exports.product = async (req, res) => {
   try {
-     const product = await Products.findOne({
+    const product = await Products.findOne({
       where: { slug: req.params.slug },
       include: [
         {
-            model: Category,
-            as: "category"
+          model: Category,
+          as: "category",
         },
         {
-            model: Brand,
-            as: "brand"
+          model: Brand,
+          as: "brand",
+        },      
+        {
+          model: product_images,
+          as: "images",
+        
+          required: false,
         },
         {
-            model: product_images,
-            as: "images",
-            where: {
-                active: true
-            },
-            required: false
+          model: Colors,
+          as: "colors",
+          through: {
+            attributes: [],
+          },
         },
         {
-            model: Colors,
-            as: "colors",
-            through: {
-                attributes: []
-            }
+          model: Sizes,
+          as: "sizes",
+          through: {
+            attributes: [],
+          },
         },
-        {
-            model: Sizes,
-            as: "sizes",
-            through: {
-                attributes: []
-            }
-        }
-      ]
+      ],
     });
 
     if (!product) {
-      return res.status(200).json({ message: "Not Found" });
+      return res.status(404).json({ message: "Not Found" });
     }
-    return res.status(404).json({ product, success : true });
-    
+    return res.status(200).json({ product, success: true });
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({ message: error});
+    console.log(error);
+    return res.status(500).json({ message: error });
   }
-}
+};

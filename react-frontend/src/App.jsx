@@ -7,11 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 // import './assets/css/fonts/Montserrat,Roboto.zip'
 //Index
+//customer or public
 import Home from "./pages/Home.jsx";
 import About from "./pages/About.jsx";
 import Contact from "./pages/Contact.jsx";
 import Profile from './pages/Profile.jsx';
 import Shop from './pages/Shop.jsx';
+import SingleProduct from './pages/SingleProduct.jsx';
 
 
 //Auth
@@ -30,7 +32,7 @@ import Brands from "./pages/admin/Brands.jsx";
 import Colors from "./pages/admin/Colors.jsx";
 import Sizes from "./pages/admin/Sizes.jsx"
 
-//customer
+
 import CustomerLayout from "./layouts/CustomerLayout.jsx";
 import ProtectedRouter from "./componentes/ProtectedRouter.jsx";
 import PublicRouter from "./componentes/PublicRouter.jsx";
@@ -69,15 +71,14 @@ function App() {
                         <Route  path="/forgot-password" element={<Forgot/>} />
                         <Route  path="/reset-password/:token" element={<ResetPassword/>} />
                     </Route>
-
                     <Route path="/" exact element={
-                            <CustomerLayout />
+                        <CustomerLayout />
                     }>
                         <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/shop" element={<Shop />} />
-                        
+                        <Route path="/shop/:slug" element={<SingleProduct />} />
                     </Route>
 
                     <Route path="/" exact element={

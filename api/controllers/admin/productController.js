@@ -23,6 +23,7 @@ exports.index = async (req, res) => {
     const offset = (page - 1) * limit;
     const where = {};
     
+    
     if (search.trim()) {
       const searchTerm = search.trim();
 

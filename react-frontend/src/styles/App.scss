@@ -1,33 +1,31 @@
-@use './_mixins' as *;
+@use "./_mixins" as *;
 $primary-color: #030239f7;
 
 $link-hover-color: #c4c4c5;
 $header-color: #ececec;
-.header{
-  @include header($primary-color , $header-color , space-between);
+.header {
+  @include header($primary-color, $header-color, space-between);
   margin-bottom: 2.5rem;
-  ul{
+  ul {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
-    padding: 1rem ;
-    color:$header-color;
-    li a{
+    padding: 1rem;
+    color: $header-color;
+    li a {
       padding: 14px 16px;
       font-size: 17px;
-      &:hover{
+      &:hover {
         text-decoration: underline;
         color: $link-hover-color;
       }
-      &:active{
+      &:active {
         color: #010373;
       }
     }
   }
 
-
-  .dropdown{
-
+  .dropdown {
     display: inline-block;
     cursor: pointer;
     .dropdown-item {
@@ -35,20 +33,20 @@ $header-color: #ececec;
       position: absolute;
       background-color: $primary-color;
       min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
       right: 0;
 
-       a {
+      a {
         color: $link-hover-color;
         padding: 12px 16px;
         text-decoration: none;
         display: block;
-         &:hover{
-           text-decoration: underline;
+        &:hover {
+          text-decoration: underline;
 
-           color: $link-hover-color;
-         }
+          color: $link-hover-color;
+        }
       }
     }
   }
@@ -62,5 +60,56 @@ $header-color: #ececec;
   gap: 2rem;
 }
 
-
-
+.main-wrapper {
+  --bs-gutter-x: 5rem;
+  --bs-gutter-y: : 0;
+  width: 100%;
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+  margin-right: auto;
+  margin-left: auto;
+  .product-wrapper{
+    .product-card{
+      box-shadow: #d8d8d8 0px 1px 13px 4px;
+      border-radius: .5em;
+      // .product-img{
+      //   text-align: center;
+      //   border: 1px solid black;
+      //   .card-img{
+      //     height: 255px;
+      //     width: 300px;
+      //     object-fit: inherit;
+      //   }
+      // }
+      p{
+        color: #494949;
+      }
+      button{
+        width: 100%;
+      }
+    }
+  }
+  
+  .single-product-wrapper{
+    box-shadow: #d8d8d8 0px 1px 13px 4px;
+    padding: 2rem .8rem;
+    ul{
+      li{
+        img{
+          // width: 100%;
+          text-align: center;
+          // object-fit: cover;
+        }
+      }
+    }
+    .product-image{
+      display: flex;
+    justify-content: center;
+    align-items: center;
+      img{
+        width: 100%;
+        
+      }
+    }
+  }
+}
