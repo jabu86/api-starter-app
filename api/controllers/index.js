@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { Op } = require("sequelize");
 
 const {
   Category,
@@ -25,7 +25,6 @@ exports.home = (req, res) => {
   }
 };
 
-
 exports.about = (req, res) => {
   try {
     res.status(200).json({ message: "About api contoller" });
@@ -47,13 +46,89 @@ exports.products = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || "";
+    const sort = req.query.sort || "";
+    const size = req.query.size || "";
     const offset = (page - 1) * limit;
+
+    // ---------------------------------------
+    // 1. FIND PRODUCTS THAT MATCH SIZE
+    // ---------------------------------------
+    let sizeProductIds = null;
+
+    if (size) {
+      const sizeProducts = await Products.findAll({
+        attributes: ["id"],
+        include: [
+          {
+            model: Sizes,
+            as: "sizes",
+            attributes: [],
+            through: {
+              attributes: [],
+            },
+            where: {
+              slug: size,
+            },
+            required: true,
+          },
+        ],
+      });
+
+      sizeProductIds = sizeProducts.map((product) => product.id);
+
+      console.log("Matching product IDs:", sizeProductIds);
+    }
+    // ---------------------------------------
+    // 2. BUILD PRODUCT WHERE
+    // ---------------------------------------
+
+    const productWhere = {
+      active: true,
+    };
+
+    if (search.trim()) {
+      const searchTerm = search.trim();
+      productWhere[Op.or] = [
+        {
+          name: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+        {
+          description: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+        {
+          price: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+      ];
+    }
+
+    if (sizeProductIds !== null) {
+      productWhere.id = sizeProductIds;
+    }
+
+    let order = [["id", "DESC"]];
+
+    if (sort === "lowest") {
+      order = [["price", "ASC"]];
+    }
+
+    if (sort === "highest") {
+      order = [["price", "DESC"]];
+    }
+    // console.log(sort , 'sort')
+    // console.log(size , 'size')
+
     const { count, rows: productIds } = await Products.findAndCountAll({
-      where: { active: true },
+      where: productWhere,
       attributes: ["id"],
       limit,
       offset,
-      order: [["createdAt", "DESC"]],
+      order,
       distinct: true,
     });
 
@@ -66,9 +141,7 @@ exports.products = async (req, res) => {
         id: ids,
         active: true,
       },
-
-      order: [["createdAt", "DESC"]],
-
+      order,
       include: [
         {
           model: Category,
@@ -141,11 +214,11 @@ exports.product = async (req, res) => {
         {
           model: Brand,
           as: "brand",
-        },      
+        },
         {
           model: product_images,
           as: "images",
-        
+
           required: false,
         },
         {

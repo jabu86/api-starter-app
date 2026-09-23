@@ -39,7 +39,7 @@ function SingleProdcut() {
     }
   };
 
-  console.log(product);
+
   console.log(mainImage);
 
   useEffect(() => {

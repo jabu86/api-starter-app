@@ -1,16 +1,15 @@
 import { Link } from "react-router-dom";
 import noProductImage from "../../assets/images/noproduct.png";
-function ProductCard({ products }) {
+function ProductCard({ products , addToCart }) {
 
-  const addToCart = (product) => {
-    console.log(product);
-    
-  }
+
+  
+  
   return (
-    <div className="col-md-9">
+    <div className="col-md-9 mb-4">
       {/* Added g-4 here to control the gap between columns automatically */}
       <div className="row product-wrapper g-2">
-        {products.map((product) => (
+        {products.length === 0 ? <div className="col-md-12 justify-content-center text-center"><h3>Product not found</h3></div> : products.map((product) => (
           // Structual column (Leave this clean of borders and margins)
           <div key={product.id} className="col-md-3">
             {/* Visual Card (Put your borders, shadows, and padding here) */}
