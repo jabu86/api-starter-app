@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
+import Cart from "../componentes/customer/Cart";
+
+import noProductImage from "../assets/images/noproduct.png";
 
 function SingleProdcut() {
   const [product, setProduct] = useState({
@@ -20,6 +20,11 @@ function SingleProdcut() {
   const [mainImage, setMainImage] = useState(null);
   const { slug } = useParams();
 
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cartItems");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
   const getProduct = async () => {
     try {
       const res = await fetch(`/api/shop/${slug}`, {
@@ -29,9 +34,10 @@ function SingleProdcut() {
         },
       });
       const data = await res.json();
-      const activeImage = data.product.images.find(
-        (img) => img.active === true,
-      ) || data.product.images[0] || null;
+      const activeImage =
+        data.product.images.find((img) => img.active === true) ||
+        data.product.images[0] ||
+        null;
       setMainImage(activeImage);
       setProduct(data.product);
     } catch (error) {
@@ -39,12 +45,38 @@ function SingleProdcut() {
     }
   };
 
+  const handleRemoveCartItem = (id) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  };
+  
 
-  console.log(mainImage);
+  const addToCart = (product) => {
+    setCartItems((prevItems) => {
+      const existingItem  = prevItems.find((item) => item.id === product.id);
+      if(existingItem ){
+        return prevItems.map((item) => item.id === product.id ? {...item, quantity: item.quantity + 1} : item)
+      }
+      return [
+        ...prevItems,
+        {
+          ...product,
+          quantity:1
+        }
+      ]
+    });
+    // console.log(cartItmes , 'shop comp')    
+  }
 
   useEffect(() => {
     getProduct();
   }, []);
+
+  
+  useEffect(() => {  
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  console.log(mainImage);
 
   return (
     <div className="row mb-5">
@@ -52,24 +84,29 @@ function SingleProdcut() {
         <div className="row justify-content-md-center">
           <div className="col-md-2 product-image-list text-center">
             <ul className="">
-              {product.images && product.images &&
+              {product.images &&
+                product.images &&
                 product.images.map((img) => (
                   <li key={img.id} className="border mb-2 py-2">
                     <img
                       src={`http://localhost:8000${img.thumbnail}`}
-                        width={100}
+                      width={100}
                       onClick={() => setMainImage(img)}
-                    style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer" }}
                     />
                   </li>
                 ))}
             </ul>
           </div>
           <div className="col-md-4 border product-image">
-            <img
-              className="main-image"
-              src={`http://localhost:8000${mainImage && mainImage.image}`}              
-            />
+            {mainImage === null ? (
+              <img src={noProductImage} />
+            ) : (
+              <img
+                className="main-image"
+                src={`http://localhost:8000${mainImage && mainImage.image}`}
+              />
+            )}
           </div>
           <div className="col-md-6">
             <p className="h3">{product.name && product.name}</p>
@@ -87,17 +124,25 @@ function SingleProdcut() {
               <li>Hassle-Free Exchanges & Returns for 30 Days.</li>
               <li>6-Month Limited Warranty.</li>
             </ul>
+
+            <button type="button" className="btn btn-primary btn-block" onClick={(e) => addToCart(product)}>
+                    Add to Cart
+              </button>
           </div>
         </div>
       </div>
 
-      
-      <div className="col-md-3 border">card</div>
-        <div className="col-md-9 single-product-wrapper mb-4">
+      <div className="col-md-3">
+        <Cart
+          cartItems={cartItems}
+          handleRemoveCartItem={handleRemoveCartItem}
+        />
+      </div>
+      <div className="col-md-9 single-product-wrapper mb-4">
         <h3>Description</h3>
         <p>{product.description}</p>
       </div>
-      
+
       {/* {slug} */}
     </div>
   );

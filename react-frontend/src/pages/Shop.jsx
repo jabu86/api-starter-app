@@ -15,7 +15,7 @@ function Shop() {
     return savedCart ? JSON.parse(savedCart) : [];
   });
   
-  console.log(cartItems ,'shop comp');
+  
   
 
   const [pagination, setPagination] = useState({
@@ -111,6 +111,11 @@ function Shop() {
   }, [cartItems]);
   // console.log(products);
 
+
+  const handleRemoveCartItem = (id) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));    
+  }
+  
   return (
     <Fragment>
       <div className="row">
@@ -128,11 +133,10 @@ function Shop() {
         filterProducts={filterProducts}
         sortProducts={sortProducts}
       />
-
       <div className="row">
         <ProductCard products={products} addToCart={addToCart}/>
         <div className="col-md-3">
-          <Cart cartItems={cartItems}/>
+          <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
         </div>
       </div>
       <div className="row">

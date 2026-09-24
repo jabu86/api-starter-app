@@ -1,6 +1,6 @@
 import noProductImage from "../../assets/images/noproduct.png";
 
-function Cart({ cartItems }) {
+function Cart({ cartItems , handleRemoveCartItem}) {
  
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -23,7 +23,7 @@ function Cart({ cartItems }) {
           </p>
           {cartItems.map((item) => (
             <div className="row border mb-2" key={item.id}>
-              <div className="col-md-4 mb-2 mt-2 text-center">
+              <div className="col-md-4 mb-2 mt-2 cart-img-wrapper">
                 {item.images.length === 0 ? (
                   <img
                     src={noProductImage}
@@ -35,15 +35,14 @@ function Cart({ cartItems }) {
                   item.images.map((img) => (
                     <img
                       src={`http://localhost:8000${img.image}`}
-                      className="cart-imge"
-                      width={100}
-                      height={100}
+                      className="cart-img"                     
                       key={img.id}
                     />
                   ))
                 )}
               </div>
               <div className="col-md-8 cart-content">
+                <button type="button" className="btn btn-danger btn-sm remove-btn" onClick={(e) => handleRemoveCartItem(item.id)}>X</button>
                 <p className="">{item.name}</p>
                 <p>R {item.price} X {item.quantity}</p>
                 <p>Subtotal: R {(Number(item.price) * item.quantity).toFixed(2)} </p>
@@ -54,8 +53,7 @@ function Cart({ cartItems }) {
           <div className="cart-footer">
             <p>
               <strong>Total: R {cartTotal.toFixed(2)}</strong>
-            </p>
-        
+            </p>        
             <p>
               <strong>Cart Items: {cartCount}</strong>
             </p>
