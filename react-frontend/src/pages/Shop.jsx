@@ -1,10 +1,11 @@
 import { useState, useEffect, Fragment } from "react";
 import Pagination from "../componentes/customer/Pagination";
-
 import ProductCard from "../componentes/customer/ProductCard";
 import Filter from "../componentes/customer/Filter";
 import GlobalSearchBar from "../componentes/customer/GlobalSearchBar";
 import Cart from "../componentes/customer/Cart";
+import { Link } from "react-router-dom";
+import {useAuth} from "../context/AuthContext.jsx";
 function Shop() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -15,7 +16,7 @@ function Shop() {
     return savedCart ? JSON.parse(savedCart) : [];
   });
   
-  
+   const { user,} = useAuth();
   
 
   const [pagination, setPagination] = useState({
@@ -137,6 +138,7 @@ function Shop() {
         <ProductCard products={products} addToCart={addToCart}/>
         <div className="col-md-3">
           <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
+          {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> } 
         </div>
       </div>
       <div className="row">

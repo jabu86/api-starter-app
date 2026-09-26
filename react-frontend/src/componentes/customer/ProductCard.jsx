@@ -14,7 +14,7 @@ function ProductCard({ products , addToCart }) {
           <div key={product.id} className="col-md-3">
             {/* Visual Card (Put your borders, shadows, and padding here) */}
             <div className="product-card box-shadow">
-              <Link to={`${product.slug}`}>
+              <Link to={`/shop/${product.slug}`}>
                 {product.images.length === 0 ? (
                   <img src={noProductImage} className="card-img" />
                 ) : (

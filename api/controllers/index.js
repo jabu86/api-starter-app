@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 const {
   Category,
@@ -7,6 +7,7 @@ const {
   Products,
   Sizes,
   Colors,
+  ShippingAddress
 } = require("../models");
 
 exports.index = async (req, res) => {
@@ -40,6 +41,8 @@ exports.contact = (req, res) => {
     console.error(err);
   }
 };
+
+// Get active product
 
 exports.products = async (req, res) => {
   try {
@@ -202,6 +205,7 @@ exports.products = async (req, res) => {
   }
 };
 
+
 exports.product = async (req, res) => {
   try {
     const product = await Products.findOne({
@@ -246,4 +250,36 @@ exports.product = async (req, res) => {
     console.log(error);
     return res.status(500).json({ message: error });
   }
-};
+}; 
+
+exports.shipping = async (req, res) => {
+  try {
+    //check if user has an address or addresses
+    //return the address that user has created or already created  
+
+    //Get user address
+    const shippingAddress = await ShippingAddress.findOne({ where : {
+       user_id:req.user.id
+    }});    
+
+
+    if(!shippingAddress){
+      return res.status(200).json({
+        hasAddress:false,
+        message : "You don't have a shipping address. Please add an address before continuing.",
+        success : true
+      });
+    }
+    return res.status(200).json({
+      hasAddress:true,
+      shippingAddress,
+      success : true
+    });
+    
+  } catch (error) {
+    console.log(error);
+    
+  }
+}
+
+

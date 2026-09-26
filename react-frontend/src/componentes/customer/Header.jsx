@@ -35,7 +35,7 @@ function Header() {
 
                         {dropDown &&(
                             <>
-                                <li>{user.roles.includes('admin') && (<Link to="/admin">Admin</Link>)}</li>
+                                <li>{user.roles.includes('admin') || user.roles.includes('user') && (<Link to="/admin">Admin</Link>)}</li>
                                 <li><Link to={`/profile/${user.name}`}>Profile</Link></li>
                                 <li><Link to="#" onClick={handleLogout}>Logout</Link></li>
                             </>

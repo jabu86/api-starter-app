@@ -14,6 +14,7 @@ import Contact from "./pages/Contact.jsx";
 import Profile from './pages/Profile.jsx';
 import Shop from './pages/Shop.jsx';
 import SingleProduct from './pages/SingleProduct.jsx';
+import Shipping from './pages/Shipping';
 
 
 //Auth
@@ -39,7 +40,7 @@ import PublicRouter from "./componentes/PublicRouter.jsx";
 
 
 import { useState } from 'react'
-import Categories from "./pages/admin/Categories.jsx";
+
 function App() {
 
     // Modal control
@@ -87,6 +88,7 @@ function App() {
                         </ProtectedRouter>
                     }>                        
                         <Route path="/profile/:name" element={<Profile />} />
+                        <Route path="/shipping" element={<Shipping />} />
                     </Route>
 
                     <Route path="/admin" element={

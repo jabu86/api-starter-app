@@ -1,7 +1,10 @@
 const express = require('express')
 const router = express.Router()
-// const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleware/authMiddleware');
+const roleMiddleware = require('../middleware/roleMiddleware');
 const indexController = require('../controllers/index');
+    
+
 //index route
 router.get('/' ,indexController.index);
 // define the home page route
@@ -12,4 +15,6 @@ router.get('/about', indexController.about);
 router.get('/contact', indexController.contact);
 router.get('/shop', indexController.products);
 router.get('/shop/:slug', indexController.product);
+router.get('/shipping',   authMiddleware, indexController.shipping);
+
 module.exports = router

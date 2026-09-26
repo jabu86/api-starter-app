@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Cart from "../componentes/customer/Cart";
 
 import noProductImage from "../assets/images/noproduct.png";
+import { useAuth } from "../context/AuthContext";
 
 function SingleProdcut() {
+   const { user,} = useAuth();
   const [product, setProduct] = useState({
     id: null,
     name: "",
@@ -69,14 +71,14 @@ function SingleProdcut() {
 
   useEffect(() => {
     getProduct();
-  }, []);
+  }, [slug]);
 
   
   useEffect(() => {  
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  console.log(mainImage);
+  // console.log(mainImage);
 
   return (
     <div className="row mb-5">
@@ -137,6 +139,8 @@ function SingleProdcut() {
           cartItems={cartItems}
           handleRemoveCartItem={handleRemoveCartItem}
         />
+
+        {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> } 
       </div>
       <div className="col-md-9 single-product-wrapper mb-4">
         <h3>Description</h3>

@@ -4,6 +4,8 @@ const {where} = require("sequelize");
 const bcrypt = require("bcrypt");
 exports.index = async (req, res) => {
     try {
+        console.log(req.user);
+        
         const user = await User.findByPk(req.user.id, {
             attributes: ['id', 'email', 'name'],
             include: "profile",
@@ -16,10 +18,8 @@ exports.index = async (req, res) => {
 }
 
 exports.profileUpdate =async (req, res) => {
-
     const {name, email, bio} = req.body;
     const user_id = req.user.id;
-
     try{
         const user = await User.findOne({
             where:{id : user_id},
