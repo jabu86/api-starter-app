@@ -38,7 +38,7 @@ function BrandForm({initialData , onSubmit ,closeModal, show , errors}) {
             <div className="form-group mb-1">
                 <label htmlFor="image">Brand Image / Logo</label>
                 <div className="custom-file">
-                    <input type="file" className="custom-file-input" id="image" onChange={handleChange} id="image" />
+                    <input type="file" className="custom-file-input" id="image" onChange={handleChange} />
                     {errors.image && (<div className="text-danger">{errors.image}</div>)}
                 </div>
             </div>

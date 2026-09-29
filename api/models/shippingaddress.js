@@ -11,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-
-    ShippingAddress.belongsTo(models.User, {
+      ShippingAddress.belongsTo(models.User, {
         foreignKey: "user_id",
         as: "user"
-    });
+      });
     }
   }
   ShippingAddress.init({
     user_id: DataTypes.INTEGER,
+    // label: DataTypes.STRING,
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     address: DataTypes.STRING,
