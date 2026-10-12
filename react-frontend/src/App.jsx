@@ -15,6 +15,11 @@ import Profile from './pages/Profile.jsx';
 import Shop from './pages/Shop.jsx';
 import SingleProduct from './pages/SingleProduct.jsx';
 import Shipping from './pages/Shipping';
+import Checkout from "./pages/Checkout.jsx";
+import Payment from "./pages/Payment.jsx";
+import CartItem from './pages/CartItem.jsx'
+import PlaceOrder from './pages/PlaceOrder.jsx'
+import Order from './pages/Order.jsx'
 
 
 //Auth
@@ -80,6 +85,7 @@ function App() {
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/shop" element={<Shop />} />
                         <Route path="/shop/:slug" element={<SingleProduct />} />
+                        <Route path="/cart" element={<CartItem />} />
                     </Route>
 
                     <Route path="/" exact element={
@@ -89,6 +95,10 @@ function App() {
                     }>                        
                         <Route path="/profile/:name" element={<Profile />} />
                         <Route path="/shipping" element={<Shipping />} />
+                        <Route path="/payment" element={<Payment />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/placeorder" element={<PlaceOrder />} />
+                        <Route path="/order/:id" element={<Order />} />
                     </Route>
 
                     <Route path="/admin" element={

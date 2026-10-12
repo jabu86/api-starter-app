@@ -1,5 +1,4 @@
 import { useState, useEffect, Fragment } from "react";
-import Pagination from "../componentes/customer/Pagination";
 import ProductCard from "../componentes/customer/ProductCard";
 import Filter from "../componentes/customer/Filter";
 import GlobalSearchBar from "../componentes/customer/GlobalSearchBar";
@@ -135,18 +134,13 @@ function Shop() {
         sortProducts={sortProducts}
       />
       <div className="row">
-        <ProductCard products={products} addToCart={addToCart}/>
-        <div className="col-md-3">
-          <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
-          {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> } 
+        <ProductCard products={products} addToCart={addToCart} pagination={pagination} handlePageChange={handlePageChange}/>
+        <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
+        <div className="">
+          {/* {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> }  */}
         </div>
       </div>
-      <div className="row">
-        <Pagination
-          pagination={pagination}
-          handlePageChange={handlePageChange}
-        />
-      </div>
+      
     </Fragment>
   );
 }

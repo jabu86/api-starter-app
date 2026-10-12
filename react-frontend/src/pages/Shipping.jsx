@@ -3,9 +3,8 @@ import axios from "axios";
 import ShippingForm from "../componentes/customer/ShippingForm";
 import ShippingList from "../componentes/customer/ShippingList";
 import { useNavigate } from "react-router-dom";
-
-import { ToastContainer, toast } from "react-toastify";
-
+import { toast } from "react-toastify";
+import CheckoutStep from "../componentes/customer/CheckoutStep"; 
 function Shipping() {
   const navigate = useNavigate();
   // const [userShippingAddress, setUserShippingAddress] = useState({});
@@ -14,7 +13,7 @@ function Shipping() {
   const [errors, setErrors] = useState({});
   const [initialData, setInitialData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-const shippingFormRef = useRef(null);
+  const shippingFormRef = useRef(null);
 
   const getUserShippingAddress = async () => {
     try {
@@ -94,6 +93,7 @@ const shippingFormRef = useRef(null);
         });
         // Clear the child form
         shippingFormRef.current?.resetForm();
+        setErrors({})
       }
     } catch (error) {
       // console.log(error.response.data.errors , 'eeeeeeee');
@@ -125,7 +125,7 @@ const shippingFormRef = useRef(null);
       );
     }
   };
-
+  
   const handleSelectAddress = async (address) => {
     try {
       setSelectedAddress(address);
@@ -152,10 +152,10 @@ const shippingFormRef = useRef(null);
             closeOnClick: true,
             theme: "colored",
           });
-      }
-    
-    } catch (error) {
-      // console.log(error);
+        }
+        
+      } catch (error) {
+        
       if (error.response.status === 404 && error.response.data.message) {
         toast.error(error.response.data.message, {
           position: "top-right",
@@ -170,15 +170,39 @@ const shippingFormRef = useRef(null);
       );
     }
   };
-
-  const handleContinue = (e) => {
+  
+  
+  const handleContinue = async (e) => {
     e.preventDefault();
     if (!selectedAddress) {
       return;
     }
-    navigate("/checkout");
-    // Move to the next checkout step
-    console.log("Selected address:", selectedAddress);
+    const url = `/api/shipping/checkout`;
+    const token = localStorage.getItem("token");
+    try {
+      if (!token) {
+        console.log("No token found");
+        return;
+      }
+      const { data } = await axios.post(
+        url,
+        selectedAddress,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (data.success) {
+        console.log(data.url);
+        
+        // Move to the next checkout step
+        navigate(`${data.url}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    // console.log("Selected address:", selectedAddress);
   };
 
   const handleEditShippingAddress = (edit) => {
@@ -188,9 +212,10 @@ const shippingFormRef = useRef(null);
   };
 
   const handleDeleteShippingAddress = async (id) => {
+    const url = `/api/shipping/${id}/delete`;
+    const token = localStorage.getItem("token");
+    setErrors({})
     try {
-      const url = `/api/shipping/${id}/delete`;
-      const token = localStorage.getItem("token");
       if (!token) {
         console.log("No token found");
         return;
@@ -204,8 +229,11 @@ const shippingFormRef = useRef(null);
           },
         },
       );
-
       if (data.success) {
+        // If the deleted address was selected for checkout
+        if (selectedAddress?.id === id) {
+          setSelectedAddress(null);
+        }
         getUserShippingAddress();
         toast.success(data.message, {
           position: "top-right",
@@ -213,19 +241,25 @@ const shippingFormRef = useRef(null);
           closeOnClick: true,
           theme: "colored",
         });
+        setErrors({})
       }
+      
     } catch (error) {
       console.log(error);
+      shippingFormRef.current?.resetForm();
     }
   };
 
   useEffect(() => {
     getUserShippingAddress();
   }, []);
+
+
   return (
     <div className="row mb-2 justify-content-center mb-5">
       <div className="col-md-12">
         <div className="row">
+          <CheckoutStep step1 step2/>
           <div className="col-md-4">
              {isEditing ? <h1>Edit Address</h1> :<h1>Add Address</h1> }
             <ShippingForm
@@ -233,13 +267,11 @@ const shippingFormRef = useRef(null);
               initialData={initialData}
               errors={errors}
               isEditing={isEditing}
-                ref={shippingFormRef}
+              ref={shippingFormRef}
             />
           </div>
-          <div className="col-md-8">
-
-            
-            <h1>Shipping Addresses</h1>
+          <div className="col-md-8">            
+            <h1>Addresses</h1>
             {!shippingAddress.hasAddress ? (
               <div className="alert alert-danger">
                 {shippingAddress.message}
@@ -278,7 +310,7 @@ const shippingFormRef = useRef(null);
                   disabled={!selectedAddress}
                   onClick={handleContinue}
                 >
-                  Checkout
+                  Continue
                 </button>
               </div>
             )}

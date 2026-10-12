@@ -3,10 +3,10 @@ import { Link, useParams } from "react-router-dom";
 import Cart from "../componentes/customer/Cart";
 
 import noProductImage from "../assets/images/noproduct.png";
-import { useAuth } from "../context/AuthContext";
+
 
 function SingleProdcut() {
-   const { user,} = useAuth();
+  
   const [product, setProduct] = useState({
     id: null,
     name: "",
@@ -50,42 +50,44 @@ function SingleProdcut() {
   const handleRemoveCartItem = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
-  
 
   const addToCart = (product) => {
     setCartItems((prevItems) => {
-      const existingItem  = prevItems.find((item) => item.id === product.id);
-      if(existingItem ){
-        return prevItems.map((item) => item.id === product.id ? {...item, quantity: item.quantity + 1} : item)
+      const existingItem = prevItems.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        );
       }
       return [
         ...prevItems,
         {
           ...product,
-          quantity:1
-        }
-      ]
+          quantity: 1,
+        },
+      ];
     });
-    // console.log(cartItmes , 'shop comp')    
-  }
+    // console.log(cartItmes , 'shop comp')
+  };
 
   useEffect(() => {
     getProduct();
   }, [slug]);
 
-  
-  useEffect(() => {  
+  useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // console.log(mainImage);
+  // console.log();
 
   return (
-    <div className="row mb-5">
-      <div className="col-md-9 single-product-wrapper mb-4">
-        <div className="row justify-content-md-center">
-          <div className="col-md-2 product-image-list text-center">
-            <ul className="">
+    <div className="row single-product-wrapper">
+      <div className="col-md-9 mb-4">
+        <div className="row  border shadow m-1">
+          <div className="col-md-2 mt-2 mb-2 product-image-list text-center">
+            <ul className="mt-4">
               {product.images &&
                 product.images &&
                 product.images.map((img) => (
@@ -100,7 +102,7 @@ function SingleProdcut() {
                 ))}
             </ul>
           </div>
-          <div className="col-md-4 border product-image">
+          <div className="col-md-4 border product-image mb-2 mt-4 mb-4">
             {mainImage === null ? (
               <img src={noProductImage} />
             ) : (
@@ -110,11 +112,26 @@ function SingleProdcut() {
               />
             )}
           </div>
-          <div className="col-md-6">
+          <div className="col-md-6 mt-4">
             <p className="h3">{product.name && product.name}</p>
             <p className="h5">R {product.name && product.price}</p>
+
             <p className="">4.5 Reviews</p>
             <hr />
+            <div className="colors">
+              {product.colors
+                ? product.colors.map((color) => (
+                    <div
+                      style={{
+                        background: color.name,
+                       
+                      }}
+
+                      className="colors-holder mb-2"
+                    ></div>
+                  ))
+                : ""}
+            </div>
             <p className="h5">
               {product.in_stock && product.in_stock
                 ? "In stock"
@@ -127,24 +144,40 @@ function SingleProdcut() {
               <li>6-Month Limited Warranty.</li>
             </ul>
 
-            <button type="button" className="btn btn-primary btn-block" onClick={(e) => addToCart(product)}>
-                    Add to Cart
-              </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              onClick={(e) => addToCart(product)}
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+
+        <div className="row m-1 border mt-2 mb-2 shadow box-changer">
+          <div className="col-md-12 mt-2">
+            <ul className="">
+              <li className="nav-item">
+                <button className="btn btn-primary ">Details</button>
+              </li>
+              <li className="nav-item">
+                <button className="btn btn-primary ">Review</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="row border shadow m-1">
+          <div className="col-md-12 mb-4 ">
+            <h3>Description</h3>
+            <p>{product.description}</p>
           </div>
         </div>
       </div>
 
+      <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem} />
       <div className="col-md-3">
-        <Cart
-          cartItems={cartItems}
-          handleRemoveCartItem={handleRemoveCartItem}
-        />
-
-        {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> } 
-      </div>
-      <div className="col-md-9 single-product-wrapper mb-4">
-        <h3>Description</h3>
-        <p>{product.description}</p>
+       
       </div>
 
       {/* {slug} */}

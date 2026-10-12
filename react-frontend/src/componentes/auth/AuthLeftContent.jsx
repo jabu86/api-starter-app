@@ -12,7 +12,7 @@ function AuthLeftContent({image, heading , content})  {
                 {content && content.map((item, index) => (
                     <p key={index}>{item}</p>
                 ))}
-                <Link to={`/`} className="btn-link text-info">Shop</Link>
+                <Link to={`/shop`} className="btn-link text-info">Shop</Link>
             </div>
         </div>
     )
