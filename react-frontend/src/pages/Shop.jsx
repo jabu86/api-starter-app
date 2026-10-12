@@ -5,8 +5,14 @@ import GlobalSearchBar from "../componentes/customer/GlobalSearchBar";
 import Cart from "../componentes/customer/Cart";
 import { Link } from "react-router-dom";
 import {useAuth} from "../context/AuthContext.jsx";
+import CategoryList from '../componentes/customer/CategoryList.jsx';
+import BrandList from '../componentes/customer/BrandList.jsx';
+
+
 function Shop() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [search, setSearch] = useState("");
   const [size, setSize] = useState("");
   const [sort, setSort] = useState("");
@@ -62,6 +68,43 @@ function Shop() {
     }
   };
 
+  const getCategory = async () => {
+    try { 
+      const res = await fetch(`/api/categories`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });      
+      const data = await res.json();
+      if(data.success){
+        setCategories(data.categories)
+      }
+      
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getBrands = async () => {
+    try { 
+      const res = await fetch(`/api/brands`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    
+      const data = await res.json();
+      if(data.success){
+        setBrands(data.brands)
+      }
+      
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const handlePageChange = (page) => {
     getProducts(page, search, size, sort);
   };
@@ -103,10 +146,12 @@ function Shop() {
 
   useEffect(() => {
     getProducts(1, "");
+    getCategory();
+    getBrands();
     
   }, []);
-  useEffect(() => {
-  
+
+  useEffect(() => {  
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
   // console.log(products);
@@ -134,11 +179,25 @@ function Shop() {
         sortProducts={sortProducts}
       />
       <div className="row">
-        <ProductCard products={products} addToCart={addToCart} pagination={pagination} handlePageChange={handlePageChange}/>
-        <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
-        <div className="">
-          {/* {user ? <Link to="/shipping" className="btn btn-info btn-block">Procced</Link> : <Link to="/login">login</Link> }  */}
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item"><Link to="/shop">shop</Link></li>
+          </ol>
+        </nav>
+      </div>
+      <div className="row">
+        <div className="col-md-2">
+          {/* shop side */}
+          <CategoryList categories={categories}/>
+          <BrandList brands={brands}/>
         </div>
+
+        {/* shop products */}
+        <ProductCard products={products} addToCart={addToCart} pagination={pagination} handlePageChange={handlePageChange}/>
+
+        {/* shop cart */}
+        <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem}/>
+        
       </div>
       
     </Fragment>

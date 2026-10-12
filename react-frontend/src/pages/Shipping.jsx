@@ -281,9 +281,8 @@ function Shipping() {
                 <table className="table table-sm">
                   <thead>
                     <tr>
-                      <th>Select Address</th>
-                      <th>Name</th>
-                      <th>Surname</th>
+                      <th className="bg-info">Choose address to ship</th>
+                    
                       <th>Address One</th>
                       <th>Address Two</th>
                       <th>City</th>

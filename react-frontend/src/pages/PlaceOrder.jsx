@@ -91,9 +91,18 @@ function PlaceOrder() {
         setCartItems([]);
       }
     } catch (error) {
-      console.log(error);
+      if(error.response.status === 500 && error.response ){
+         console.log(error.response.data.message);
+         toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          theme: "colored",
+        });
+        
+      }
       console.error(
-        "Failed to fetch shipping address:",
+        "Failed to create order:",
         error.response?.data || error,
       );
     }

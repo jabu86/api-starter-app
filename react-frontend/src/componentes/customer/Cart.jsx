@@ -16,7 +16,7 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
       {cartItems.length === 0 ? (
         <div className="cart cart-header">Cart is empty</div>
       ) : (
-        <div className="row border shadow m-1 cart justify-content-center">
+        <div className="row border shadow m-010 cart justify-content-center">
           <p className="mt-2">
             You have{" "}
             <span className="badge rounded-pill text-bg-dark">

@@ -50,7 +50,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <div className="row">
+        {/* <div className="row">
           <div className="form-group col-md-6">
             <label htmlFor="firstName">First name</label>
             <input
@@ -79,7 +79,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
               <div className="text-danger">{errors.last_name[0]}</div>
             )}
           </div>
-        </div>
+        </div> */}
         <div className="form-group">
           <label htmlFor="address">Address</label>
           <input
@@ -159,7 +159,8 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
             <div className="text-danger">{errors.country[0]}</div>
           )}
         </div>
-        <div className="form-group text-end">
+        <div className="row m-0 text-end">
+          
           {isEditing ? (
             <button type="submit" className="btn btn-primary mt-2 mb-2">
               Update

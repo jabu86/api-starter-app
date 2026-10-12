@@ -84,6 +84,14 @@ function SingleProdcut() {
 
   return (
     <div className="row single-product-wrapper">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li className="breadcrumb-item"><Link to="/shop">shop</Link></li>
+            <li className="breadcrumb-item"><Link to={`/shop/${product.slug}`}>{product.slug}</Link></li>
+            
+          </ol>
+        </nav>
+
       <div className="col-md-9 mb-4">
         <div className="row  border shadow m-1">
           <div className="col-md-2 mt-2 mb-2 product-image-list text-center">

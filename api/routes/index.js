@@ -16,6 +16,11 @@ router.get('/about', indexController.about);
 router.get('/contact', indexController.contact);
 router.get('/shop', indexController.products);
 router.get('/shop/:slug', indexController.product);
+router.get('/categories', indexController.getCategory);
+router.get('/brands', indexController.getBrands);
+
+
+
 router.get('/shipping',   authMiddleware, indexController.shipping);
 router.get('/shipping/selected',   authMiddleware, indexController.selectedShippingAddress);
 router.post('/shipping', shippingValidator,  authMiddleware, indexController.addShippingAddress);

@@ -43,6 +43,60 @@ exports.contact = (req, res) => {
   }
 };
 
+//@desc  Get category with sub categories
+//@route POST /api/category
+//@access Public
+exports.getCategory = async(req, res) => {
+  try {
+    const categories = await Category.findAll({
+      include:["subCategory"],
+      order: [["name", "ASC"]],
+    })
+
+    if(!categories){
+      return res.status(404).json({
+        message: "Category not found: ",
+        success:false,
+      });
+    }
+    return res.status(200).json({ success: true, message: "Category found successfull. ", categories});
+    
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Getting categoy Error: ",
+      err,
+    });
+  }
+};
+
+//@desc  Get brands
+//@route POST /api/brands
+//@access Public
+
+exports.getBrands = async(req, res) => {
+ try {
+    const brands = await Brand.findAll({
+      order: [["name", "ASC"]],
+    });
+    if(!brands){
+      return res.status(404).json({
+        message: "Brand not found: ",
+        success:false,
+      });
+    }
+    return res.status(200).json({ success: true, message: "Brand found successfull. ", brands});
+    
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Getting brand Error: ",
+      err,
+    });
+  }
+};
+
 // Get active product
 
 exports.products = async (req, res) => {

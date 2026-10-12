@@ -3,7 +3,7 @@ import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
 function ProductCard({ products, addToCart , pagination, handlePageChange }) {
   return (
-    <div className="col-md-9 mb-4">
+    <div className="col-md-7 mb-4 product-wrapper m-0">
       {/* Added g-4 here to control the gap between columns automatically */}
       <div className="row">
         {products.length === 0 ? (
@@ -13,31 +13,24 @@ function ProductCard({ products, addToCart , pagination, handlePageChange }) {
         ) : (
           products.map((product) => (
             // Structual column (Leave this clean of borders and margins)
-            <div key={product.id} className="col-md-3">
+            <div key={product.id} className="col-md-4">
               {/* Visual Card (Put your borders, shadows, and padding here) */}
-              <div className="border shadow m-1">
-                <Link to={`/shop/${product.slug}`}>
+              <div className="border shadow m-0 mb-2 product-card">
+                <Link to={`/shop/${product.slug}`} className="product-image-link">
                   {product.images.length === 0 ? (
                     <img src={noProductImage} className="card-img" />
                   ) : (
                     product.images.map((img, index) => (
                       <div
                         className="product-img"
-                        style={{
-                          backgroundImage: `url(http://localhost:8000${img.image})`,
-                          backgroundSize: "50% 45%",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          height: "50vh",
-                          borderImageoutset: " 10px",
-                        }}
+                        // style={{backgroundImage: `url(http://localhost:8000${img.image})`}}
                       >
-                        {/* <img
+                        <img
                           key={index}
                           className="card-img"           
                           alt={`${product.name}`}
                           src={`http://localhost:8000${img.image}`}
-                        /> */}
+                        />
                       </div>
                     ))
                   )}
