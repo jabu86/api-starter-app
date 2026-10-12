@@ -12,15 +12,7 @@ module.exports = {
       user_id: {
         type: Sequelize.INTEGER
       },
-      label: {
-        type: Sequelize.STRING
-      },
-      first_name: {
-        type: Sequelize.STRING
-      },
-      last_name: {
-        type: Sequelize.STRING
-      },
+    
       address: {
         type: Sequelize.STRING
       },

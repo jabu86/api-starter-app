@@ -21,8 +21,10 @@ const colorsRoutes = require('./routes/colors');
 const brandRoutes = require('./routes/brands');
 const productRoutes = require('./routes/products');
 const sizeRoutes = require('./routes/size');
+const orderRoutes = require('./routes/orders');
 app.use('/api', indexRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api', orderRoutes);
 
 app.use('/api/admin',
     dashboardRoutes,
@@ -32,6 +34,7 @@ app.use('/api/admin',
     colorsRoutes,
     productRoutes,
     sizeRoutes,
+     orderRoutes
 );
 
 async function connectDB(){

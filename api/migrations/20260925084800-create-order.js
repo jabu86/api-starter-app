@@ -18,12 +18,12 @@ module.exports = {
       total: {
         type: Sequelize.DECIMAL
       },
-      shipping_first_name: {
-        type: Sequelize.STRING
-      },
-      shipping_last_name: {
-        type: Sequelize.STRING
-      },
+      // shipping_first_name: {
+      //   type: Sequelize.STRING
+      // },
+      // shipping_last_name: {
+      //   type: Sequelize.STRING
+      // },
       shipping_address: {
         type: Sequelize.STRING
       },
@@ -42,8 +42,20 @@ module.exports = {
       shipping_country: {
         type: Sequelize.STRING
       },
-      payment_status: {
+      payment_method: {
         type: Sequelize.STRING
+      },
+      tax_price: {
+        type: Sequelize.STRING
+      },
+      shipping_price: {
+        type: Sequelize.STRING
+      },
+      is_paid: {
+        type: Sequelize.BOOLEAN
+      },
+      is_delivered: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

@@ -268,7 +268,7 @@ exports.shipping = async (req, res) => {
       ],
     });
 
-    // console.log(shippingAddress.length);
+  
 
     if (shippingAddress.length === 0) {
       return res.status(200).json({
@@ -289,11 +289,45 @@ exports.shipping = async (req, res) => {
   }
 };
 
+exports.selectedShippingAddress = async (req, res) => {
+  try {  
+    //Get user address
+    const shippingAddress = await ShippingAddress.findOne({
+      where: {
+        user_id: req.user.id,
+        is_default: true,
+      },
+    });
+    
+    //check if user has an address or addresses
+    if (!shippingAddress) {
+      return res.status(200).json({
+        message: "Shipping address not found.",
+        hasAddress: false,
+        shippingAddress:null,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      hasAddress: true,
+      shippingAddress,
+      success: true,
+    });
+  } catch (error) {
+
+    return res.status(500).json({
+      message: "error",
+      error:error,
+      success: false,
+    });
+  }
+};
+
 exports.addShippingAddress = async (req, res) => {
   try {
     const {
-      first_name,
-      last_name,
+      // first_name,
+      // last_name,
       address,
       address_2,
       city,
@@ -323,8 +357,8 @@ exports.addShippingAddress = async (req, res) => {
     const is_default = checkUserShippingAddress === 0;
     const shippingAddress = await ShippingAddress.create({
       user_id: req.user.id,
-      first_name,
-      last_name,
+      // first_name,
+      // last_name,
       address,
       address_2,
       city,
@@ -386,6 +420,7 @@ exports.editShippingAddress = async (req, res) => {
 };
 
 exports.updateDefaultValute = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const selectedId = req.params.id;
     //get all the users shipping addresss
@@ -398,9 +433,11 @@ exports.updateDefaultValute = async (req, res) => {
         user_id: req.user.id,
         id: selectedId,
       },
+      transaction,
     });
 
     if (!selectedAddress) {
+      await transaction.rollback();
       return res.status(404).json({
         message: "Shipping address not found",
         success: false,
@@ -416,13 +453,17 @@ exports.updateDefaultValute = async (req, res) => {
           user_id: req.user.id,
         },
       },
+      transaction,
     );
 
     // 3. Set the selected address to true
-    await selectedAddress.update({
-      is_default: true,
-    });
-
+    await selectedAddress.update(
+      {
+        is_default: true,
+      },
+      { transaction },
+    );
+    await transaction.commit();
     return res.status(200).json({
       message: "Default shipping address updated",
       shippingAddress: selectedAddress,
@@ -495,6 +536,62 @@ exports.deleteShippingAddress = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Error removing shipping address",
+      success: false,
+    });
+  }
+};
+
+exports.checkout = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { id } = req.body;
+    const selectedAddress = await ShippingAddress.findOne({
+      where: {
+        user_id: req.user.id,
+        id: id,
+      },
+      transaction,
+    });
+
+    if (!selectedAddress) {
+      await transaction.rollback();
+      return res.status(404).json({
+        message: "Shipping address not found",
+        success: false,
+      });
+    }
+
+    // Remove default from all user's addresses
+    await selectedAddress.update(
+      {
+        is_default: false,
+      },
+      {
+        where: {
+          user_id: req.user.id,
+        },
+        transaction,
+      },
+    );
+
+    // Make the selected address the default
+    await selectedAddress.update(
+      {
+        is_default: true,
+      },
+      { transaction },
+    );
+
+    await transaction.commit();
+    return res.status(200).json({
+      url: "/payment",
+      success: true,
+    });
+  } catch (err) {
+    await transaction.rollback();
+    console.error(err);
+    return res.status(500).json({
+      message: "Error updating checkout default value",
       success: false,
     });
   }

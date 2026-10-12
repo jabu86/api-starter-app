@@ -17,9 +17,11 @@ router.get('/contact', indexController.contact);
 router.get('/shop', indexController.products);
 router.get('/shop/:slug', indexController.product);
 router.get('/shipping',   authMiddleware, indexController.shipping);
+router.get('/shipping/selected',   authMiddleware, indexController.selectedShippingAddress);
 router.post('/shipping', shippingValidator,  authMiddleware, indexController.addShippingAddress);
 router.post('/shipping/:id/edit', shippingValidator,  authMiddleware, indexController.editShippingAddress);
 router.post('/shipping/:id/delete', authMiddleware, indexController.deleteShippingAddress);
 router.post('/shipping/:id/update', authMiddleware, indexController.updateDefaultValute);
+router.post('/shipping/checkout', authMiddleware, indexController.checkout);
 
 module.exports = router

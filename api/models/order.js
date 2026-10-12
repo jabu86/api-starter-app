@@ -34,7 +34,11 @@ module.exports = (sequelize, DataTypes) => {
     shipping_province: DataTypes.STRING,
     shipping_postal_code: DataTypes.STRING,
     shipping_country: DataTypes.STRING,
-    payment_status: DataTypes.STRING
+    payment_method:DataTypes.STRING,
+    tax_price:DataTypes.STRING,
+    shipping_price:DataTypes.STRING,
+    is_paid:DataTypes.BOOLEAN,
+    is_delivered:DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Order',

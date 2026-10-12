@@ -12,14 +12,8 @@ const { body, validationResult } = require("express-validator");
       */
 
 const shippingValidator = [
-    body("first_name")
-        .trim()
-        .notEmpty()
-        .withMessage("First name is required"),
-    body("last_name")
-        .trim()
-        .notEmpty()
-        .withMessage("Last name is required"),
+  
+   
     body("address")
         .trim()
         .notEmpty()
