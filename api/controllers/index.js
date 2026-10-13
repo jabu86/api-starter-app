@@ -8,6 +8,8 @@ const {
   Sizes,
   Colors,
   ShippingAddress,
+  SubCategory,
+  sub_category_product,
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -46,21 +48,24 @@ exports.contact = (req, res) => {
 //@desc  Get category with sub categories
 //@route POST /api/category
 //@access Public
-exports.getCategory = async(req, res) => {
+exports.getCategory = async (req, res) => {
   try {
     const categories = await Category.findAll({
-      include:["subCategory"],
+      include: ["subCategory"],
       order: [["name", "ASC"]],
-    })
+    });
 
-    if(!categories){
+    if (!categories) {
       return res.status(404).json({
         message: "Category not found: ",
-        success:false,
+        success: false,
       });
     }
-    return res.status(200).json({ success: true, message: "Category found successfull. ", categories});
-    
+    return res.status(200).json({
+      success: true,
+      message: "Category found successfull. ",
+      categories,
+    });
   } catch (err) {
     console.error(err);
 
@@ -75,19 +80,20 @@ exports.getCategory = async(req, res) => {
 //@route POST /api/brands
 //@access Public
 
-exports.getBrands = async(req, res) => {
- try {
+exports.getBrands = async (req, res) => {
+  try {
     const brands = await Brand.findAll({
       order: [["name", "ASC"]],
     });
-    if(!brands){
+    if (!brands) {
       return res.status(404).json({
         message: "Brand not found: ",
-        success:false,
+        success: false,
       });
     }
-    return res.status(200).json({ success: true, message: "Brand found successfull. ", brands});
-    
+    return res
+      .status(200)
+      .json({ success: true, message: "Brand found successfull. ", brands });
   } catch (err) {
     console.error(err);
     return res.status(500).json({
@@ -97,22 +103,38 @@ exports.getBrands = async(req, res) => {
   }
 };
 
-// Get active product
-
+//@desc  Get products , filter by category, sub category, size, sort and search
+//@route POST /api/shop
+//@access Public
 exports.products = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const search = req.query.search || "";
-    const sort = req.query.sort || "";
+    const search = (req.query.search || "").trim();
+    const sort = (req.query.sort || "").trim(); // Get sort parameter from query
     const size = req.query.size || "";
     const offset = (page - 1) * limit;
+    const categoryName = (req.query.category || "").trim(); // Get category name from query parameter
+    const subCategoryId = (req.query.subCategoryId || "").trim(); // Get sub category id from query parameter
+    // const subCategoryName = (req.query.subCategory || "").trim(); // Get sub category name from query parameter
+    const brandName = (req.query.brand || "").trim(); // Get brand name from query parameter
+
+    // return console.log("Query Parameters:", {
+    //   page,
+    //   limit,
+    //   search,
+    //   sort,
+    //   size,
+    //   categoryName,
+    // subCategoryId,
+    // subCategoryName,
+    // });
 
     // ---------------------------------------
     // 1. FIND PRODUCTS THAT MATCH SIZE
     // ---------------------------------------
-    let sizeProductIds = null;
 
+    let sizeProductIds = null;
     if (size) {
       const sizeProducts = await Products.findAll({
         attributes: ["id"],
@@ -134,7 +156,7 @@ exports.products = async (req, res) => {
 
       sizeProductIds = sizeProducts.map((product) => product.id);
 
-      console.log("Matching product IDs:", sizeProductIds);
+      // console.log("Matching product IDs:", sizeProductIds);
     }
     // ---------------------------------------
     // 2. BUILD PRODUCT WHERE
@@ -181,19 +203,62 @@ exports.products = async (req, res) => {
     // console.log(sort , 'sort')
     // console.log(size , 'size')
 
+    //get category relationships and filter by category name if provided
+    //get sub category relationships and filter by product sub-category name if provided
+    const filterIncludes = [];
+
+
+    if (categoryName) {
+      filterIncludes.push({
+        association: "category",
+        attributes: [],
+        where: {
+          name: categoryName,
+        },
+        required: true,
+      });
+    }
+
+    if (subCategoryId) {
+      filterIncludes.push({
+        association: "sub_category_products",
+        attributes: [],
+        where: {
+          sub_category_id: Number(subCategoryId),
+        },
+        required: true,
+      });
+    }
+
+    if (brandName) {
+      filterIncludes.push({
+        association: "brand",
+        attributes: [],
+        where: {
+          name: brandName,
+        },
+        required: true,
+      });
+    }
+
+    // ---------------------------------------
+    // 3. FIND AND COUNT PRODUCTS
+    // ---------------------------------------
     const { count, rows: productIds } = await Products.findAndCountAll({
       where: productWhere,
       attributes: ["id"],
+      include: filterIncludes,
       limit,
       offset,
       order,
       distinct: true,
+      subQuery: false, // Ensure proper handling of the include with limit and offset
     });
 
     // 2. Extract IDs
     const ids = productIds.map((product) => product.id);
 
-    // 3. Get the actual products + relationships
+    //Get the actual products + relationships
     const rows = await Products.findAll({
       where: {
         id: ids,
@@ -244,7 +309,7 @@ exports.products = async (req, res) => {
       pagination: {
         currentPage: page,
         perPage: limit,
-        totalItems: count,
+        totalItems: count, 
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
@@ -322,8 +387,6 @@ exports.shipping = async (req, res) => {
       ],
     });
 
-  
-
     if (shippingAddress.length === 0) {
       return res.status(200).json({
         hasAddress: false,
@@ -344,7 +407,7 @@ exports.shipping = async (req, res) => {
 };
 
 exports.selectedShippingAddress = async (req, res) => {
-  try {  
+  try {
     //Get user address
     const shippingAddress = await ShippingAddress.findOne({
       where: {
@@ -352,13 +415,13 @@ exports.selectedShippingAddress = async (req, res) => {
         is_default: true,
       },
     });
-    
+
     //check if user has an address or addresses
     if (!shippingAddress) {
       return res.status(200).json({
         message: "Shipping address not found.",
         hasAddress: false,
-        shippingAddress:null,
+        shippingAddress: null,
         success: false,
       });
     }
@@ -368,10 +431,9 @@ exports.selectedShippingAddress = async (req, res) => {
       success: true,
     });
   } catch (error) {
-
     return res.status(500).json({
       message: "error",
-      error:error,
+      error: error,
       success: false,
     });
   }

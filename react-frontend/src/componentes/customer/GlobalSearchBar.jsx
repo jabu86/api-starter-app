@@ -12,20 +12,21 @@ function GlobalSearchBar({ getData, search, setSearch, handleSearch }) {
   return (
     <Fragment>
 
-      <div className="col-md-8">
+      <div className="form-group">
+        <label>Search</label>
         <input
           type="text"
           value={search}
           className="form-control"
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search..."
+          placeholder="Search products..."
         />
       </div>
-      <div className="col-md-1">
+      {/* <div className="col-md-1">
         <button className="btn btn-primary" onClick={handleSearch}>
           Search
         </button>
-      </div>
+      </div> */}
     </Fragment>
     
   );

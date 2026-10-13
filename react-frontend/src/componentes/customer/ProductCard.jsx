@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
-function ProductCard({ products, addToCart , pagination, handlePageChange }) {
+function ProductCard({ products, addToCart, pagination, handlePageChange }) {
   return (
     <div className="col-md-7 mb-4 product-wrapper m-0">
       {/* Added g-4 here to control the gap between columns automatically */}
@@ -15,19 +15,20 @@ function ProductCard({ products, addToCart , pagination, handlePageChange }) {
             // Structual column (Leave this clean of borders and margins)
             <div key={product.id} className="col-md-4">
               {/* Visual Card (Put your borders, shadows, and padding here) */}
-              <div className="border shadow m-0 mb-2 product-card">
-                <Link to={`/shop/${product.slug}`} className="product-image-link">
+              <div className="card border shadow m-0 mb-2 product-card">
+                <Link
+                  to={`/shop/${product.slug}`}
+                  className="product-image-link"
+                >
                   {product.images.length === 0 ? (
-                    <img src={noProductImage} className="card-img" />
+                    <div className="product-img" key={product.id}>
+                      <img src={noProductImage} className="card-img" />
+                    </div>
                   ) : (
                     product.images.map((img, index) => (
-                      <div
-                        className="product-img"
-                        // style={{backgroundImage: `url(http://localhost:8000${img.image})`}}
-                      >
+                      <div className="product-img" key={index}>
                         <img
-                          key={index}
-                          className="card-img"           
+                          className="card-img"
                           alt={`${product.name}`}
                           src={`http://localhost:8000${img.image}`}
                         />
@@ -44,15 +45,15 @@ function ProductCard({ products, addToCart , pagination, handlePageChange }) {
                     <p className="h5">R {product.price}</p>
                     <p>{product.in_stock ? "In stock" : "Out of stock"}</p>
                   </div>
-                <div className="row">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={(e) => addToCart(product)}
-                  >
-                    Add to Cart
-                  </button>
-                </div>
+                  <div className="row">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={(e) => addToCart(product)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -60,7 +61,7 @@ function ProductCard({ products, addToCart , pagination, handlePageChange }) {
         )}
       </div>
       <div className="row">
-         <Pagination
+        <Pagination
           pagination={pagination}
           handlePageChange={handlePageChange}
         />

@@ -13,8 +13,9 @@ $header-color: #ececec;
     padding: 1rem;
     color: $header-color;
     li a {
-      padding: 14px 16px;
+    
       font-size: 17px;
+      color: $header-color;
       &:hover {
         text-decoration: underline;
         color: $link-hover-color;

@@ -13,10 +13,23 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
 
   return (
     <div className="col-md-3">
+      <div className="row cart border shadow p-2 mb-4">
+        <p className="fw-semibold">Shop smart and quick.</p>
+        <p className="fw-semibold">Get it here, be the first.</p>
+        <p>
+           {!user && (
+              <Link to="/login" className="btn-link text-info mt-2">
+                SIGN IN
+              </Link>
+            )}
+        </p>
+      </div>
       {cartItems.length === 0 ? (
-        <div className="cart cart-header">Cart is empty</div>
+        <div className="row cart cart-header border shadow p-2">
+          <h5>Cart is empty</h5>
+        </div>
       ) : (
-        <div className="row border shadow m-010 cart justify-content-center">
+        <div className="row border shadow cart justify-content-center">
           <p className="mt-2">
             You have{" "}
             <span className="badge rounded-pill text-bg-dark">
@@ -97,13 +110,11 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
             >
               Go to Cart
             </Link>
-           {user ? (
-          <Link to="/shipping" className="btn btn-primary mt-2 mb -2">
-            Contiune
-          </Link>
-        ) : (
-          <Link to="/login" className="btn-link text-info mt-2">SIGN IN</Link>
-        )} 
+            {user && (
+              <Link to="/shipping" className="btn btn-primary mt-2 mb-2">
+                Contiune
+              </Link>
+            )}
           </div>
         </div>
       )}

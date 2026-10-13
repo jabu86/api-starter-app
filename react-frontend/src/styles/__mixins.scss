@@ -1,13 +1,13 @@
 @mixin header($bg-color, $color, $justify:center) {
-  display: flex;
-  justify-content: $justify;
-  align-items: center;
-  width: 100%;
-  color: $color;
-  padding:.89rem;
+  // display: flex;
+  // justify-content: $justify;
+  // align-items: center;
+  // width: 100%;
+  // color: $color;
+  // padding:.89rem;
 
-  margin-right: auto;
-  margin-left: auto;
+  // margin-right: auto;
+  // margin-left: auto;
   background-color: $bg-color;
 }
 
