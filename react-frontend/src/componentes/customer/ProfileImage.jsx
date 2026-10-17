@@ -1,6 +1,6 @@
 
 
-function ProfileImage({imageUrl , imagePreview}) {
+function   ProfileImage({imageUrl , imagePreview}) {
 
   return (
       <div 
@@ -10,8 +10,8 @@ function ProfileImage({imageUrl , imagePreview}) {
             backgroundSize: "contain",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            height: "50vh",
-            borderImageoutset: " 10px",
+            height: "5rem",
+            
           }}
 
         ></div>

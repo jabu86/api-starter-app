@@ -1,10 +1,10 @@
-import { useEffect, useState , useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import ShippingForm from "../componentes/customer/ShippingForm";
 import ShippingList from "../componentes/customer/ShippingList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import CheckoutStep from "../componentes/customer/CheckoutStep"; 
+import CheckoutStep from "../componentes/customer/CheckoutStep";
 function Shipping() {
   const navigate = useNavigate();
   // const [userShippingAddress, setUserShippingAddress] = useState({});
@@ -20,7 +20,7 @@ function Shipping() {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        console.log("No token found");
+        navigate("/login");
         return;
       }
       const { data } = await axios.get("/api/shipping", {
@@ -69,7 +69,7 @@ function Shipping() {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.log("No token found");
+        navigate("/login");
         return;
       }
       const { data } = await axios.post(
@@ -93,7 +93,7 @@ function Shipping() {
         });
         // Clear the child form
         shippingFormRef.current?.resetForm();
-        setErrors({})
+        setErrors({});
       }
     } catch (error) {
       // console.log(error.response.data.errors , 'eeeeeeee');
@@ -116,7 +116,7 @@ function Shipping() {
           closeOnClick: true,
           theme: "colored",
         });
-         // Clear the child form
+        // Clear the child form
         shippingFormRef.current?.resetForm();
       }
       console.error(
@@ -125,14 +125,14 @@ function Shipping() {
       );
     }
   };
-  
+
   const handleSelectAddress = async (address) => {
     try {
       setSelectedAddress(address);
       const url = `/api/shipping/${address.id}/update`;
       const token = localStorage.getItem("token");
       if (!token) {
-        console.log("No token found");
+        navigate("/login");
         return;
       }
       const { data } = await axios.post(
@@ -145,17 +145,15 @@ function Shipping() {
         },
       );
       if (data.success) {
-          getUserShippingAddress();
-          toast.success(data.message, {
-            position: "top-right",
-            autoClose: 5000,
-            closeOnClick: true,
-            theme: "colored",
-          });
-        }
-        
-      } catch (error) {
-        
+        getUserShippingAddress();
+        toast.success(data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          theme: "colored",
+        });
+      }
+    } catch (error) {
       if (error.response.status === 404 && error.response.data.message) {
         toast.error(error.response.data.message, {
           position: "top-right",
@@ -170,8 +168,7 @@ function Shipping() {
       );
     }
   };
-  
-  
+
   const handleContinue = async (e) => {
     e.preventDefault();
     if (!selectedAddress) {
@@ -184,18 +181,14 @@ function Shipping() {
         console.log("No token found");
         return;
       }
-      const { data } = await axios.post(
-        url,
-        selectedAddress,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const { data } = await axios.post(url, selectedAddress, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       if (data.success) {
         console.log(data.url);
-        
+
         // Move to the next checkout step
         navigate(`${data.url}`);
       }
@@ -214,10 +207,10 @@ function Shipping() {
   const handleDeleteShippingAddress = async (id) => {
     const url = `/api/shipping/${id}/delete`;
     const token = localStorage.getItem("token");
-    setErrors({})
+    setErrors({});
     try {
       if (!token) {
-        console.log("No token found");
+        navigate("/login");
         return;
       }
       const { data } = await axios.post(
@@ -241,27 +234,41 @@ function Shipping() {
           closeOnClick: true,
           theme: "colored",
         });
-        setErrors({})
+        setErrors({});
+      } else {
+        toast.error(data.message || "Failed to delete shipping address.", {
+          position: "top-right",
+          autoClose: 8000,
+          closeOnClick: true,
+          theme: "colored",
+        });
       }
-      
     } catch (error) {
-      console.log(error);
-      shippingFormRef.current?.resetForm();
+      toast.error(
+        error.response?.data?.message || "Failed to delete shipping address.",
+        {
+          position: "top-right",
+          autoClose: 8000,
+          closeOnClick: true,
+          theme: "colored",
+        },
+      );
     }
   };
 
   useEffect(() => {
+
+    
     getUserShippingAddress();
   }, []);
 
-
   return (
-    <div className="row mb-2 justify-content-center mb-5">
-      <div className="col-md-12">
-        <div className="row">
-          <CheckoutStep step1 step2/>
-          <div className="col-md-4">
-             {isEditing ? <h1>Edit Address</h1> :<h1>Add Address</h1> }
+    <div className="row mb-5">
+      <div className="col-md-12 ">
+        <CheckoutStep step1 step2 />
+        <div className="row p-4 gap-2 justify-content-center mt-4">
+          <div className="col-md-4 mb-4 mb-md-0 p-3 border rounded shadow-sm">
+            {isEditing ? <h2>Edit Address</h2> : <h2>Add Address</h2>}
             <ShippingForm
               addShippingAddress={addShippingAddress}
               initialData={initialData}
@@ -270,8 +277,8 @@ function Shipping() {
               ref={shippingFormRef}
             />
           </div>
-          <div className="col-md-8">            
-            <h1>Addresses</h1>
+          <div className="col border p-3 rounded shadow-sm">
+            <h2>Addresses</h2>
             {!shippingAddress.hasAddress ? (
               <div className="alert alert-danger">
                 {shippingAddress.message}
@@ -281,8 +288,7 @@ function Shipping() {
                 <table className="table table-sm">
                   <thead>
                     <tr>
-                      <th className="bg-info">Choose address to ship</th>
-                    
+                      <th className="bg-info text-center">Choose address</th>
                       <th>Address One</th>
                       <th>Address Two</th>
                       <th>City</th>

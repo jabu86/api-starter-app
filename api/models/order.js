@@ -38,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     tax_price:DataTypes.STRING,
     shipping_price:DataTypes.STRING,
     is_paid:DataTypes.BOOLEAN,
+    paid_at:DataTypes.DATE,
     is_delivered:DataTypes.BOOLEAN,
   }, {
     sequelize,

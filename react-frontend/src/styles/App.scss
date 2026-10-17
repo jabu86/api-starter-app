@@ -79,9 +79,8 @@ $header-color: #ececec;
         display: flex;
         justify-content: center;
         align-items: center;
-        .card-img{
-              width: 10rem;
-              min-height: 17rem;
+        .card-img{              
+          max-height: 155px;
         }
         
       }

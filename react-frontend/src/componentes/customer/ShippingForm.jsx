@@ -81,7 +81,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           </div>
         </div> */}
         <div className="form-group">
-          <label htmlFor="address">Address</label>
+          <label htmlFor="address"><strong>Address</strong></label>
           <input
             type="text"
             className={`form-control ${errors.address ? "is-invalid" : ""}`}
@@ -95,7 +95,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           )}
         </div>
         <div className="form-group">
-          <label htmlFor="address_two">Address2</label>
+          <label htmlFor="address_two"><strong>Address 2</strong></label>
           <input
             type="text"
             className="form-control"
@@ -106,7 +106,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           />
         </div>
         <div className="form-group">
-          <label htmlFor="city">City</label>
+          <label htmlFor="city"><strong>City</strong></label>
           <input
             type="text"
             className={`form-control ${errors.city ? "is-invalid" : ""}`}
@@ -118,7 +118,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           {errors.city && <div className="text-danger">{errors.city[0]}</div>}
         </div>
         <div className="form-group">
-          <label htmlFor="province">Province</label>
+          <label htmlFor="province"><strong>Province</strong></label>
           <input
             type="text"
             className={`form-control ${errors.province ? "is-invalid" : ""}`}
@@ -132,7 +132,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           )}
         </div>
         <div className="form-group">
-          <label htmlFor="code">Postal Code</label>
+          <label htmlFor="code"><strong>Postal Code</strong></label>
           <input
             type="text"
             className={`form-control ${errors.postal_code ? "is-invalid" : ""}`}
@@ -146,7 +146,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
           )}
         </div>
         <div className="form-group">
-          <label htmlFor="country">Country</label>
+          <label htmlFor="country"><strong>Country</strong></label>
           <input
             type="text"
             className={`form-control ${errors.country ? "is-invalid" : ""}`}

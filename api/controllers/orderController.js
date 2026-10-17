@@ -143,7 +143,7 @@ exports.createOrders = async (req, res) => {
   } catch (err) {
     await transaction.rollback();
 
-    console.error("Create order error:", err);
+    // console.error("Create order error:", err);
 
     return res.status(500).json({
       message: err.message || "Unable to create order",
@@ -157,9 +157,25 @@ exports.createOrders = async (req, res) => {
 //@access Private
 exports.getUserOrders = async (req, res) => {
   try {
-    res.status(200).json({ message: "get order item" });
+    const orders = await Order.findAll({
+      where: {
+        user_id: req.user.id,
+      },
+    });
+
+    if (!orders) {
+      return res
+        .status(404)
+        .json({ message: "User orders not found", success: false });
+    }
+
+    return res.status(200).json({ orders, success: true });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({
+      message: err.message || "Error getting user orders",
+      success: false,
+    });
   }
 };
 
@@ -217,9 +233,34 @@ exports.getByIdOrder = async (req, res) => {
 //@access Private
 exports.payOrderItem = async (req, res) => {
   try {
-    res.status(200).json({ message: "UPDATE TO PAY" });
+    const order = await Order.findByPk(req.params.id);
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+        success: false,
+      });
+    }
+
+    //check if this order is user order
+    if (order.user_id !== req.user.id) {
+      return res
+        .status(404)
+        .json({ message: "This is not your order", success: false });
+    }
+
+    order.is_paid = true;
+    order.paid_at = new Date();
+    await order.save();
+
+    return res
+      .status(200)
+      .json({ message: "Order paid successfully", success: true, order });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({
+      message: err.message || "Error occur while paying for order",
+      success: false,
+    });
   }
 };
 

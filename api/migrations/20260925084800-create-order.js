@@ -57,6 +57,9 @@ module.exports = {
       is_delivered: {
         type: Sequelize.BOOLEAN
       },
+      paid_at: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

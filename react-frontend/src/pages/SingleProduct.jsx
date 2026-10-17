@@ -4,9 +4,7 @@ import Cart from "../componentes/customer/Cart";
 
 import noProductImage from "../assets/images/noproduct.png";
 
-
 function SingleProdcut() {
-  
   const [product, setProduct] = useState({
     id: null,
     name: "",
@@ -27,6 +25,7 @@ function SingleProdcut() {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  const [showDescriptionReview, setShowDescriptionReview] = useState(true);
   const getProduct = async () => {
     try {
       const res = await fetch(`/api/shop/${slug}`, {
@@ -50,6 +49,10 @@ function SingleProdcut() {
   const handleRemoveCartItem = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
+
+  const handleDescriptionReviewToggle = () => {
+    setShowDescriptionReview(!showDescriptionReview);
+  }
 
   const addToCart = (product) => {
     setCartItems((prevItems) => {
@@ -80,50 +83,60 @@ function SingleProdcut() {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // console.log();
+  
 
   return (
     <div className="row single-product-wrapper">
       <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li className="breadcrumb-item"><Link to="/shop">shop</Link></li>
-            <li className="breadcrumb-item"><Link to={`/shop/${product.slug}`}>{product.slug}</Link></li>
-            
-          </ol>
-        </nav>
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/shop">shop</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link to={`/shop/${product.slug}`}>{product.slug}</Link>
+          </li>
+        </ol>
+      </nav>
 
       <div className="col-md-9 mb-4">
-        <div className="row  border shadow m-1">
-          <div className="col-md-2 mt-2 mb-2 product-image-list text-center">
-            <ul className="mt-4">
-              {product.images &&
-                product.images &&
+        <div className="row  border shadow  me-1 mb-2">
+          <div className="col-md-1 product-image-list text-center">
+            <ul className="list-group mt-4">
+              {!product.images ? (
+                <li className="border list-group-item mb-2">
+                  <p>No images available</p>
+                </li>
+              ) : (
                 product.images.map((img) => (
-                  <li key={img.id} className="border mb-2 py-2">
+                  <li key={img.id} className="border list-group-item mb-2">
                     <img
                       src={`http://localhost:8000${img.thumbnail}`}
-                      width={100}
+                      width={50}
                       onClick={() => setMainImage(img)}
                       style={{ cursor: "pointer" }}
                     />
                   </li>
-                ))}
+                ))
+              )}
             </ul>
           </div>
-          <div className="col-md-4 border product-image mb-2 mt-4 mb-4">
-            {mainImage === null ? (
-              <img src={noProductImage} />
-            ) : (
-              <img
-                className="main-image"
-                src={`http://localhost:8000${mainImage && mainImage.image}`}
-              />
-            )}
+          <div className="col-md-4 border product-image mt-4 mb-4 text-center">
+            <ul className="list-group">
+              <li className="list-group">
+                {mainImage === null ? (
+                  <img className="main-image" src={noProductImage} />
+                ) : (
+                  <img
+                    className="main-image"
+                    src={`http://localhost:8000${mainImage && mainImage.image}`}
+                  />
+                )}
+              </li>
+            </ul>
           </div>
           <div className="col-md-6 mt-4">
             <p className="h3">{product.name && product.name}</p>
             <p className="h5">R {product.name && product.price}</p>
-
             <p className="">4.5 Reviews</p>
             <hr />
             <div className="colors">
@@ -132,9 +145,8 @@ function SingleProdcut() {
                     <div
                       style={{
                         background: color.name,
-                       
                       }}
-
+                      key={color.id}
                       className="colors-holder mb-2"
                     ></div>
                   ))
@@ -152,43 +164,55 @@ function SingleProdcut() {
               <li>6-Month Limited Warranty.</li>
             </ul>
 
-            <button
-              type="button"
-              className="btn btn-primary btn-block"
-              onClick={(e) => addToCart(product)}
-            >
-              Add to Cart
-            </button>
+            <div className="form-group text-end">
+              <button
+                type="button"
+                className="btn btn-primary mb-5"
+                onClick={(e) => addToCart(product)}
+              >
+                Add to Cart
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="row m-1 border mt-2 mb-2 shadow box-changer">
-          <div className="col-md-12 mt-2">
-            <ul className="">
+        <div className="row me-2 border mt-4 shadow box-changer">
+          <div className="col-md-12">
+            <ul className="lits-group list-group-horizontal py-2">
               <li className="nav-item">
-                <button className="btn btn-primary ">Details</button>
+                <button className="btn btn-primary" onClick={handleDescriptionReviewToggle}>
+                  Details
+                </button>
               </li>
               <li className="nav-item">
-                <button className="btn btn-primary ">Review</button>
+                <button className="btn btn-info text-light" onClick={handleDescriptionReviewToggle}>
+                  Review
+                </button>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="row border shadow m-1">
-          <div className="col-md-12 mb-4 ">
-            <h3>Description</h3>
-            <p>{product.description}</p>
+        {showDescriptionReview && (
+          <div className="row border shadow me-2 mt-4 ">
+            <div className="col-md-12 mb-4 py-2">
+              <h3>Description</h3>
+              <p>{product.description}</p>
+            </div>
           </div>
-        </div>
+        )}
+        {!showDescriptionReview && (
+          <div className="row border shadow me-2 mt-4 ">
+            <div className="col-md-12 mb-4 py-2">
+              <h3>Reviews</h3>
+              <p>Reviews will be displayed here</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <Cart cartItems={cartItems} handleRemoveCartItem={handleRemoveCartItem} />
-      <div className="col-md-3">
-       
-      </div>
-
-      {/* {slug} */}
+      
     </div>
   );
 }

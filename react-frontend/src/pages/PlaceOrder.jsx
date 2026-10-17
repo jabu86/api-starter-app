@@ -56,7 +56,7 @@ function PlaceOrder() {
     (total, item) => total + Number(item.price) * item.quantity,
     0,
   );
-  
+
   const placeOrder = async () => {
     const payload = {
       totalPrice: cartTotal,
@@ -91,20 +91,28 @@ function PlaceOrder() {
         setCartItems([]);
       }
     } catch (error) {
-      if(error.response.status === 500 && error.response ){
-         console.log(error.response.data.message);
-         toast.error(error.response.data.message, {
+      if (error.response.status === 500 && error.response) {
+        // console.log(error.response.data.message);
+        toast.error(error.response.data.message, {
           position: "top-right",
           autoClose: 5000,
           closeOnClick: true,
           theme: "colored",
         });
-        
       }
-      console.error(
-        "Failed to create order:",
-        error.response?.data || error,
-      );
+      if (error.response.status === 400 && error.response) {
+        // console.log(error.response.data.message);
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          theme: "colored",
+        });
+      }
+
+      // console.log(error.response);
+
+      console.error("Failed to create order:", error.response?.data || error);
     }
   };
 
@@ -116,11 +124,12 @@ function PlaceOrder() {
         </div>
       </div>
 
-      <div className="row">
-        <div className="col-md-8">
+      <div className="row mb-5 mt-4 p-2">
+        <div className="col-md-8 border rounded shadow-sm">
+          <h1>Order Summary</h1>
           <ul className="list-group" variant="flusth">
             <li className="list-item">
-              <h2>Shipping</h2>
+              <h3>Shipping</h3>
               <p>
                 <strong>Address: </strong> {shippingAddress.address},{" "}
                 {shippingAddress.address_2
@@ -131,14 +140,14 @@ function PlaceOrder() {
               </p>
             </li>
             <li className="list-item">
-              <h2>Payment Method</h2>
+              <h3>Payment Method</h3>
               <p>
                 <strong>Method: </strong>
                 {paymentMethod}
               </p>
             </li>
-            <li className="list-item">
-              <h2>Order Items</h2>
+            <li className="list-item mb-2">
+              <h3>Order Items</h3>
               <ul className="list-group">
                 {cartItems.map((item) => {
                   const activeImage = item.images?.find(
@@ -162,8 +171,8 @@ function PlaceOrder() {
                               src={noProductImage}
                               className="card-img"
                               alt="No product"
-                              width={50}
-                              height={50}
+                              width={100}
+                              height={100}
                             />
                           )}
                         </div>
@@ -184,11 +193,11 @@ function PlaceOrder() {
             </li>
           </ul>
         </div>
-        <div className="col-md-4">
-          <div className="card">
+        <div className="col">
+          <div className="card shadow">
             <ul className="list-group-item py-2 p-2">
-              <li className="list-item ">
-                <h2>Cart Summary</h2>
+              <li className="list-group border-bottom mb-2 p-4">
+                <h3>Cart Summary</h3>
               </li>
               <li className="list-item">
                 <div className="row">

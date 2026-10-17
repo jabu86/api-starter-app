@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import noProductImage from "../assets/images/noproduct.png";
 import { Link } from "react-router-dom";
-import Cart from '../componentes/customer/Cart'
+import Cart from "../componentes/customer/Cart";
 import { useNavigate } from "react-router-dom";
 
 export const CartItem = () => {
@@ -9,16 +9,16 @@ export const CartItem = () => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  
+
   const navigate = useNavigate();
 
   // Save cart changes to localStorage
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      if(cartItems.length === 0){
-        navigate("/shop")
-      }
-  }, [cartItems , navigate]);
+    if (cartItems.length === 0) {
+      navigate("/shop");
+    }
+  }, [cartItems, navigate]);
 
   // Update the quantity of one specific product
   const handleQuantityChange = (id, value) => {
@@ -43,9 +43,17 @@ export const CartItem = () => {
 
   return (
     <div className="row">
-        <h2>Shopping Cart</h2>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/shop">shop</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link to={`/cart`}>cart</Link>
+          </li>
+        </ol>
+      </nav>
       <div className="col-md-9">
-
         {cartItems.length === 0 ? (
           <p className="h4">No products in the cart</p>
         ) : (
@@ -56,68 +64,88 @@ export const CartItem = () => {
               cart.images?.[0];
 
             return (
-              <div className="row mb-4 border shadow m-1" key={cart.id}>
-                <div className="col-md-2 mt-4 mb-2">
-                 <Link to={`/shop/${cart.slug}`}>
-                  <img
-                    src={
-                      activeImage
-                        ? `http://localhost:8000${activeImage.image}`
-                        : noProductImage
-                    }
-                    alt={cart.name}
-                    className="img-fluid"
-                  />
-                 </Link>
+              <div className="row mb-4 border shadow me-2" key={cart.id}>
+                <div className="row">
+                  <div className="col-md-2 p-2 ">
+                    <Link to={`/shop/${cart.slug}`}>
+                      <img
+                        src={
+                          activeImage
+                            ? `http://localhost:8000${activeImage.image}`
+                            : noProductImage
+                        }
+                        alt={cart.name}
+                        className="img-fluid"
+                      />
+                    </Link>
+                  </div>
+                  <div className="col-md-7 p-2 mb-2">
+                    <h2>{cart.name}</h2>
+                    <p>{cart.description}</p>
+                    <p>
+                      <strong>R {Number(cart.price).toFixed(2)}</strong>
+                    </p>
+                  </div>
                 </div>
 
-                <div className="col-md-7 mt-4 mb-2">
-                  <h2>{cart.name}</h2>
-                  <p>{cart.description}</p>
-                  <p>
-                    <strong>R {Number(cart.price).toFixed(2)}</strong>
-                  </p>
-
-                  <p>
-                    Subtotal: R{" "}
-                    <strong>
-                      {(
-                        Number(cart.price) * Number(cart.quantity || 0)
-                      ).toFixed(2)}
-                    </strong>
-                  </p>
-                </div>
                 <hr />
 
-                <div className="col-md-12 mb-4 text-end">
-                  <label htmlFor={`qty-${cart.id}`}>Quantity</label>
-                  <br />
-                  <input
-                    type="number"
-                    id={`qty-${cart.id}`}
-                    min="1"
-                    value={cart.quantity ?? 1}
-                    className="border shadow py-2 p-2"
-                    onChange={(e) =>
-                      handleQuantityChange(cart.id, e.target.value)
-                    }
-                    style={{ width: "100px" }}
-                  />
-                  <br />
-                  <button
-                    className="btn btn-danger btn-sm mt-2"
-                    onClick={() => handleRemove(cart.id)}
-                  >
-                    Remove
-                  </button>
+                <div className="row">
+                  <div className="col-md-6">
+                    <span>
+                      Subtotal: R {cart.price} X {cart.quantity} ={" "}
+                      <strong>
+                        R{" "}
+                        {(
+                          Number(cart.price) * Number(cart.quantity || 0)
+                        ).toFixed(2)}
+                      </strong>
+                    </span>
+                  </div>
+                  <div className="col-md-6 mb-4 ">
+                    <ul className="list-group list-group-horizontal justify-content-end ">
+                      <li className="list-group me-2">
+                        <ul className="list-group">
+                          <li className="list-item">
+                            <label htmlFor={`qty-${cart.id}`}>Quantity</label>
+                          </li>
+                          <li className="list-item">
+                            <input
+                              type="number"
+                              id={`qty-${cart.id}`}
+                              min="1"
+                              value={cart.quantity ?? 1}
+                              className="form-control"
+                              onChange={(e) =>
+                                handleQuantityChange(cart.id, e.target.value)
+                              }
+                              style={{ width: "100px" }}
+                            />
+                          </li>
+                        </ul>
+                      </li>
+                      <li className="list-group">
+                        <ul className="list-group">
+                          <li>&nbsp;</li>
+                          <li className="list-item ">
+                            <button
+                              className="btn btn-danger border-0"
+                              onClick={() => handleRemove(cart.id)}
+                            >
+                              X
+                            </button>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             );
           })
         )}
       </div>
-        <Cart cartItems={cartItems} handleRemoveCartItem={handleRemove} />
-        
+      <Cart cartItems={cartItems} handleRemoveCartItem={handleRemove} />
     </div>
   );
 };

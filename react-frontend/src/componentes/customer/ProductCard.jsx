@@ -3,7 +3,7 @@ import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
 function ProductCard({ products, addToCart, pagination, handlePageChange }) {
   return (
-    <div className="col-md-7 mb-4 product-wrapper m-0">
+    <div className="col-md-7 mb-4 product-wrapper">
       {/* Added g-4 here to control the gap between columns automatically */}
       <div className="row">
         {products.length === 0 ? (
@@ -13,9 +13,9 @@ function ProductCard({ products, addToCart, pagination, handlePageChange }) {
         ) : (
           products.map((product) => (
             // Structual column (Leave this clean of borders and margins)
-            <div key={product.id} className="col-md-4">
+            <div key={product.id} className="col-md-3">
               {/* Visual Card (Put your borders, shadows, and padding here) */}
-              <div className="card border shadow m-0 mb-2 product-card">
+              <div className="card border shadow  mb-2 product-card">
                 <Link
                   to={`/shop/${product.slug}`}
                   className="product-image-link"
@@ -37,14 +37,22 @@ function ProductCard({ products, addToCart, pagination, handlePageChange }) {
                   )}
                 </Link>
 
-                <div className="card-info p-3">
+                <div className="card-body">
                   {" "}
                   {/* Added padding for inside the card */}
-                  <div className="card-body">
-                    <p className="card-text">{product.name}</p>
-                    <p className="h5">R {product.price}</p>
-                    <p>{product.in_stock ? "In stock" : "Out of stock"}</p>
-                  </div>
+                  <ul className="list-group mb-2">
+                    <li className="list-item">
+                      <span className="fw-bold">{product.name}</span>
+                    </li>
+                    <li className="list-item">
+                      <p className="h5">R {product.price}</p>
+                    </li>
+                    <li className="list-item">
+                      <span>
+                        {product.in_stock ? "In stock" : "Out of stock"}
+                      </span>
+                    </li>
+                  </ul>
                   <div className="row">
                     <button
                       type="button"

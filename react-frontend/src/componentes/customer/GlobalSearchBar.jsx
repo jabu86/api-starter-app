@@ -1,10 +1,10 @@
 import { Fragment } from "react";
 import { useEffect } from "react";
 
-function GlobalSearchBar({ getData, search, setSearch, handleSearch }) {
+function GlobalSearchBar({search, setSearch, handleSearch }) {
   useEffect(() => {
     const timer = setTimeout(() => {
-      getData(1, search);
+      handleSearch(1, search);
     }, 500);
 
     return () => clearTimeout(timer);

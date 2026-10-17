@@ -1,23 +1,50 @@
-const express = require('express')
+const express = require("express");
 const upload = require("../middleware/upload");
-const router = express.Router()
-const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
-const profileController = require('../controllers/admin/profileController');
-const {validateProfile , validateProfileUserPassword} = require('../validation/profileValidation');
+const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware");
+const roleMiddleware = require("../middleware/roleMiddleware");
+const profileController = require("../controllers/admin/profileController");
+const {
+  validateProfile,
+  validateProfileUserPassword,
+} = require("../validation/profileValidation");
 // const validateProfileUserPassword = require('../validation/profileValidation');
 
 //index route
-router.get('/profile', authMiddleware, roleMiddleware('admin' , 'user' , 'customer') ,profileController.index);
+router.get(
+  "/profile",
+  authMiddleware,
+  roleMiddleware("admin", "user", "customer"),
+  profileController.index,
+);
 
-
-router.post('/profile' ,(req, res, next) => {
-    req.uploadType = 'profile';
+router.post(
+  "/profile",
+  (req, res, next) => {
+    req.uploadType = "profile";
     next();
+  },
+  upload.single("image"),
+  validateProfile,
+  authMiddleware,
+  roleMiddleware("admin", "user", "customer"),
+  profileController.profileUpdate,
+);
 
-},upload.single('image') ,validateProfile,authMiddleware, roleMiddleware('admin' , 'user' , 'customer') ,profileController.profileUpdate);
+router.post(
+  "/profile-reset-password",
+  validateProfileUserPassword,
+  authMiddleware,
+  roleMiddleware("admin", "user", "customer"),
+  profileController.profilePasswordReset,
+);
 
-router.post('/profile-reset-password',validateProfileUserPassword, authMiddleware, roleMiddleware('admin' , 'user' , 'customer') ,profileController.profilePasswordReset);
 
+router.post(
+  "/profile/user/:user_id/delete",
+  authMiddleware,
+  roleMiddleware("admin", "user", "customer"),
+  profileController.deleteUserAccount,
+);
 
-module.exports = router
+module.exports = router;

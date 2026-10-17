@@ -2,9 +2,7 @@
 // import {useAuth} from "../../context/AuthContext.jsx";
 import { useState, useEffect } from "react";
 
-function ProfileResetPassword({ onSubmit, user , errors }) {
-
-
+function ProfileResetPassword({ onSubmit, user, errors }) {
   const [form, setForm] = useState({
     password: "",
     confirmPassword: "",
@@ -28,41 +26,46 @@ function ProfileResetPassword({ onSubmit, user , errors }) {
   };
 
   return (
-    <div className="col-md-6">
-          <form onSubmit={handleUpdateUserPassword}>
-            <h2>Reset Password</h2>
-            <div className="form-group mb-2">
-              <label htmlFor="password">
-                <strong>Password</strong>
-              </label>
-              <input
-                type="password"
-                name="password"
-                className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                 onChange={handleChange}
-              />
-              {errors.password && (<div className="text-danger">{errors.password[0]}</div>)}
-            </div>
-            <div className="form-group mb-2">
-              <label htmlFor="confirm-password">``
-                <strong>Confim-Password</strong>
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
-                 onChange={handleChange}
-              />
-              {errors.confirmPassword && (<div className="text-danger">{errors.confirmPassword[0]}</div>)}
-            </div>
-
-            <div>
-              <button type="submit" className="btn btn-primary btn-lg mt-2">
-                Reset Password
-              </button>
-            </div>
-          </form>
+    <div className="col-md-8 border shadow p-2">
+      <form onSubmit={handleUpdateUserPassword}>
+        <h2>Reset Password</h2>
+        <div className="form-group mb-2">
+          <label htmlFor="password">
+            <strong>Password</strong>
+          </label>
+          <input
+            type="password"
+            name="password"
+            className={`form-control ${errors.password ? "is-invalid" : ""}`}
+            onChange={handleChange}
+          />
+          {errors.password && (
+            <div className="text-danger">{errors.password[0]}</div>
+          )}
         </div>
+        <div className="form-group mb-2">
+          <label htmlFor="confirm-password">
+            ``
+            <strong>Confim-Password</strong>
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
+            onChange={handleChange}
+          />
+          {errors.confirmPassword && (
+            <div className="text-danger">{errors.confirmPassword[0]}</div>
+          )}
+        </div>
+
+        <div>
+          <button type="submit" className="btn btn-primary btn-lg mt-2">
+            Reset Password
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 
