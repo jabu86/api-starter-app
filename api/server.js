@@ -22,9 +22,12 @@ const brandRoutes = require('./routes/brands');
 const productRoutes = require('./routes/products');
 const sizeRoutes = require('./routes/size');
 const orderRoutes = require('./routes/orders');
+const reviewsRoutes = require('./routes/reviews');
+
 app.use('/api', indexRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', orderRoutes);
+app.use('/api/reviews', reviewsRoutes);
 
 app.use('/api/admin',
     dashboardRoutes,

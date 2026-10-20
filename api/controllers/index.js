@@ -8,8 +8,7 @@ const {
   Sizes,
   Colors,
   ShippingAddress,
-  SubCategory,
-  sub_category_product,
+  Reviews
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -275,6 +274,10 @@ exports.products = async (req, res) => {
           model: Brand,
           as: "brand",
         },
+        {
+          model: Reviews,
+          as: "reviews",
+        },
 
         {
           model: product_images,
@@ -325,6 +328,9 @@ exports.products = async (req, res) => {
   }
 };
 
+//@desc  Get single products
+//@route POST /api/shop/slug
+//@access Public
 exports.product = async (req, res) => {
   try {
     const product = await Products.findOne({
@@ -364,7 +370,28 @@ exports.product = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Not Found" });
     }
-    return res.status(200).json({ product, success: true });
+    
+    //calculate product ratings
+    const ratingStats = await Reviews.findOne({
+      where : {product_id : product.id},
+      attributes: [
+        [
+          sequelize.fn("AVG", sequelize.col("ratings")),
+          "averageRating",
+        ],
+        [
+          sequelize.fn("COUNT", sequelize.col("id")),
+          "totalReviews",
+        ],
+      ],
+      raw: true,
+    })
+    return res.status(200).json({
+      success: true,
+      product,
+      averageRating: Number(ratingStats?.averageRating || 0),
+      totalReviews: Number(ratingStats?.totalReviews || 0),
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error });
