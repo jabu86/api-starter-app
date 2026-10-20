@@ -2,9 +2,9 @@
 // import {useAuth} from "../../context/AuthContext.jsx";
 import { useState, useEffect } from "react";
 import ProfileImage from "../customer/ProfileImage";
-function ProfileUserForm({ onSubmit, user, errors, imageUrl }) {
+function ProfileUserForm({ onSubmit, user, errors, imagePreview , setImagePreview }) {
   // console.log(user.profile.bio);
-  const [imagePreview, setImagePreview] = useState("");
+  
 
   const [form, setForm] = useState({
     id: "",
@@ -59,11 +59,10 @@ function ProfileUserForm({ onSubmit, user, errors, imageUrl }) {
 
   return (
     <>
-      <div className="col-md-4">
-        <div className="row border shadow p-2">
-          <div className="col-md-12">
+      
+          {/* <div className="col-md-12"> */}
             <h2>User Infomation</h2>
-            <ProfileImage imageUrl={imageUrl} imagePreview={imagePreview} />
+           
             <form onSubmit={handleUpdateUserInfo}>
               <div className="form-group mb-2">
                 <label htmlFor="name">
@@ -125,9 +124,8 @@ function ProfileUserForm({ onSubmit, user, errors, imageUrl }) {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      </div>
+          {/* </div> */}
+        
     </>
   );
 }

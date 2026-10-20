@@ -26,7 +26,7 @@ function ProfileResetPassword({ onSubmit, user, errors }) {
   };
 
   return (
-    <div className="col-md-8 border shadow p-2">
+    <>
       <form onSubmit={handleUpdateUserPassword}>
         <h2>Reset Password</h2>
         <div className="form-group mb-2">
@@ -65,7 +65,7 @@ function ProfileResetPassword({ onSubmit, user, errors }) {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

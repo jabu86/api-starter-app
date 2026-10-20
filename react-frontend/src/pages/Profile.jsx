@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import OrderListHistory from "../componentes/customer/OrderListHistory";
 import { useAuth } from "../context/AuthContext.jsx";
+import ProfileImage from "../componentes/customer/ProfileImage.jsx";
 
 function Profile() {
   const navigate = useNavigate();
@@ -23,8 +24,14 @@ function Profile() {
       image: "",
     },
   });
+  const [showOrder, setShowOrder] = useState(true);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [showRestPassword, setShowRestPassword] = useState(false);
+  const [showDeleteUser, setShowDeleteUser] = useState(false);
+  const [imagePreview, setImagePreview] = useState("");
 
   const { logout } = useAuth();
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -202,6 +209,34 @@ function Profile() {
     }
   };
 
+  const handleUserInfoToggle = async () => {
+    setShowUserInfo(true);
+    setShowOrder(false);
+    setShowRestPassword(false);
+    setShowDeleteUser(false);
+  };
+
+  const handleResetPasswordToggle = async () => {
+    setShowUserInfo(false);
+    setShowOrder(false);
+    setShowRestPassword(true);
+    setShowDeleteUser(false);
+  };
+
+  const handleOrdersToggle = async () => {
+    setShowUserInfo(false);
+    setShowOrder(true);
+    setShowRestPassword(false);
+    setShowDeleteUser(false);
+  };
+
+  const handleRemoveUserToggle = async () => {
+    setShowUserInfo(false);
+    setShowOrder(false);
+    setShowRestPassword(false);
+    setShowDeleteUser(true);
+  };
+
   useEffect(() => {
     getUserProfile();
     getUserOrders();
@@ -214,29 +249,84 @@ function Profile() {
   return (
     <>
       <div className="row gap-2 mb-4">
-        <ProfileUserForm
-          onSubmit={handleUpdateUserInfo}
-          user={user}
-          errors={errors}
+        <h1 class="mb-0">User Profile</h1>
+        <ProfileImage
           imageUrl={imageUrl}
-        />
+          imagePreview={imagePreview}
+          user={user}
+        />{" "}
         <div className="col">
-          <OrderListHistory orders={userOrders} />
-          <div className="row mt-4 gap-2">
-            <ProfileResetPassword
-              onSubmit={handleResetPassword}
-              user={user}
-              errors={errors}
-            />
-            <div className="col shadow border p-2">
-              <h2>Delete User</h2>
-              <div className="row m-0">
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDeleteUserProfile(user.id)}
-                >
-                  Delete User
-                </button>
+          <div className="border rounded shadow m-0">
+            <div className="card-header p-0 border-bottom-0">
+              <ul className="nav nav-tabs">
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${showOrder ? "active" : ""}`}
+                    onClick={handleOrdersToggle}
+                  >
+                    Orders
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${showUserInfo ? "active" : ""}`}
+                    onClick={handleUserInfoToggle}
+                  >
+                    User Info
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${showRestPassword ? "active" : ""}`}
+                    onClick={handleResetPasswordToggle}
+                  >
+                    Password Reset
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link text-danger ${showDeleteUser ? "active" : ""}`}
+                    onClick={handleRemoveUserToggle}
+                  >
+                    Delete user
+                  </button>
+                </li>
+              </ul>
+
+              <div className="card-body p-2">
+                {/* Component Display on nav click */}
+
+                {showOrder && <OrderListHistory orders={userOrders} />}
+                {showUserInfo && (
+                  <ProfileUserForm
+                    onSubmit={handleUpdateUserInfo}
+                    user={user}
+                    errors={errors}
+                    imagePreview={imagePreview}
+                    setImagePreview={setImagePreview}
+                  />
+                )}
+                {showRestPassword && (
+                  <ProfileResetPassword
+                    onSubmit={handleResetPassword}
+                    user={user}
+                    errors={errors}
+                  />
+                )}
+
+                {showDeleteUser && (
+                  <div className="">
+                    <h2>Delete User</h2>
+                    <div className="row m-0">
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleDeleteUserProfile(user.id)}
+                      >
+                        Delete User
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

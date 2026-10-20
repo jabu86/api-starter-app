@@ -24,6 +24,7 @@ function ReviewList({ reviews, handleUpdateReview, handleDeleteReview }) {
                   <div className="col-md-1">
                     <div className="row">
                       <img
+                        className="rounded-circle"
                         src={`http://localhost:8000/images/${review.user.profile.image ? review.user.profile.image : "/images/profile/profile.png"}`}
                         alt={review.user.name}
                         width={40}
