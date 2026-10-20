@@ -18,12 +18,7 @@ module.exports = {
       total: {
         type: Sequelize.DECIMAL
       },
-      // shipping_first_name: {
-      //   type: Sequelize.STRING
-      // },
-      // shipping_last_name: {
-      //   type: Sequelize.STRING
-      // },
+    
       shipping_address: {
         type: Sequelize.STRING
       },

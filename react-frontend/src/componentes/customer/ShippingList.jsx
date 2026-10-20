@@ -21,8 +21,7 @@ function ShippingList({shipping, handleEditShippingAddress , handleDeleteShippin
                 : shipping.map((ship) => (
                 <tr key={ship.id} className={selectedAddress?.id === ship.id ? "table-active" : ""}>
                     <td className="text-center"><input type="radio" value={ship.id} name="shipping_address" checked={selectedAddress?.id === ship.id} onChange={() =>onSelectAddress(ship)}/></td>
-                    {/* <td>{ship.first_name}</td>
-                    <td>{ship.last_name}</td> */}
+                 
                     <td>{ship.address}</td>
                     <td>{ship.address_2}</td>
                     <td>{ship.city}</td>

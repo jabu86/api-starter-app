@@ -469,8 +469,6 @@ exports.selectedShippingAddress = async (req, res) => {
 exports.addShippingAddress = async (req, res) => {
   try {
     const {
-      // first_name,
-      // last_name,
       address,
       address_2,
       city,
@@ -528,8 +526,7 @@ exports.addShippingAddress = async (req, res) => {
 exports.editShippingAddress = async (req, res) => {
   try {
     const {
-      first_name,
-      last_name,
+     
       address,
       address_2,
       city,
@@ -539,8 +536,7 @@ exports.editShippingAddress = async (req, res) => {
     } = req.body;
     const id = req.params.id;
     const shippingAddress = await ShippingAddress.findByPk(id);
-    shippingAddress.first_name = first_name;
-    shippingAddress.last_name = last_name;
+  
     shippingAddress.address = address;
     shippingAddress.address_2 = address_2;
     shippingAddress.city = city;

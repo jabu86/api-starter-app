@@ -79,8 +79,7 @@ exports.createOrders = async (req, res) => {
 
     const copyOrder = {
       user_id: req.user.id,
-      shipping_first_name: selectedAddress.first_name,
-      shipping_last_name: selectedAddress.last_name,
+    
       shipping_address: selectedAddress.address,
       shipping_address_2: selectedAddress.address_2,
       shipping_city: selectedAddress.city,

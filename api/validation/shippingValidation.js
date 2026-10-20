@@ -1,8 +1,7 @@
 const { body, validationResult } = require("express-validator");
 
 /*
- first_name: form.first_name,
-      last_name: form.last_name,
+
       address: form.address_one,
       address_2: form.address_two,
       city: form.city,

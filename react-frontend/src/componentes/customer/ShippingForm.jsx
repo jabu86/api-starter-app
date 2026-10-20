@@ -2,8 +2,7 @@ import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 
 const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isEditing }, ref) => {
   const initialForm = {
-    first_name: "",
-    last_name: "",
+    
     address_one: "",
     address_two: "",
     city: "",
@@ -26,8 +25,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
     if (initialData) {
       setForm({
         id: initialData.id || "",
-        first_name: initialData.first_name || "",
-        last_name: initialData.last_name || "",
+       
         address_one: initialData.address || "",
         address_two: initialData.address_2 || "",
         city: initialData.city || "",
@@ -50,36 +48,7 @@ const ShippingForm = forwardRef( ({ addShippingAddress, initialData, errors, isE
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        {/* <div className="row">
-          <div className="form-group col-md-6">
-            <label htmlFor="firstName">First name</label>
-            <input
-              type="text"
-              className={`form-control ${errors.first_name ? "is-invalid" : ""}`}
-              id="first_name"
-              placeholder="First name"
-              value={form.first_name}
-              onChange={handleChange}
-            />
-            {errors.first_name && (
-              <div className="text-danger">{errors.first_name[0]}</div>
-            )}
-          </div>
-          <div className="form-group col-md-6">
-            <label htmlFor="lastName">Last name</label>
-            <input
-              type="text"
-              className={`form-control ${errors.last_name ? "is-invalid" : ""}`}
-              id="last_name"
-              placeholder="Last name"
-              value={form.last_name}
-              onChange={handleChange}
-            />
-            {errors.last_name && (
-              <div className="text-danger">{errors.last_name[0]}</div>
-            )}
-          </div>
-        </div> */}
+     
         <div className="form-group">
           <label htmlFor="address"><strong>Address</strong></label>
           <input
