@@ -8,7 +8,7 @@ const {
   Sizes,
   Colors,
   ShippingAddress,
-  Reviews
+  Reviews,
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -206,7 +206,6 @@ exports.products = async (req, res) => {
     //get sub category relationships and filter by product sub-category name if provided
     const filterIncludes = [];
 
-
     if (categoryName) {
       filterIncludes.push({
         association: "category",
@@ -256,6 +255,30 @@ exports.products = async (req, res) => {
 
     // 2. Extract IDs
     const ids = productIds.map((product) => product.id);
+    console.log(productIds);
+
+    //get average ratings for all the products
+    const ratings = await Reviews.findAll({
+      attributes: [
+        "product_id",
+        [sequelize.fn("AVG", sequelize.col("ratings")), "averageRating"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+      ],
+      where: {
+        product_id: ids,
+      },
+      group: ["product_id"],
+      raw: true,
+    });
+
+    const ratingMap = {};
+    ratings.forEach((rating) => {
+      ratingMap[rating.product_id] = {
+        averageRating: Number(rating.averageRating),
+        totalReviews: Number(rating.totalReviews),
+      };
+    });
+    
 
     //Get the actual products + relationships
     const rows = await Products.findAll({
@@ -274,10 +297,10 @@ exports.products = async (req, res) => {
           model: Brand,
           as: "brand",
         },
-        {
-          model: Reviews,
-          as: "reviews",
-        },
+        // {
+        //   model: Reviews,
+        //   as: "reviews",
+        // },
 
         {
           model: product_images,
@@ -306,13 +329,23 @@ exports.products = async (req, res) => {
       ],
     });
 
+    const productsWithRatings = rows.map((product) => {
+      const rating = ratingMap[product.id];
+
+      return {
+        ...product.toJSON(),
+        averageRating: rating?.averageRating ?? 0,
+        totalReviews: rating?.totalReviews ?? 0,
+      };
+    });
+
     const totalPages = Math.ceil(count / limit);
     return res.status(200).json({
-      products: rows,
+      products: productsWithRatings,
       pagination: {
         currentPage: page,
         perPage: limit,
-        totalItems: count, 
+        totalItems: count,
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
@@ -370,22 +403,16 @@ exports.product = async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Not Found" });
     }
-    
+
     //calculate product ratings
     const ratingStats = await Reviews.findOne({
-      where : {product_id : product.id},
+      where: { product_id: product.id },
       attributes: [
-        [
-          sequelize.fn("AVG", sequelize.col("ratings")),
-          "averageRating",
-        ],
-        [
-          sequelize.fn("COUNT", sequelize.col("id")),
-          "totalReviews",
-        ],
+        [sequelize.fn("AVG", sequelize.col("ratings")), "averageRating"],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
       ],
       raw: true,
-    })
+    });
     return res.status(200).json({
       success: true,
       product,
@@ -468,14 +495,8 @@ exports.selectedShippingAddress = async (req, res) => {
 
 exports.addShippingAddress = async (req, res) => {
   try {
-    const {
-      address,
-      address_2,
-      city,
-      country,
-      province,
-      postal_code,
-    } = req.body;
+    const { address, address_2, city, country, province, postal_code } =
+      req.body;
     //check how many address does a user have
     //if is the first address set default value to true
     //if a user has more than one address set the default value to false
@@ -498,8 +519,6 @@ exports.addShippingAddress = async (req, res) => {
     const is_default = checkUserShippingAddress === 0;
     const shippingAddress = await ShippingAddress.create({
       user_id: req.user.id,
-      // first_name,
-      // last_name,
       address,
       address_2,
       city,
@@ -525,18 +544,11 @@ exports.addShippingAddress = async (req, res) => {
 
 exports.editShippingAddress = async (req, res) => {
   try {
-    const {
-     
-      address,
-      address_2,
-      city,
-      country,
-      province,
-      postal_code,
-    } = req.body;
+    const { address, address_2, city, country, province, postal_code } =
+      req.body;
     const id = req.params.id;
     const shippingAddress = await ShippingAddress.findByPk(id);
-  
+
     shippingAddress.address = address;
     shippingAddress.address_2 = address_2;
     shippingAddress.city = city;

@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
+import RatingStars from "./RatingStars";
 function ProductCard({ products, addToCart, pagination, handlePageChange }) {
+  console.log(products);
+
   return (
     <div className="col-md-7 mb-4 product-wrapper">
       {/* Added g-4 here to control the gap between columns automatically */}
@@ -38,20 +41,40 @@ function ProductCard({ products, addToCart, pagination, handlePageChange }) {
                 </Link>
 
                 <div className="card-body">
-                  {" "}
                   {/* Added padding for inside the card */}
                   <ul className="list-group mb-2">
+                    <li className="list-item mb-1">
+                      <div className="row">
+                        <div className="col">
+                          <span>
+                            <small>Reviews </small>
+                          </span>
+                        </div>
+                        <div className="col text-end">
+                          <span className="badge rounded-pill text-bg-dark ms-2">
+                            <strong>{product.totalReviews}</strong>
+                          </span>
+                        </div>
+                      </div>
+                      <RatingStars rating={product.averageRating} />
+                    </li>
                     <li className="list-item">
                       <span className="fw-bold">{product.name}</span>
                     </li>
                     <li className="list-item">
                       <p className="h5">R {product.price}</p>
                     </li>
-                    <li className="list-item">
-                      <span>
-                        {product.in_stock ? "In stock" : "Out of stock"}
-                      </span>
-                    </li>
+                    {/* <li className="list-item">
+                      {product.in_stock ? (
+                        <span className="badage bg-success p-1 text-light rounded border">
+                          In stock
+                        </span>
+                      ) : (
+                        <span className="badage bg-danger p-1 text-light rounded border">
+                          Out of stock
+                        </span>
+                      )}
+                    </li> */}
                   </ul>
                   <div className="row">
                     <button

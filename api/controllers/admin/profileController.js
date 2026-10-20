@@ -76,7 +76,7 @@ exports.profileUpdate = async (req, res) => {
 exports.profilePasswordReset = async (req, res) => {
   const { password, confirmPassword } = req.body;
   const user_id = req.user.id;
-  as;
+
 
   try {
     const user = await User.findOne({
