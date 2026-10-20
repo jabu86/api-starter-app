@@ -11,10 +11,11 @@ function Header() {
     await logout();
     navigate("/login");
   };
+  
   const handleDropDown = () => {
     setDropDown(!dropDown);
   };
-  console.log(user);
+  
 
   return (
     <header className="header navbar navbar-expand-lg navbar-light">

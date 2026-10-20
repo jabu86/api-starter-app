@@ -99,6 +99,16 @@ $header-color: #ececec;
         }
       }
     }
+    .product-image-list{
+      ul{
+        li {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          
+        }
+      }
+    }
     .product-image {
       display: flex;
       justify-content: center;

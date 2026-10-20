@@ -42,9 +42,9 @@ export const CartItem = () => {
   );
 
   return (
-    <div className="row">
+    <div className="row gap-2">
       <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
+        <ol className="breadcrumb">
           <li className="breadcrumb-item">
             <Link to="/shop">shop</Link>
           </li>
@@ -64,7 +64,7 @@ export const CartItem = () => {
               cart.images?.[0];
 
             return (
-              <div className="row mb-4 border shadow me-2" key={cart.id}>
+              <div className="row mb-4 border shadow rounded" key={cart.id}>
                 <div className="row">
                   <div className="col-md-2 p-2 ">
                     <Link to={`/shop/${cart.slug}`}>

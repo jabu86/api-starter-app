@@ -14,8 +14,8 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
 
 
   return (
-    <div className="col-md-3">
-      <div className="row cart border shadow p-2 mb-4">
+    <div className="col">
+      <div className="row cart border shadow p-2 mb-4 rounded">
         <p className="fw-semibold">Shop smart and quick.</p>
         <p className="fw-semibold">Get it here, be the first.</p>
         <p>
@@ -27,11 +27,11 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
         </p>
       </div>
       {cartItems.length === 0 ? (
-        <div className="row cart cart-header border shadow p-2">
+        <div className="row cart cart-header border shadow rounded p-2 ">
           <h5>Cart is empty</h5>
         </div>
       ) : (
-        <div className="row border shadow cart justify-content-center">
+        <div className="row border shadow cart justify-content-center rounded">
           <p className="mt-2">
             You have{" "}
             <span className="badge rounded-pill text-bg-dark">

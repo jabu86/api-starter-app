@@ -15,7 +15,7 @@ function CategoryList({ categories, searchByCategory, searchBySubCategory }) {
   return (
     <div className="row">
       <ul className="list-group mb-3">
-        <li className="list-group-item list-group-item-light">
+        <li className="list-group-item list-group-item-action list-group-item-light">
           <button
             className="btn btn-link text-dark text-decoration-none p-0 w-100 text-start"
             onClick={() => searchByCategory("") }
@@ -57,6 +57,7 @@ function CategoryList({ categories, searchByCategory, searchBySubCategory }) {
                 ))}
               </ul>
             )}
+        
           </li>
         ))}
       </ul>
