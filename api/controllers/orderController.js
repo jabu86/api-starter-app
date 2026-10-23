@@ -8,7 +8,6 @@ const sequelize = require("../config/database");
 //@access Private
 exports.createOrders = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const { orderItems, paymentMethod } = req.body;
 
@@ -79,7 +78,7 @@ exports.createOrders = async (req, res) => {
 
     const copyOrder = {
       user_id: req.user.id,
-    
+
       shipping_address: selectedAddress.address,
       shipping_address_2: selectedAddress.address_2,
       shipping_city: selectedAddress.city,
@@ -279,8 +278,23 @@ exports.deliverOrderItem = async (req, res) => {
 //@access Private/Admin
 exports.getAllOders = async (req, res) => {
   try {
-    res.status(200).json({ message: "admin orders" });
+    const orders = await Order.findAll({
+      include: ["user", "item"],
+      order: [["createdAt", "DESC"]],
+    });
+
+    if (!orders) {
+      return res
+        .status(404)
+        .json({ message: "Orders not found", success: false });
+    }
+
+    return res.status(200).json({ orders, success: true });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({
+      message: err.message || "Error getting user orders",
+      success: false,
+    });
   }
 };

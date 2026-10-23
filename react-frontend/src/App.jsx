@@ -37,6 +37,9 @@ import SubCategories from "./pages/admin/SubCategories.jsx";
 import Brands from "./pages/admin/Brands.jsx";
 import Colors from "./pages/admin/Colors.jsx";
 import Sizes from "./pages/admin/Sizes.jsx"
+import Users from "./pages/admin/Users.jsx";
+import AdminOrders from "./pages/admin/Orders.jsx";
+
 
 
 import CustomerLayout from "./layouts/CustomerLayout.jsx";
@@ -113,6 +116,8 @@ function App() {
                         <Route path="/admin/sub-categories/:slug" element={<SubCategories openModal={handleOpenModal} show={show}/>} />
                         <Route path="/admin/colors" element={<Colors openModal={handleOpenModal} show={show} />}  />
                         <Route path="/admin/sizes" element={<Sizes openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/orders" element={<AdminOrders openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/users" element={<Users openModal={handleOpenModal} show={show} />} />
                     </Route>
                 </Routes>
             </div>

@@ -1,107 +1,101 @@
 //Admin styles
 
-@use '../_mixins' as *;
+@use "../_mixins" as *;
 
-$primary-color:#030239f7;
+$primary-color: #030239f7;
 $link-color: #b5b3b3;
-$header-bg-color:#f1f1f1;
+$header-bg-color: #f1f1f1;
 $header-color: #131313;
-$border-color:#e3e3e3;
+$border-color: #e3e3e3;
 $primary: #030239f7;
 $primary-hover: #010373;
 
-
-.container-fluid{
+.container-fluid {
   padding: 0;
   margin: 0;
-  .row{
-
+  .row {
     .sidebar {
-      background:$primary-color;
-      color:$link-color;
-      min-height:100vh;
+      background: $primary-color;
+      color: $link-color;
+      min-height: 100vh;
       overflow: hidden;
       transition: width 0.3s ease;
       font-size: 16px;
       font-weight: 600;
-      h2, p{
-        padding: .5rem 1rem;
+      h2,
+      p {
+        padding: 0.5rem 1rem;
       }
       a {
-        display:block;
-        padding: .5rem 1rem;
-        color:$link-color;
-        text-decoration:none;
+        display: block;
+        padding: 0.5rem 1rem;
+        color: $link-color;
+        text-decoration: none;
         &:hover {
           color: #f1f1f1;
         }
-
       }
 
-      &.open{
+      &.open {
         display: block;
-
       }
-      &.close{
+      &.close {
         display: none;
       }
-
     }
-    .content{
+    .content {
       flex: 1;
-
     }
     .admin-footer {
-      @include header($header-bg-color , $header-color , center);
+      @include header($header-bg-color, $header-color, center);
+      min-height: 5rem;
+      padding: 1rem;
+      text-align: center;
+      border-top: #010373 2px solid;
     }
   }
 }
-.image-loader{
-
+.image-loader {
   display: flex;
-  justifyContent: center;
-  alignItems: center;
+  justify-content: center;
+  align-items: center;
   height: 100px;
 }
-.btn-primary{
+.btn-primary {
   background: $primary-color;
   border: 1px solid $primary-hover;
   border-radius: 0;
 }
-.btn-danger{
-
+.btn-danger {
   border-radius: 0;
 }
-.btn-info{
-
-  border-radius: 0;
-}
-
-.btn-success{
-
+.btn-info {
   border-radius: 0;
 }
 
-.btn-primary:hover{
+.btn-success {
+  border-radius: 0;
+}
+
+.btn-primary:hover {
   background: $primary-hover;
 }
 
-.modal-overlay{
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   overflow-y: auto;
 }
 
-.admin-modal{
+.admin-modal {
   background: #f1f1f1;
   padding: 20px;
   margin: 100px auto;
   width: 50%;
-
 }
 .modal-footer {
   position: sticky;
@@ -111,6 +105,10 @@ $primary-hover: #010373;
   margin-top: 5px;
 }
 @media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+  .sidenav {
+    padding-top: 15px;
+  }
+  .sidenav a {
+    font-size: 18px;
+  }
 }

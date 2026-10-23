@@ -3,7 +3,7 @@ import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
 import RatingStars from "./RatingStars";
 function ProductCard({ products, addToCart, pagination, handlePageChange }) {
-  console.log(products);
+  // console.log(products);
 
   return (
     <div className="col-md-7 mb-4 product-wrapper">

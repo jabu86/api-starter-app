@@ -1,10 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useState } from "react";
 
 function Header() {
   const { user, logout } = useAuth();
   const [dropDown, setDropDown] = useState(false);
+  const location = useLocation();
+  const path = location.pathname;
 
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -16,28 +18,29 @@ function Header() {
     setDropDown(!dropDown);
   };
   
+  
 
   return (
     <header className="header navbar navbar-expand-lg navbar-light">
       <div className="collapse navbar-collapse">
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
           <li className="nav-item">
-            <Link className="nav-link" to="/">
+            <Link className={`nav-link ${path == "/" ? "active" : ""}`} to="/">
               Home
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/shop">
+            <Link className={`nav-link ${path == "/shop" ? "active" : ""}`} to="/shop">
               Shop
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/about">
+            <Link className={`nav-link ${path == "/about" ? "active" : ""}`} to="/about">
               About
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/contact">
+            <Link className={`nav-link ${path == "/contact" ? "active" : ""}`} to="/contact">
               Contact
             </Link>
           </li>
@@ -45,12 +48,12 @@ function Header() {
             {!user ? (
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className="nav-link" to="/login">
+              <Link className={`nav-link ${path == "/login" ? "active" : ""}`} to="/login">
                 Login
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/register">
+              <Link className={`nav-link ${path == "/register" ? "active" : ""}`} to="/register">
                 Register
               </Link>
             </li>
@@ -66,13 +69,13 @@ function Header() {
                   {(user.roles.includes("admin") ||
                     user.roles.includes("user")) && (
                     <li className="nav-item">
-                      <Link className="nav-link" to="/admin">
+                      <Link className="nav-link" to="/admin" >
                         Admin
                       </Link>
                     </li>
                   )}
                   <li className="nav-item">
-                    <Link className="nav-link" to={`/profile/${user.name}`}>
+                    <Link className={`nav-link ${path == `/profile/${user.name}` ? "active" : ""}`} to={`/profile/${user.name}`}>
                       Profile
                     </Link>
                   </li>
