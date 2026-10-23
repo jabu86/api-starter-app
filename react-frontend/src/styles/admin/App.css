@@ -11,7 +11,8 @@
   font-size: 16px;
   font-weight: 600;
 }
-.container-fluid .row .sidebar h2, .container-fluid .row .sidebar p {
+.container-fluid .row .sidebar h2,
+.container-fluid .row .sidebar p {
   padding: 0.5rem 1rem;
 }
 .container-fluid .row .sidebar a {
@@ -33,21 +34,17 @@
   flex: 1;
 }
 .container-fluid .row .admin-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  color: #131313;
-  padding: 0.89rem;
-  margin-right: auto;
-  margin-left: auto;
   background-color: #f1f1f1;
+  min-height: 5rem;
+  padding: 1rem;
+  text-align: center;
+  border-top: #010373 2px solid;
 }
 
 .image-loader {
   display: flex;
-  justifyContent: center;
-  alignItems: center;
+  justify-content: center;
+  align-items: center;
   height: 100px;
 }
 
