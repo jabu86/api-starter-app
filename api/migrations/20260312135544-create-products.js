@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       quantity: {
-          type: Sequelize.STRING
+          type: Sequelize.INTEGER
       },
       in_stock: {
           type: Sequelize.BOOLEAN

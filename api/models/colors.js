@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Colors',
+      tableName: 'colors', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+      freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
       hooks:{
           beforeCreate: (category) => {
               category.slug = createSlug(category.name);

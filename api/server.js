@@ -43,6 +43,8 @@ app.use(
   usersRoutes,
 );
 
+
+
 async function connectDB() {
   try {
     await sequelize.authenticate();

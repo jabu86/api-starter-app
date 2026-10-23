@@ -41,7 +41,9 @@ module.exports = (sequelize, DataTypes) => {
     resetTokenExpire: {type: DataTypes.DATE},
   }, {
     sequelize,
-    modelName: 'User',
+        modelName: 'User',
+        tableName: 'users', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+        freezeTableName: true // 💡 Stops Sequelize from auto-pluralizing or messing with case
   });
 
   User.beforeCreate( async (user) => {

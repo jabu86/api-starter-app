@@ -28,6 +28,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'product_size',
+    tableName: 'product_sizes', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+    freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
   });
   return product_size;
 };

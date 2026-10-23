@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Sizes',
+      tableName: 'sizes', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+      freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
       hooks:{
           beforeCreate: (size) => {
               size.slug = createSlug(size.size);

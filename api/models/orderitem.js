@@ -26,10 +26,12 @@ module.exports = (sequelize, DataTypes) => {
     order_id: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
     quantity: DataTypes.INTEGER,
-    price: DataTypes.DECIMAL
+    price: DataTypes.DECIMAL(10, 2)
   }, {
     sequelize,
     modelName: 'OrderItem',
+    tableName: 'OrderItems', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+    freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
   });
   return OrderItem;
 };

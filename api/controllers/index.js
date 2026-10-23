@@ -179,9 +179,12 @@ exports.products = async (req, res) => {
           },
         },
         {
-          price: {
-            [Op.like]: `%${searchTerm}%`,
-          },
+          price: sequelize.where(
+              sequelize.cast(sequelize.col("price"), "TEXT"),
+              {
+                [Op.like]: `%${searchTerm}%`,
+              }
+          ),
         },
       ];
     }
@@ -255,14 +258,23 @@ exports.products = async (req, res) => {
 
     // 2. Extract IDs
     const ids = productIds.map((product) => product.id);
-    console.log(productIds);
+    // console.log(productIds);
 
     //get average ratings for all the products
     const ratings = await Reviews.findAll({
       attributes: [
         "product_id",
-        [sequelize.fn("AVG", sequelize.col("ratings")), "averageRating"],
-        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+        [
+          sequelize.fn(
+              "AVG",
+              sequelize.cast(sequelize.col("ratings"), "INTEGER")
+          ),
+          "averageRating",
+        ],
+        [
+          sequelize.fn("COUNT", sequelize.col("id")),
+          "totalReviews",
+        ],
       ],
       where: {
         product_id: ids,
@@ -405,11 +417,23 @@ exports.product = async (req, res) => {
     }
 
     //calculate product ratings
+    // Calculate product ratings
     const ratingStats = await Reviews.findOne({
-      where: { product_id: product.id },
+      where: {
+        product_id: product.id,
+      },
       attributes: [
-        [sequelize.fn("AVG", sequelize.col("ratings")), "averageRating"],
-        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+        [
+          sequelize.fn(
+              "AVG",
+              sequelize.cast(sequelize.col("ratings"), "INTEGER")
+          ),
+          "averageRating",
+        ],
+        [
+          sequelize.fn("COUNT", sequelize.col("id")),
+          "totalReviews",
+        ],
       ],
       raw: true,
     });

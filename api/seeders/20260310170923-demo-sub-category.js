@@ -26,7 +26,7 @@ module.exports = {
           name: 'Shoes',
           slug: 'shoes',
           category_id: 1,
-          description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution",
+          description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
@@ -39,7 +39,7 @@ module.exports = {
       },{
           name: 'Clothing',
           slug: 'clothing',
-          description: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution",
+          description: "It is a long established fact that a reader will be distracted by t.",
           category_id: 2,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -47,21 +47,21 @@ module.exports = {
           name: 'Shoes',
           slug: 'shoes',
           category_id: 2,
-          description: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC",
+          description: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
           name: 'Accessories',
           slug: 'accessories',
           category_id: 2,
-          description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.",
+          description: "There are many variations of passages of Lorem Ipsum available.",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
           name: 'Computer',
           slug: 'computer',
           category_id: 3,
-          description: "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.",
+          description: "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.",
           createdAt: new Date(),
           updatedAt: new Date()
 
@@ -69,27 +69,27 @@ module.exports = {
           name: 'Phone',
           slug: 'phone',
           category_id: 3,
-          description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.",
+          description: "There are many variations of passages of Lorem Ipsum available, but the .",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
           name: 'Tablet',
           slug: 'tablet',
           category_id: 3,
-          description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.",
+          description: "There are many variations of passages of Lorem Ipsum available, but the ma.",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
           name: 'Gifts for Men',
           slug: 'gifts-for-men',
           category_id: 4,
-          description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.",
+          description: "There are many variations of passages of Lorem Ipsum available, but the ma.",
           createdAt: new Date(),
           updatedAt: new Date()
       },{
           name: 'Gifts for Women',
           slug: 'gifts-for-women',
-          description: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.",
+          description: "There are many variations of passages of Lorem Ipsum available, but the ma.",
           category_id: 4,
           createdAt: new Date(),
           updatedAt: new Date()

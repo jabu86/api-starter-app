@@ -4,6 +4,7 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     const createSlug = (text) => {
+        if (!text) return "";
         return text
             .toLowerCase()
             .replace(/[^\w\s]/g, "")
@@ -80,12 +81,14 @@ module.exports = (sequelize, DataTypes) => {
     slug: DataTypes.STRING,
     description: DataTypes.TEXT,
     price: DataTypes.STRING,
-    quantity: DataTypes.STRING,
+    quantity: DataTypes.INTEGER,
     in_stock: DataTypes.BOOLEAN,
     active: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Products',
+      tableName: 'products', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+      freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
       hooks:{
           beforeCreate: (product) => {
               product.slug = createSlug(product.name);

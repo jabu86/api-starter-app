@@ -55,12 +55,13 @@ exports.createOrders = async (req, res) => {
       }
 
       // Check quantity
-      if (!item.quantity || item.quantity < 1) {
+      if (Number(!item.quantity) || Number( item.quantity) < 1) {
         throw new Error(`Invalid quantity for product ${product.id}`);
       }
 
+// return  console.log(product.quantity < item.quantity);
       // Check stock
-      if (product.quantity < item.quantity) {
+      if (Number(product.quantity) <  Number(item.quantity)) {
         throw new Error(`${product.name} does not have enough stock`);
       }
 
@@ -100,6 +101,7 @@ exports.createOrders = async (req, res) => {
     // --------------------------------
 
     const order = await Order.create(copyOrder, { transaction });
+    console.log('orders created')
 
     // --------------------------------
     // Create order items
@@ -139,9 +141,9 @@ exports.createOrders = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    console.error("Create order error:", err);
     await transaction.rollback();
 
-    // console.error("Create order error:", err);
 
     return res.status(500).json({
       message: err.message || "Unable to create order",
