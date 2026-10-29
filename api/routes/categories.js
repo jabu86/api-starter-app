@@ -8,30 +8,30 @@ const { body } = require('express-validator');
 const validateCategory  = require('../validation/categoryValidation');
 //index route
 //Get Categories and SubCategories.jsx
-router.get('/categories' ,categoriesController.index);
-router.get('/categories/:slug' ,categoriesController.category);
-router.get('/sub-categories' ,subCategoriesController.index);
+router.get('/categories', authMiddleware, roleMiddleware('admin', 'user'), categoriesController.index);
+router.get('/categories/:slug', authMiddleware, roleMiddleware('admin', 'user') ,categoriesController.category);
+router.get('/sub-categories', authMiddleware, roleMiddleware('admin', 'user'),subCategoriesController.index);
 
 /**
  * create routes
  * Create categories and sub-categories
  */
-router.post('/categories' , validateCategory, categoriesController.create);
-router.post('/sub-categories' , validateCategory, subCategoriesController.create);
+router.post('/categories' , authMiddleware, roleMiddleware('admin', 'user'),validateCategory, categoriesController.create);
+router.post('/sub-categories' , authMiddleware, roleMiddleware('admin', 'user'), validateCategory, subCategoriesController.create);
 
 /**
  * update routes
  * update categories and sub-categories
  */
-router.post('/categories/:id' , validateCategory, categoriesController.update);
-router.post('/sub-categories/:id', validateCategory, subCategoriesController.update);
+router.post('/categories/:id' , authMiddleware, roleMiddleware('admin', 'user'), validateCategory, categoriesController.update);
+router.post('/sub-categories/:id', authMiddleware, roleMiddleware('admin', 'user'), validateCategory, subCategoriesController.update);
 
 /**
  * delete routes
  * delete categories and sub-categories
  */
-router.delete('/categories/:id' ,categoriesController.delete);
-router.delete('/sub-categories/:id' ,subCategoriesController.delete);
+router.delete('/categories/:id', authMiddleware, roleMiddleware('admin', 'user'), categoriesController.delete);
+router.delete('/sub-categories/:id',authMiddleware, roleMiddleware('admin', 'user'), subCategoriesController.delete);
 
 
 module.exports = router

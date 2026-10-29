@@ -7,13 +7,13 @@ const colorsController = require('../controllers/admin/colorsController');
 const { body } = require('express-validator');
 //index route
 //Get Categories and SubCategories.jsx
-router.get('/colors' ,colorsController.index);
+router.get('/colors' ,authMiddleware, roleMiddleware('admin' , 'user') ,colorsController.index);
 
 /**
  * create routes
  * Create categories and sub-categories
  */
-router.post('/colors' ,  [
+router.post('/colors' ,authMiddleware, roleMiddleware('admin' , 'user') , [
     body("name").notEmpty().withMessage('Color name is required')
         .trim()
         .isLength({min:3 , max:50 }).withMessage("Color can't be less than 4 characters and can't be longer than 50 characters.")
@@ -23,7 +23,7 @@ router.post('/colors' ,  [
  * update routes
  * update categories and sub-categories
  */
-router.post('/colors/:id' , [
+router.post('/colors/:id' ,authMiddleware, roleMiddleware('admin' , 'user') , [
     body("name").notEmpty().withMessage('Color name is required')
         .trim()
         .isLength({min:3 , max:50 }).withMessage("Color can't be less than 4 characters and can't be longer than 50 characters.")
@@ -33,7 +33,7 @@ router.post('/colors/:id' , [
  * delete routes
  * delete categories and sub-categories
  */
-router.delete('/colors/:id' ,colorsController.delete);
+router.delete('/colors/:id' ,authMiddleware, roleMiddleware('admin' , 'user') ,colorsController.delete);
 
 
 

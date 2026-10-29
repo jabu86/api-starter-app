@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         User.belongsToMany(models.Role, {
             through: models.User_Role,
             foreignKey: "user_id",
-            otherKey: "role_id"
+            otherKey: "role_id",
         });
         User.hasOne(models.Profile, {
             foreignKey: "user_id",

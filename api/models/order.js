@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     user_id: DataTypes.INTEGER,
     status: DataTypes.STRING,
     total: DataTypes.DECIMAL,
-    
     shipping_address: DataTypes.STRING,
     shipping_address_2: DataTypes.STRING,
     shipping_city: DataTypes.STRING,
@@ -39,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
     is_paid:DataTypes.BOOLEAN,
     paid_at:DataTypes.DATE,
     is_delivered:DataTypes.BOOLEAN,
+    delivered_at:DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Order',

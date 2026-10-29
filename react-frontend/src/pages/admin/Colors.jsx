@@ -5,7 +5,14 @@ import ColorsForm from "../../componentes/admin/ColorsForm.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
 
+import {
+  faDashboard, faLayerGroup, faPaintbrush,
+} from "@fortawesome/free-solid-svg-icons";
+import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 function Colors({ openModal, show }) {
+  const navigate = useNavigate();
   const [colors, setColors] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -25,14 +32,23 @@ function Colors({ openModal, show }) {
         limit: "10",
         search: searchTerm || "",
       });
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       const res = await fetch(`/api/admin/colors?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
+      if(res.status === 401){
+        toast.error(data.message);
+      }
       setColors(data.colors || []);
       setPagination(data.pagination);
     } catch (error) {
@@ -68,15 +84,24 @@ function Colors({ openModal, show }) {
       name: form.name,
     };
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+      if(res.status === 401){
+        toast.error(data.message);
+      }
 
       if (res.status === 400 && data.errors) {
         const groupedErrors = data.errors.reduce((acc, err) => {
@@ -125,10 +150,22 @@ function Colors({ openModal, show }) {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (!result.isConfirmed) return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
         const res = await fetch(`/api/admin/colors/${id}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
         const data = await res.json();
+        if(res.status === 401){
+          toast.error(data.message);
+        }
         if (data.success) {
           getColors();
         }
@@ -146,18 +183,25 @@ function Colors({ openModal, show }) {
   };
 
   return (
-    <div className="row g-0 mt-1 p-3">
+      <>
+        <Breadcrumb route1={'/admin'} route2={'/admin/colors'} parentPage={'Dashboard'} page={`Colors`}  icon1={faDashboard} icon2={faPaintbrush} />
+        <div className="row">
+          <div className="col-md-8">
+            <SearchBar search={search} setSearch={setSearch} getData={getColors} />
+          </div>
+          <div className="col-md-4">
+            <button
+                className="btn btn-primary float-end"
+                type="button"
+                onClick={() => handleAddColor()}
+            >
+              Add Color
+            </button>
+          </div>
+        </div>
+        <div className="row p-2">
       <div className="col-12 mb-1">
-        <button
-          className="btn btn-primary float-end"
-          type="button"
-          onClick={() => handleAddColor()}
-        >
-          Add Color
-        </button>
-        <h2>Colors</h2>
-        <SearchBar search={search} setSearch={setSearch} getData={getColors} />
-        <table className="table table-responsive mt-4">
+        <table className="table table-responsive">
           <caption>List of colors</caption>
           <thead>
             <tr>
@@ -193,6 +237,8 @@ function Colors({ openModal, show }) {
         </Modal>
       )}
     </div>
+
+        </>
   );
 }
 

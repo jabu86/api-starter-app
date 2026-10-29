@@ -12,7 +12,7 @@ const upload = require("../middleware/upload");
  * index route
  * Get brand and SubCategories.jsx
  */
-router.get('/brands' ,brandController.index);
+router.get('/brands',authMiddleware, roleMiddleware('admin', 'user') ,brandController.index);
 
 /**
  * create routes
@@ -22,7 +22,7 @@ router.post('/brands' ,(req, res, next) => {
     req.uploadType = 'brands';
     next();
 
-},upload.single('image') ,brandValidation, brandController.create);
+},upload.single('image') ,authMiddleware, roleMiddleware('admin', 'user') ,brandValidation, brandController.create);
 
 
 /**
@@ -33,13 +33,13 @@ router.put('/brands' ,(req, res, next) => {
     req.uploadType = 'brands';
     next();
 
-},upload.single('image') ,brandValidation, brandController.update);
+},upload.single('image') ,authMiddleware, roleMiddleware('admin', 'user') ,brandValidation, brandController.update);
 
 /**
  * delete brand
  * delete categories and sub-categories
  */
-router.delete('/brands/:id' ,brandController.delete);
+router.delete('/brands/:id' ,authMiddleware, roleMiddleware('admin', 'user') ,brandController.delete);
 
 
 module.exports = router

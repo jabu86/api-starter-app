@@ -12,14 +12,14 @@ const {
 
 /**
  * index route
- * Get all products
+ * Get all products and it's sub categories
  */
-router.get('/products' ,productController.index);
-router.get('/products/category' ,productController.category);
-router.get('/products/brands' ,productController.brands);
-router.get('/products/sub-category' ,productController.subCategory);
-router.get('/products/colors' ,productController.colors);
-router.get('/products/sizes' ,productController.sizes);
+router.get('/products',authMiddleware, roleMiddleware('admin', 'user') ,productController.index);
+router.get('/products/category', authMiddleware, roleMiddleware('admin', 'user') ,productController.category);
+router.get('/products/brands', authMiddleware, roleMiddleware('admin', 'user') ,productController.brands);
+router.get('/products/sub-category', authMiddleware, roleMiddleware('admin', 'user') ,productController.subCategory);
+router.get('/products/colors',authMiddleware, roleMiddleware('admin', 'user') ,productController.colors);
+router.get('/products/sizes', authMiddleware, roleMiddleware('admin', 'user'),productController.sizes);
 
 
 /**
@@ -30,7 +30,7 @@ router.post(
     "/products",
     uploadProductImages,
     processProductImages,
-    validateProduct,
+    validateProduct, authMiddleware,roleMiddleware('admin', 'user'),
     productController.create
 );
 
@@ -42,6 +42,7 @@ router.post('/products/:id' ,
     uploadProductImages,
     processProductImages,
     validateProduct,
+    authMiddleware,roleMiddleware('admin', 'user'),
     productController.update
 );
 
@@ -50,8 +51,8 @@ router.post('/products/:id' ,
  * delete brand
  * delete products
  */
-router.delete('/products/:id' ,productController.delete);
+router.delete('/products/:id' ,authMiddleware, roleMiddleware("admin", "user"), productController.delete);
 
-router.delete('/products/:id/image' ,productController.deleteImage);
+router.delete('/products/:id/image', authMiddleware,roleMiddleware("admin", "user") ,productController.deleteImage);
 
 module.exports = router

@@ -1,4 +1,4 @@
-const { User } = require("../../models");
+const { User , Role } = require("../../models");
 const { body, validationResult } = require("express-validator");
 const { Op } = require("sequelize");
 
@@ -23,16 +23,22 @@ exports.index = async (req, res) => {
             [Op.like]: `%${searchTerm}%`,
           },
         },
-        
-        {
-          slug: {
-            [Op.like]: `%${searchTerm}%`,
-          },
-        },
+
       ];
     }
     const { count, rows } = await User.findAndCountAll({
+      attributes: {
+        exclude: ["password", "resetToken", "resetTokenExpire"],
+      },
       where,
+      include: [
+        {
+          model: Role,
+          through: {
+            attributes: [],
+          },
+        },
+      ],
       distinct: true,
       subQuery: false,
       limit,
@@ -60,9 +66,9 @@ exports.index = async (req, res) => {
 };
 
 exports.assignRole = async (req, res) => {
-  const { id } = req.params;
+  const {user_id, role_id} = req.body;
   try {
-    const user = await Brand.findOne({ where: { id } });
+    const user = await User.findOne({ where: { id :user_id } });
     if (!user) return res.status(400).json({ errors: "User not found" });
     
     return res
@@ -77,6 +83,7 @@ exports.assignRole = async (req, res) => {
     return res.status(500).json({ errors: err, message: "Sever Error" });
   }
 };
+
 
 /*
 exports.update = async (req, res) => {

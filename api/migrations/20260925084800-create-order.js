@@ -49,10 +49,13 @@ module.exports = {
       is_paid: {
         type: Sequelize.BOOLEAN
       },
+      paid_at: {
+        type: Sequelize.DATE
+      },
       is_delivered: {
         type: Sequelize.BOOLEAN
       },
-      paid_at: {
+      delivered_at: {
         type: Sequelize.DATE
       },
       createdAt: {

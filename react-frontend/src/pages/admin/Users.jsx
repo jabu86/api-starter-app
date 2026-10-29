@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import OrderList from "../../componentes/admin/OrderList.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
-import axios from 'axios'
-
+import UserList from "../../componentes/admin/UserList.jsx";
+import {useNavigate} from "react-router-dom";
+import {
+  faDashboard, faLayerGroup, faPaintbrush, faRuler,
+} from "@fortawesome/free-solid-svg-icons";
+import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
+import {faUsers} from "@fortawesome/free-solid-svg-icons/faUsers";
 function Users() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({
@@ -17,18 +22,32 @@ function Users() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: "5",
+        limit: "10",
         search: searchTerm || "",
       });
-      
-      
-      // const data = await res.json();
-      // setOrders(data.brands || []);
-      // setPagination(data.pagination);
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      const res = await fetch(`/api/admin/users?${params.toString()}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUsers(data.users);
+        setPagination(data.pagination);
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
 
   useEffect(() => {
     getUsers(1, "");
@@ -38,31 +57,64 @@ function Users() {
     // setCurrentPage(currentPage);
     getUsers(page, search);
   };
+  const assignUserRole = async (user) => {
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      const payload = {
+        user_id: user.id,
+        role_id: user.Roles?.[0]?.id,
+      }
+      const res = await fetch(`/api/admin/users/assign-role`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+
+    }catch (err) {
+      console.log(err.response)
+
+    }
+
+  }
 
   return (
-    <div className="row g-0 mt-1 p-3">
+      <>
+        <Breadcrumb route1={'/admin'} route2={'/admin/users'} parentPage={'Dashboard'} page={`Users`}  icon1={faDashboard} icon2={faUsers} />
+    <div className="row p-2">
       <div className="col-12 mb-1">
-        <h2>Users</h2>
         <SearchBar search={search} setSearch={setSearch} getData={getUsers} />
         <table className="table table-responsive mt-4">
-          <caption>List of brands</caption>
+          <caption>List of users</caption>
           <thead>
             <tr>
-              <th>BRAND</th>
-              <th>IMAGE</th>
-              <th className="text-center">ACTION</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th className="text-center">ASSIGN ROLE</th>
             </tr>
           </thead>
           <tbody className="table-group-divider">
-            {/* <OrderList
-              brands={orders}
+            <UserList
+              users={users}
               pagination={pagination}
               handlePageChange={handlePageChange}
-            /> */}
+              assignUserRole={assignUserRole}
+            />
           </tbody>
         </table>
       </div>
     </div>
+        </>
   );
 }
 

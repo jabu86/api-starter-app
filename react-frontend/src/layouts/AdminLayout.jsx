@@ -9,7 +9,7 @@ function AdminLayout({ handleSideBarClick, sideBarOpen }) {
     <div className="container-fluid">
       <div className="row g-0">
         <SideBar sideBarOpen={sideBarOpen} />
-        <main className="content col-sm-10">
+        <main className="content col-md-10 m-0">
           <Header handleSideBarClick={handleSideBarClick} />
           <Outlet />
           <Footer />

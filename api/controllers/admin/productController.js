@@ -22,8 +22,7 @@ exports.index = async (req, res) => {
     const search = req.query.search || "";
     const offset = (page - 1) * limit;
     const where = {};
-    
-    
+
     if (search.trim()) {
       const searchTerm = search.trim();
 
@@ -203,8 +202,13 @@ exports.create = async (req, res) => {
   const t = await sequelize.transaction();
 
 
-  
+  let stock= false;
   try {
+    if(quantity > 0){
+      stock = true;
+    }
+
+
     const newProduct = await Products.create(
       {
         name: name,
@@ -213,7 +217,7 @@ exports.create = async (req, res) => {
         description: description,
         price: price,
         quantity: quantity,
-        in_stock: in_stock,
+        in_stock: stock,
         active: active,
       },
       { transaction: t },
@@ -511,17 +515,19 @@ exports.delete = async (req, res) => {
     const getColors = product.productColors;
     const getSizes = product.productSizes;
     const subCategoryProducts = product.sub_category_products;
+    //
+    // return  console.log(getSizes ,req.params.id ,product.id);
     if (subCategoryProducts.length > 0) {
       for (let subCatPro of subCategoryProducts) {
         await sub_category_product.destroy({
-          where: { id: subCatPro.id },
+          where: { id: subCatPro.id },transaction :t
         });
       }
     }
     if (getImages.length > 0) {
       for (const image of getImages) {
         await product_images.destroy({
-          where: { id: image.id },
+          where: { id: image.id },transaction: t
         });
         const folder = path.dirname(image.image);
 
@@ -530,19 +536,20 @@ exports.delete = async (req, res) => {
         await fs.remove(folderPath);
       }
     }
-    if (getColors.length > 0) {
-      for (let color of getColors) {
-        await product_colors.destroy({
-          where: { id: color.id },
-        });
-      }
+    if(getColors.length > 0) {
+
+      await product_colors.destroy({
+        where: { product_id: product.id }, transaction: t,
+      });
     }
 
     if (getSizes.length > 0) {
-      for (let size of getSizes) {
-        await product_size.destroy({ where: { id: size.id } });
-      }
+
+      await product_size.destroy({ where: { product_id: product.id }, transaction: t });
+
     }
+
+    await t.commit();
 
     await product.destroy();
     return res.status(201).json({
@@ -551,6 +558,7 @@ exports.delete = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    await t.rollback();
     console.error(err);
     console.log(err);
     return res.status(500).json({

@@ -267,12 +267,37 @@ exports.payOrderItem = async (req, res) => {
 //@desc  Update Order to deliver
 //@route POST /api/admin/orders/:id/delivered
 //@access Private/Admin
-exports.deliverOrderItem = async (req, res) => {
+exports.markOrdrAsDelivered = async (req, res) => {
   try {
-    res.status(200).json({ message: "Deliver update" });
+    const order = await Order.findOne({
+      where: {
+        id: req.params.id,
+      }
+    });
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+        order,
+        success: false,
+      });
+    }
+
+    order.is_delivered = true;
+    order.delivered_at = new Date();
+    await order.save();
+    return res.status(200).json({
+      message: "Order marked as delivered successfully.",
+      order,
+      success: false,
+    });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({
+      message: `Server Error while marking order as delivered. ${err.message}`,
+      success: false,
+    });
   }
+
 };
 
 //@desc  admin get all orders

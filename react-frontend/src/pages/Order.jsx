@@ -5,14 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import noProductImage from "../assets/images/noproduct.png";
-
+import { useAuth } from "../context/AuthContext.jsx";
 function Order() {
   const navigate = useNavigate();
   const { id: orderId } = useParams();
   const [order, setOrder] = useState({});
   const [checkinOrder, setCheckingOrder] = useState(true);
 
-  console.log(order);
+  const { user } = useAuth();
+
 
   const getOrder = async () => {
     try {
@@ -39,6 +40,8 @@ function Order() {
     }
   };
 
+
+
   // console.log();
 
   useEffect(() => {
@@ -55,6 +58,39 @@ function Order() {
       </div>
     );
   }
+
+  const markAsDelivered = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      const { data } = await axios.post(`/api/orders/${orderId}/mark-delivered`,{},{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        getOrder()
+        toast.success(data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          closeOnClick: true,
+          theme: "colored",
+        });
+        // console.log(data)
+      }
+    } catch (error) {
+      if(error.response.status === 401 && error.response){
+        toast.error(error.response.data.message);
+      }
+      console.error(
+          "Failed to mark order as delivered:",
+          error.response?.data || error,
+      );
+    }
+  };
 
   const payOrder = async () => {
     try {
@@ -93,6 +129,7 @@ function Order() {
       }
     }
   };
+
   return (
     <div className="row">
       <div className="col-md-12">
@@ -117,7 +154,7 @@ function Order() {
                   {order.shipping_postal_code}
                 </p>
                 {order.is_delivered ? (
-                  <div className="alert alert-success">Delivered on </div>
+                  <div className="alert alert-success">Delivered on {order.delivered_at} </div>
                 ) : (
                   <div className="alert alert-danger">Not Delivered</div>
                 )}
@@ -206,9 +243,7 @@ function Order() {
                     </div>
                     <div className="col">R {order.total}</div>
                   </div>
-                  {/* pay order place holder */}
                 </li>
-
                 {!order.is_paid && (
                   <li className="list-group p-4">
                     <button
@@ -220,6 +255,11 @@ function Order() {
                     </button>
                   </li>
                 )}
+                {user &&
+                    user.roles.includes("admin") &&
+                    order.is_paid &&
+                    order.is_delivered === false &&
+                    (<li className="list-group p-4"><button className="btn btn-block btn-warning" onClick={markAsDelivered}>Mark As Delivered</button></li>)}
               </ul>
             </div>
           </div>

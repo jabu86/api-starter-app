@@ -4,6 +4,12 @@ import Modal from "../../componentes/admin/Modal.jsx";
 import SizesForm from "../../componentes/admin/SizesForm.jsx";
 import Swal from "sweetalert2";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
+import {
+  faDashboard, faLayerGroup, faPaintbrush, faRuler,
+} from "@fortawesome/free-solid-svg-icons";
+import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 function Sizes({ openModal, show }) {
   const [sizes, setSizes] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -16,6 +22,7 @@ function Sizes({ openModal, show }) {
     totalItems: 0,
     totalPages: 0,
   });
+  const navigate = useNavigate();
   const getSizes = async (page = 1, searchTerm = "") => {
     try {
       const params = new URLSearchParams({
@@ -23,14 +30,22 @@ function Sizes({ openModal, show }) {
         limit: "10",
         search: searchTerm || "",
       });
-
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const res = await fetch(`/api/admin/size?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
+      if(res.status === 401){
+        toast.error(data.message);
+      }
       setSizes(data.sizes || []);
       setPagination(data.pagination);
     } catch (error) {
@@ -66,15 +81,24 @@ function Sizes({ openModal, show }) {
       size: form.size,
     };
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+      if(res.status === 401){
+        toast.error(data.message);
+      }
 
       if (res.status === 400 && data.errors) {
         const groupedErrors = data.errors.reduce((acc, err) => {
@@ -124,10 +148,22 @@ function Sizes({ openModal, show }) {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (!result.isConfirmed) return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
         const res = await fetch(`/api/admin/size/${id}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
         const data = await res.json();
+        if(res.status === 401){
+          toast.error(data.message);
+        }
         if (data.success) {
           getSizes();
         }
@@ -144,18 +180,23 @@ function Sizes({ openModal, show }) {
     }
   };
   return (
-    <div className="row g-0 mt-1 p-3">
+      <>
+        <Breadcrumb route1={'/admin'} route2={'/admin/sizes'} parentPage={'Dashboard'} page={`Sizes || Capacity`}  icon1={faDashboard} icon2={faRuler} />
+        <div className="row">
+          <div className="col-md-8"><SearchBar search={search} setSearch={setSearch} getData={getSizes} /></div>
+          <div className="col-md-4">
+            <button
+                className="btn btn-primary float-end"
+                type="button"
+                onClick={() => handleAddSize()}
+            >
+              Add Size
+            </button>
+          </div>
+        </div>
+    <div className="row p-2">
       <div className="col-12 mb-1">
-        <button
-          className="btn btn-primary float-end"
-          type="button"
-          onClick={() => handleAddSize()}
-        >
-          Add Size
-        </button>
-        <h2>Sizes</h2>
-        <SearchBar search={search} setSearch={setSearch} getData={getSizes} />
-        <table className="table table-responsive mt-4">
+        <table className="table table-responsive">
           <caption>List of sizes</caption>
           <thead>
             <tr>
@@ -191,6 +232,7 @@ function Sizes({ openModal, show }) {
         </Modal>
       )}
     </div>
+        </>
   );
 }
 

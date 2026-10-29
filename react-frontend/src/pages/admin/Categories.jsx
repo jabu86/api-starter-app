@@ -4,8 +4,14 @@ import CategoryList from "../../componentes/admin/CategoryList.jsx";
 import CategoryForm from "../../componentes/admin/CategoryForm.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
-
+import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
+import {
+  faDashboard,faLayerGroup,
+} from "@fortawesome/free-solid-svg-icons";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 function Categories({ openModal, show }) {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -20,19 +26,28 @@ function Categories({ openModal, show }) {
   const [initialData, setInitialData] = useState({});
   const getCategories = async (page = 1, searchTerm = "") => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const params = new URLSearchParams({
         page: page.toString(),
         limit: "10",
         search: searchTerm || "",
       });
+
       const res = await fetch(`/api/admin/categories?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
-
+      if(res.status === 401){
+        toast.error(data.message);
+      }
       setPagination(data.pagination);
       setCategories(data.categories || []);
     } catch (error) {
@@ -71,15 +86,24 @@ function Categories({ openModal, show }) {
       description: form.description,
     };
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const res = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
+      if(res.status === 401){
+        toast.error(data.message);
+      }
 
       if (res.status === 400 && data.errors) {
         const groupedErrors = data.errors.reduce((acc, err) => {
@@ -129,10 +153,22 @@ function Categories({ openModal, show }) {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (!result.isConfirmed) return;
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
         const res = await fetch(`/api/admin/categories/${id}`, {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
         const data = await res.json();
+        if(res.status === 401){
+          toast.error(data.message);
+        }
         if (data.success) {
           getCategories();
         }
@@ -150,22 +186,29 @@ function Categories({ openModal, show }) {
   };
 
   return (
-    <div className="row g-0 mt-1 p-3">
-      <div className="col-12 mb-1">
-        <button
-          className="btn btn-primary float-end"
-          type="button"
-          onClick={() => handleAddCategory(show)}
-        >
-          Add Category
-        </button>
-        <h2>Categories</h2>
-        <SearchBar
-          search={search}
-          setSearch={setSearch}
-          getData={getCategories}
-        />
-        <table className="table table-responsive mt-4">
+      <>
+        <Breadcrumb route1={'/admin'} route2={'/admin/categories'} parentPage={'Dashboard'} page={'Categories'} icon1={faDashboard} icon2={faLayerGroup} />
+        <div className="row p-2">
+          <div className="col-md-8">
+            <SearchBar
+                search={search}
+                setSearch={setSearch}
+                getData={getCategories}
+            />
+          </div>
+          <div className="col-md-4">
+            <button
+                className="btn btn-primary float-end"
+                type="button"
+                onClick={() => handleAddCategory(show)}
+            >
+              Add Category
+            </button>
+          </div>
+        </div>
+        <div className="row p-2">
+          <div className="col-12 mb-1">
+        <table className="table table-responsive">
           <caption>List of categories</caption>
           <thead>
             <tr>
@@ -201,6 +244,7 @@ function Categories({ openModal, show }) {
         </Modal>
       )}
     </div>
+        </>
   );
 }
 

@@ -15,8 +15,6 @@ function ProductForm(
 
     }){
 
-
-        
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [form, setForm] = useState({
         id:'',
@@ -29,41 +27,14 @@ function ProductForm(
         subCategoryId: [],
         colors:[],
         sizes: [],
+        in_stock:  false,
+        active: false,
         newImages: [],
         existingImages: [],
         activeImage: null,
     });
 
     // console.log(initialData);
-    
-/*
-    useEffect(() => {
-        if (initialData && colors?.length > 0 && sizes?.length > 0) {
-            setForm({
-                id : initialData.id || '',
-                name: initialData.name || '',
-                brand: initialData.brand.id || '',
-                price: initialData.price || '',
-                quantity: initialData.quantity || '',
-                description: initialData.description || '',
-                categoryId: initialData.category.id || '',
-                subCategoryId: initialData.subCategory?.map(category => String(category.id))|| [],
-                in_stock: initialData.in_stock || false,
-                active:initialData.active || false,
-                colors:initialData.colors?.map(color => String(color.color_id)) || [],
-                sizes:initialData.sizes?.map(size => String(size.size_id)) || [],
-                existingImages:initialData.images || [],
-                newImages: [],
-                activeImage: initialData.images?.find(img => img.active)
-                    ? { type: "existing", value: initialData.images.find(img => img.active).id } :null,
-            });
-            const foundCategory = categories.find(
-                c => c.id === initialData.category.id
-            );
-            setSelectedCategory(foundCategory);
-        }
-    }, [initialData , categories , colors, sizes]);
-*/
 
 useEffect(() => {
     if (!initialData || !categories?.length) {
@@ -88,8 +59,8 @@ useEffect(() => {
         id: initialData.id || "",
         name: initialData.name || "",
         brand: String(initialData.brand?.id || ""),
-        price: initialData.price || "",
-        quantity: initialData.quantity || "",
+        price: initialData.price || 0,
+        quantity: initialData.quantity || 0,
         description: initialData.description || "",
         categoryId,
         subCategoryId: subCategoryIds,

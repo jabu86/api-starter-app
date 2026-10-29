@@ -1,47 +1,66 @@
-import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from './assets/vite.svg'
-// import heroImg from './assets/hero.png'
+import {useEffect, useState} from 'react'
 
 
+ import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
+
+import DashboardHeader from "../../componentes/admin/DashboardHeader.jsx";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
+
+import {
+    faDashboard,
+    faHome,
+
+} from "@fortawesome/free-solid-svg-icons";
 function Dashboard() {
-    const [count, setCount] = useState(0)
+    const navigate = useNavigate();
+    const [orderCount, setOrderCount] = useState(0)
+    const [salesCount, setSalesCount] = useState(0)
+    const [customerCount, setCustomerCount] = useState(0)
+    const [inStockCount, setInStockCount] = useState(0)
+
+    const getDashboard = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            const res = await fetch(`/api/admin/dashboard`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await res.json();
+            if (data.success) {
+
+                setInStockCount(data.productQytTotal)
+                setOrderCount(data.ordersCount)
+                setSalesCount(data.salesCount)
+                setCustomerCount(data.customerCount)
+            }
+        } catch (error) {
+            console.log(error);
+
+            if(error.response.status === 401 && error.response){
+                toast.error(error.response.data.message);
+            }
+        }
+    };
+
+    useEffect(() => {
+
+        getDashboard();
+    })
 
     return (
         <>
-            <div className="main-wrapper">
+        <Breadcrumb route1={'/'} route2={'/admin'} parentPage={'Home'} page={'Dashboard'} icon1={faHome} icon2={faDashboard} />
+        {/*  dashboard  */}
 
-                    <div className="main-header mb-1">
-                        <h2>Dashboard</h2>
-                    </div>
-
-                <div className="dashboard-sub-header">
-                    <div className="well">
-                        <h4>Users</h4>
-                        <p>1 Million</p>
-                    </div>
-                    <div className="well">
-                        <h4>Customers</h4>
-                        <p>1 Million</p>
-                    </div>
-                    <div className="well">
-                        <h4>In Stock</h4>
-                        <p>1 Million</p>
-                    </div>
-                    <div className="well">
-                        <h4>Orders</h4>
-                        <p>1 Million</p>
-                    </div>
-                </div>
-
-                <div className="content">
-                    <div className="well">
-                        <p>Dashboard Graph!!!!</p>
-                    </div>
-                </div>
-
-
-            </div>
+        <DashboardHeader orderCount={orderCount} salesCount={salesCount}  customerCount={customerCount} inStockCount={inStockCount}/>
         </>
     )
 }

@@ -11,7 +11,8 @@ router.post('/user/orders' , authMiddleware, orderController.createOrders);
 router.get('/orders', authMiddleware, roleMiddleware('admin', 'user') , orderController.getAllOders);
 router.get('/orders/:id' , authMiddleware, orderController.getByIdOrder);
 router.post('/user/orders/:id/pay' , authMiddleware, orderController.payOrderItem);
-router.post('/orders/:id/deliver' , authMiddleware, roleMiddleware("admin", "user"), orderController.deliverOrderItem);
+router.post('/orders/:id/mark-delivered' , authMiddleware, roleMiddleware("admin"), orderController.markOrdrAsDelivered);
+
 
 
 module.exports = router

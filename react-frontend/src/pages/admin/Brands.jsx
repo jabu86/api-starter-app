@@ -4,10 +4,14 @@ import Modal from "../../componentes/admin/Modal.jsx";
 import BrandForm from "../../componentes/admin/BrandForm.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
-
-
-
+import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
+import {
+  faDashboard, faHome, faStore, faTrademark,
+} from "@fortawesome/free-solid-svg-icons";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 function Brands({ openModal, show }) {
+  const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
 
   const [selectedBrand, setSelectedBrand] = useState(null);
@@ -27,17 +31,28 @@ function Brands({ openModal, show }) {
         limit: "5",
         search: searchTerm || "",
       });
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       const res = await fetch(`/api/admin/brands?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
+
+      if(res.status === 401){
+        toast.error(data.message);
+      }
+
       setBrands(data.brands || []);
       setPagination(data.pagination);
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
     }
   };
 
@@ -70,11 +85,23 @@ function Brands({ openModal, show }) {
     formData.append("name", form.name);
     formData.append("image", form.image);
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
     const res = await fetch(`/api/admin/brands`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: formData,
     });
     const data = await res.json();
+    if(res.status === 401){
+      toast.error(data.message);
+    }
     if (res.status === 400 && data.errors) {
       const groupedErrors = data.errors.reduce((acc, err) => {
         if (!acc[err.path]) {
@@ -86,6 +113,7 @@ function Brands({ openModal, show }) {
       setErrors(groupedErrors || {});
       return;
     }
+
     if (data.success) {
       setErrors({});
       openModal(show);
@@ -113,12 +141,26 @@ function Brands({ openModal, show }) {
     formData.append("name", form.name);
     formData.append("image", form.image);
     formData.append("id", selectedBrand.id);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     const res = await fetch(`/api/admin/brands`, {
       method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       body: formData,
     });
+
     const data = await res.json();
+
+    if(res.status === 401){
+      toast.error(data.message);
+    }
+
     if (res.status === 400 && data.errors) {
       const groupedErrors = data.errors.reduce((acc, err) => {
         if (!acc[err.path]) {
@@ -161,11 +203,26 @@ function Brands({ openModal, show }) {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       if (!result.isConfirmed) return;
+
       const res = await fetch(`/api/admin/brands/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       const data = await res.json();
+
+      if(res.status === 401){
+        toast.error(data.message);
+      }
+
       if (data.success) {
         getBrands();
       }
@@ -179,18 +236,25 @@ function Brands({ openModal, show }) {
   };
 
   return (
-    <div className="row g-0 mt-1 p-3">
+    <>
+      <Breadcrumb route1={'/admin'} route2={'/admin/brands'} parentPage={'Dashboard'} page={'Brands'} icon1={faDashboard} icon2={faTrademark} />
+      <div className="row p-3">
+        <div className="col-md-8">
+            <SearchBar search={search} setSearch={setSearch} getData={getBrands} />
+        </div>
+        <div className="col-md-4">
+          <button
+              className="btn btn-primary float-end"
+              type="button"
+              onClick={() => handleAddBrand(show)}
+          >
+            Add Brand
+          </button>
+        </div>
+      </div>
+    <div className="row p-3">
       <div className="col-12 mb-1">
-        <button
-          className="btn btn-primary float-end"
-          type="button"
-          onClick={() => handleAddBrand(show)}
-        >
-          Add Brand
-        </button>
-        <h2>Brands</h2>
-        <SearchBar search={search} setSearch={setSearch} getData={getBrands} />
-        <table className="table table-responsive mt-4">
+        <table className="table table-responsive">
           <caption>List of brands</caption>
           <thead>
             <tr>
@@ -228,6 +292,7 @@ function Brands({ openModal, show }) {
         </Modal>
       )}
     </div>
+    </>
   );
 }
 
