@@ -85,27 +85,26 @@ exports.assignRole = async (req, res) => {
 };
 
 
-/*
-exports.update = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  const { name, id } = req.body;
+
+exports.getRoles = async (req, res) => {
+
   try {
-    const brand = await Brand.findByPk(id);
-    brand.name = name;
-    brand.image = `/brands/${req.file.filename}`;
-    await brand.save();
+    const userRoles = await Role.findAll({
+      order: [["name", "DESC"]],
+    });
+    if(userRoles.length > 0){
+      return res.status(200).json({success: true, userRoles: userRoles});
+    }
+
     return res
-      .status(200)
-      .send({ brand, message: "Brand updated successfully.", success: true });
+      .status(404)
+      .send({ message: "Roles not found", success: false });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ errors: err, message: "Server Error" });
   }
 };
-
+/*
 exports.delete = async (req, res) => {
   try {
     const brand = await Brand.findByPk(req.params.id);

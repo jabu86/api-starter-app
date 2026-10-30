@@ -41,7 +41,6 @@ function Order() {
   };
 
 
-
   // console.log();
 
   useEffect(() => {
@@ -203,7 +202,7 @@ function Order() {
                           </div>
                           <div className="col-md-4 align-items-center d-flex">
                             <Link to={`/shop/${product?.slug}`}>
-                              {product.name}
+                              {product?.name}
                             </Link>
                           </div>
                           <div className="col-md-4 align-items-center d-flex">

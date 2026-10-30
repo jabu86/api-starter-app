@@ -5,6 +5,7 @@ const roleMiddleware = require('../middleware/roleMiddleware');
 const usersController = require('../controllers/admin/usersController');
 //index route
 router.get('/users', authMiddleware, roleMiddleware('admin', 'user') , usersController.index);
+router.get('/users/roles', authMiddleware, roleMiddleware('admin', 'user') , usersController.getRoles);
 router.post('/users/assign-role', authMiddleware, roleMiddleware('admin') , usersController.assignRole);
 
 
