@@ -9,6 +9,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
 import {faUsers} from "@fortawesome/free-solid-svg-icons/faUsers";
+import {toast} from "react-toastify";
+import Swal from "sweetalert2";
 function Users({ openModal, show }) {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -87,39 +89,69 @@ function Users({ openModal, show }) {
     // setCurrentPage(currentPage);
     getUsers(page, search);
   };
-  const assignUserRole = async (user) => {
-    openModal(show)
-    // const token = localStorage.getItem("token");
-    // if (!token) {
-    //   navigate("/login");
-    //   return;
-    // }
-    // try {
-    //   const payload = {
-    //     user_id: user.id,
-    //     role_id: user.Roles?.[0]?.id,
-    //   }
-    //   const res = await fetch(`/api/admin/users/assign-role`, {
-    //     method: "POST",
-    //     body: JSON.stringify(payload),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //   });
-    //   const data = await res.json();
-    //   console.log(data);
-    //
-    // }catch (err) {
-    //   console.log(err.response)
-    //
-    // }
 
-   setInitialData(user);
+  const assignUserRole = async (user) => {
+     openModal(show)
+     setInitialData({
+       id:user.id,
+       roles: user.Roles,
+     });
   }
 
-  const handleUpdateUserRole = (form) => {
-    console.log(form);
+  const handleUpdateUserRole = async (form) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      const payload = {
+        user_id: form.id,
+        role_id: form.role,
+      }
+      const res = await fetch(`/api/admin/users/assign-role`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+      if(res.status === 403) {
+        toast.error(`Unauthorized! ${data.message}`, );
+      };
+      if(res.status === 401) {
+        toast.error(`Unauthorized! ${data.message}`, );
+      };
+
+      if(data.success) {
+        openModal(show);
+        await Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          },
+        }).fire({
+          icon: "success",
+          title: data.message,
+        });
+
+        getUsers();
+
+      }
+
+    }catch (err) {
+      console.log(err.response)
+
+    }
+
   }
   return (
       <>

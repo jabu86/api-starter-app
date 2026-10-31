@@ -110,7 +110,7 @@ function Dashboard() {
 
     useEffect(() => {
         getDashboard();
-    })
+    },[])
 
     const monthlyChartData = {
         labels: monthlySales.map((item) => {

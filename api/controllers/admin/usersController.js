@@ -1,5 +1,4 @@
-const { User , Role } = require("../../models");
-const { body, validationResult } = require("express-validator");
+const { User , Role , User_Role } = require("../../models");
 const { Op } = require("sequelize");
 
 exports.index = async (req, res) => {
@@ -66,21 +65,34 @@ exports.index = async (req, res) => {
 };
 
 exports.assignRole = async (req, res) => {
-  const {user_id, role_id} = req.body;
+
+  const { user_id, role_id } = req.body;
   try {
-    const user = await User.findOne({ where: { id :user_id } });
-    if (!user) return res.status(400).json({ errors: "User not found" });
+    const userRole = await User_Role.findOne({
+      where: {
+        user_id: user_id
+      }
+    });
+
+    if (!userRole){
+      return res.status(404).json({success:false, errors: "User not found" });
+    }
+
+    await User_Role.update(
+        { role_id: role_id },
+        { where: { user_id: user_id } }
+    );
     
     return res
       .status(200)
       .json({
-        user,
+        userRole,
         message: "Role assigned successfully.",
         success: true,
       });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ errors: err, message: "Sever Error" });
+    return res.status(500).json({ errors: err, message: "Error assigning role" });
   }
 };
 

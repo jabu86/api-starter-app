@@ -1,7 +1,7 @@
 import {useState, useEffect} from "react";
 
 function UserForm({initialData , onSubmit ,closeModal , errors , roles}) {
-    console.log(initialData);
+
     const [form, setForm] = useState({
         id:'',
         role: '',
@@ -10,7 +10,7 @@ function UserForm({initialData , onSubmit ,closeModal , errors , roles}) {
         if (initialData) {
             setForm({
                 id : initialData.id ||'',
-                role: initialData.role || '',
+                role: initialData.roles?.[0]?.id?.toString() || '',
             });
         }
     }, [initialData]);
