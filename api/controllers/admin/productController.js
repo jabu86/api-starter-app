@@ -15,6 +15,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const { Op } = require("sequelize");
 const { log } = require("console");
+const {logger} = require("sequelize/lib/utils/logger");
 exports.index = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -572,6 +573,7 @@ exports.deleteImage = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const image = await product_images.findByPk(req.params.id);
+    // return  console.log(image);
 
     if (!image) {
       return res.status(404).json({
@@ -593,11 +595,17 @@ exports.deleteImage = async (req, res) => {
         const exists = await fs.exists(filePath);
         if (exists) {
           await fs.remove(filePath);
-        } else {
-          console.log("File not found, skipping:", filePath);
         }
+        // else {
+        //   await image.destroy();
+        //   return res.status(404).json({
+        //     message: "File not found, skipping",
+        //     filePath,
+        //   });
+        // }
       } catch (err) {
-        return res.status(400).json({
+        console.error(err);
+        return res.status(500).json({
           message: "Error deleting image:",
           err,
         });

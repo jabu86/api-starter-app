@@ -384,9 +384,17 @@ function Products({ openModal, show }) {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       if (!result.isConfirmed) return;
       const res = await fetch(`/api/admin/products/${id}/image`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
       const data = await res.json();
       if (data.success) {
