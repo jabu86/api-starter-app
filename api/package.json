@@ -4,10 +4,8 @@
   "description": "A e-commerce-api for all types of  webs",
   "main": "server.js",
   "scripts": {
-    
     "start": "node server.js",
     "dev": "nodemon server.js"
-    
   },
   "author": "Jabu Madela",
   "license": "ISC",
