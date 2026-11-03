@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
 import RatingStars from "./RatingStars";
+import { API_URL } from "../../services/api";
 function ProductCard({ products, addToCart, pagination, handlePageChange }) {
   // console.log(products);
 
@@ -33,7 +34,7 @@ function ProductCard({ products, addToCart, pagination, handlePageChange }) {
                         <img
                           className="card-img"
                           alt={`${product.name}`}
-                          src={`http://localhost:8000${img.image}`}
+                          src={`${API_URL}${img.image}`}
                         />
                       </div>
                     ))
