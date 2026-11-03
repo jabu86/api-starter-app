@@ -4,9 +4,7 @@ const path = require("path");
 const cors = require("cors");
 const app = express();
 app.use(express.json());
-app.use(cors( {
-origin: "https://e-commerce-frontend-magq.onrender.com"
-}));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT || 8000;
 
