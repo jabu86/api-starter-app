@@ -6,12 +6,11 @@ import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
 import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
 import {
-  faDashboard, faHome, faStore,
-
-
+  faDashboard,faStore,
 } from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {API_URL} from "../../services/api";
 
 function Products({ openModal, show }) {
   // const [show, setShow] = useState(false);
@@ -48,7 +47,7 @@ function Products({ openModal, show }) {
         limit: "10",
         search: searchTerm || "",
       });
-      const res = await fetch(`/api/admin/products?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/products?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +89,7 @@ function Products({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/products/brands`, {
+      const res = await fetch(`${API_URL}/api/admin/products/brands`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +115,7 @@ function Products({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/products/category`, {
+      const res = await fetch(`${API_URL}/api/admin/products/category`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -144,7 +143,7 @@ function Products({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/sub-categories`, {
+      const res = await fetch(`${API_URL}/api/admin/sub-categories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -172,7 +171,7 @@ function Products({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/products/sizes`, {
+      const res = await fetch(`${API_URL}/api/admin/products/sizes`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +199,7 @@ function Products({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/products/colors`, {
+      const res = await fetch(`${API_URL}/api/admin/products/colors`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -277,8 +276,8 @@ function Products({ openModal, show }) {
         return;
       }
       let url = isEditing
-        ? `/api/admin/products/${form.id}`
-        : `/api/admin/products`;
+        ? `${API_URL}/api/admin/products/${form.id}`
+        : `${API_URL}/api/admin/products`;
       let payload = {
         method: "POST",
         headers: {
@@ -348,7 +347,7 @@ function Products({ openModal, show }) {
           return;
         }
 
-        const res = await fetch(`/api/admin/products/${id}`, {
+        const res = await fetch(`${API_URL}/api/admin/products/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -390,7 +389,7 @@ function Products({ openModal, show }) {
         return;
       }
       if (!result.isConfirmed) return;
-      const res = await fetch(`/api/admin/products/${id}/image`, {
+      const res = await fetch(`${API_URL}/api/admin/products/${id}/image`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

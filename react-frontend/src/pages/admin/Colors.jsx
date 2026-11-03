@@ -6,11 +6,12 @@ import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
 
 import {
-  faDashboard, faLayerGroup, faPaintbrush,
+  faDashboard,faPaintbrush,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {API_URL} from "../../services/api";
 function Colors({ openModal, show }) {
   const navigate = useNavigate();
   const [colors, setColors] = useState([]);
@@ -38,7 +39,7 @@ function Colors({ openModal, show }) {
         return;
       }
 
-      const res = await fetch(`/api/admin/colors?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/colors?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +90,7 @@ function Colors({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}${url}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

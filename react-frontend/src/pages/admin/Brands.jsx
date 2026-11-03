@@ -6,14 +6,14 @@ import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
 import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
 import {
-  faDashboard, faHome, faStore, faTrademark,
+  faDashboard, faTrademark,
 } from "@fortawesome/free-solid-svg-icons";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {API_URL} from "../../services/api";
 function Brands({ openModal, show }) {
   const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
-
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -36,7 +36,7 @@ function Brands({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/brands?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/brands?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +91,7 @@ function Brands({ openModal, show }) {
       return;
     }
 
-    const res = await fetch(`/api/admin/brands`, {
+    const res = await fetch(`${API_URL}/api/admin/brands`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -147,7 +147,7 @@ function Brands({ openModal, show }) {
       return;
     }
 
-    const res = await fetch(`/api/admin/brands`, {
+    const res = await fetch(`${API_URL}/api/admin/brands`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -211,7 +211,7 @@ function Brands({ openModal, show }) {
       }
       if (!result.isConfirmed) return;
 
-      const res = await fetch(`/api/admin/brands/${id}`, {
+      const res = await fetch(`${API_URL}/api/admin/brands/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

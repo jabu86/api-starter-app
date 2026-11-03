@@ -3,10 +3,11 @@ import OrderList from "../../componentes/admin/OrderList.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import { useNavigate } from "react-router-dom";
 import {
-  faDashboard, faLayerGroup, faPaintbrush, faRuler, faWarehouse,
+  faDashboard, faWarehouse,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
-import {faUsers} from "@fortawesome/free-solid-svg-icons/faUsers";
+
+import {API_URL} from "../../services/api";
 function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
@@ -31,7 +32,7 @@ function Orders() {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/orders`, {
+      const res = await fetch(`${API_URL}/api/admin/orders`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

@@ -11,6 +11,7 @@ import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
 import {faUsers} from "@fortawesome/free-solid-svg-icons/faUsers";
 import {toast} from "react-toastify";
 import Swal from "sweetalert2";
+import {API_URL} from "../../services/api";
 function Users({ openModal, show }) {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -38,7 +39,7 @@ function Users({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/users?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/users?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ function Users({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/users/roles`, {
+      const res = await fetch(`${API_URL}/api/admin/users/roles`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -109,7 +110,7 @@ function Users({ openModal, show }) {
         user_id: form.id,
         role_id: form.role,
       }
-      const res = await fetch(`/api/admin/users/assign-role`, {
+      const res = await fetch(`${API_URL}/api/admin/users/assign-role`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {

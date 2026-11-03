@@ -4,7 +4,6 @@ import Filter from "../componentes/customer/Filter";
 import GlobalSearchBar from "../componentes/customer/GlobalSearchBar";
 import Cart from "../componentes/customer/Cart";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
 import CategoryList from "../componentes/customer/CategoryList.jsx";
 import BrandList from "../componentes/customer/BrandList.jsx";
 import {API_URL} from "../services/api"
@@ -30,7 +29,7 @@ function Shop() {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
-  const { user } = useAuth();
+
 
   const [pagination, setPagination] = useState({
     currentPage: 1,

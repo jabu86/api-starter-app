@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
 import {toast} from "react-toastify";
+import {API_URL} from "../../services/api";
 function SubCategories({ show, openModal }) {
   const navigate = useNavigate();
   const [subCategories, setSubCategories] = useState([]);
@@ -39,7 +40,7 @@ function SubCategories({ show, openModal }) {
         return;
       }
       const res = await fetch(
-        `/api/admin/categories/${slug}?${params.toString()}`,
+        `${API_URL}/api/admin/categories/${slug}?${params.toString()}`,
         {
           method: "GET",
           headers: {
@@ -97,7 +98,7 @@ function SubCategories({ show, openModal }) {
          navigate("/login");
          return;
        }
-       const res = await fetch(`/api/admin/sub-categories/${id}`, {
+       const res = await fetch(`${API_URL}/api/admin/sub-categories/${id}`, {
          method: "DELETE",
          headers: {
            "Content-Type": "application/json",
@@ -127,8 +128,8 @@ function SubCategories({ show, openModal }) {
   const handleSaveCategory = async (form) => {
     setErrors({});
     let url = isEditing
-      ? `/api/admin/sub-categories/${form.id}`
-      : `/api/admin/sub-categories`;
+      ? `${API_URL}/api/admin/sub-categories/${form.id}`
+      : `${API_URL}/api/admin/sub-categories`;
     const payload = {
       id: form.id,
       category_id: subCategories.id,

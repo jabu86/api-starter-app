@@ -1,3 +1,4 @@
+import {API_URL} from "../../services/api";
 function ProfileImage({ imageUrl, imagePreview, user }) {
   return (
     <div className="col-md-4 ">
@@ -5,7 +6,7 @@ function ProfileImage({ imageUrl, imagePreview, user }) {
         {" "}
         <img
           className="rounded-circle border"
-          src={`${imagePreview ? imagePreview : imageUrl || "http://localhost:8000/images/profile/profile.png"}`}
+          src={`${imagePreview ? imagePreview : imageUrl || `${API_URL}/images/profile/profile.png`}`}
           style={{ width: "200px" }}
         />
         <div className="row mt-2">

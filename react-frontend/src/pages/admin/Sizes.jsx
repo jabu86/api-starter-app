@@ -5,11 +5,12 @@ import SizesForm from "../../componentes/admin/SizesForm.jsx";
 import Swal from "sweetalert2";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import {
-  faDashboard, faLayerGroup, faPaintbrush, faRuler,
+  faDashboard, faRuler,
 } from "@fortawesome/free-solid-svg-icons";
 import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {API_URL} from "../../services/api";
 function Sizes({ openModal, show }) {
   const [sizes, setSizes] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +36,7 @@ function Sizes({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/size?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/size?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +77,7 @@ function Sizes({ openModal, show }) {
 
   const handleSaveSize = async (form) => {
     setErrors({});
-    let url = isEditing ? `/api/admin/size/${form.id}` : `/api/admin/size`;
+    let url = isEditing ? `${API_URL}/api/admin/size/${form.id}` : `${API_URL}/api/admin/size`;
     const payload = {
       size: form.size,
     };
@@ -153,7 +154,7 @@ function Sizes({ openModal, show }) {
           navigate("/login");
           return;
         }
-        const res = await fetch(`/api/admin/size/${id}`, {
+        const res = await fetch(`${API_URL}/api/admin/size/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",

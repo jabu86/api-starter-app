@@ -6,6 +6,7 @@ import {useEffect, useState} from 'react'
 import DashboardHeader from "../../componentes/admin/DashboardHeader.jsx";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import {API_URL} from "../../services/api";
 import {
     faDashboard,
     faHome,
@@ -61,7 +62,7 @@ function Dashboard() {
                 navigate("/login");
                 return;
             }
-            const res = await fetch(`/api/admin/dashboard`, {
+            const res = await fetch(`${API_URL}/api/admin/dashboard`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

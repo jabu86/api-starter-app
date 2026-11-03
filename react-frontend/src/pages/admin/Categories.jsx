@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
+import {API_URL} from "../../services/api";
 function Categories({ openModal, show }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -37,7 +38,7 @@ function Categories({ openModal, show }) {
         search: searchTerm || "",
       });
 
-      const res = await fetch(`/api/admin/categories?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/admin/categories?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +92,7 @@ function Categories({ openModal, show }) {
         navigate("/login");
         return;
       }
-      const res = await fetch(url, {
+      const res = await fetch(`${API_URL}${url}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,7 +159,7 @@ function Categories({ openModal, show }) {
           navigate("/login");
           return;
         }
-        const res = await fetch(`/api/admin/categories/${id}`, {
+        const res = await fetch(`${API_URL}/api/admin/categories/${id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
