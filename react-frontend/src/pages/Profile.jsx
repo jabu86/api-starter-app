@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import OrderListHistory from "../componentes/customer/OrderListHistory";
 import { useAuth } from "../context/AuthContext.jsx";
 import ProfileImage from "../componentes/customer/ProfileImage.jsx";
+import {API_URL} from "../services/api"
 
 function Profile() {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ function Profile() {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/profile`, {
+      const res = await fetch(`${API_URL}/api/admin/profile`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -55,12 +56,12 @@ function Profile() {
       }
       const data = await res.json();
       // console.log(data.user.profile.image);
-      const staticImageUrl = `http://localhost:8000/images/profile/profile.png`;
+      const staticImageUrl = `${API_URL}/images/profile/profile.png`;
 
       setImageUrl(
         data.user.profile == null
           ? staticImageUrl
-          : `http://localhost:8000/images/${data?.user?.profile.image}`,
+          : `${API_URL}/images/${data?.user?.profile.image}`,
       );
 
       setUser(data.user);
@@ -75,7 +76,7 @@ function Profile() {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/user/orders`, {
+      const res = await fetch(`${API_URL}/api/user/orders`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -108,7 +109,7 @@ function Profile() {
     formData.append("bio", form.bio);
     formData.append("image", form.image);
     try {
-      let url = `/api/admin/profile`;
+      let url = `${API_URL}/api/admin/profile`;
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -144,7 +145,7 @@ function Profile() {
     };
 
     try {
-      const res = await fetch(`/api/admin/profile-reset-password`, {
+      const res = await fetch(`${API_URL}/api/admin/profile-reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,7 +183,7 @@ function Profile() {
         navigate("/login");
         return;
       }
-      const res = await fetch(`/api/admin/profile/user/${user_id}/delete`, {
+      const res = await fetch(`${API_URL}/api/admin/profile/user/${user_id}/delete`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

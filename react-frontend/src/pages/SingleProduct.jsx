@@ -7,6 +7,7 @@ import ReviewList from "../componentes/ReviewList";
 import axios from "axios";
 import { toast } from "react-toastify";
 import RatingStars from "../componentes/customer/RatingStars";
+import {API_URL} from "../services/api"
 
 function SingleProdcut() {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ function SingleProdcut() {
 
   const getProduct = async () => {
     try {
-      const res = await fetch(`/api/shop/${slug}`, {
+      const res = await fetch(`${API_URL}/api/shop/${slug}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +124,7 @@ function SingleProdcut() {
   const getReviews = async (product_id) => {
     if (!product_id) return;
     try {
-      const res = await fetch(`/api/reviews/${product_id}`, {
+      const res = await fetch(`${API_URL}/api/reviews/${product_id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -140,7 +141,7 @@ function SingleProdcut() {
 
   const addReviewRating = async (form) => {
     setErrors({});
-    let url = isEditing ? `/api/reviews/${form.id}/edit` : `/api/reviews`;
+    let url = isEditing ? `${API_URL}/api/reviews/${form.id}/edit` : `${API_URL}/api/reviews`;
     try {
       const payload = {
         ratings: form.rating,
@@ -235,7 +236,7 @@ function SingleProdcut() {
 
   const handleDeleteReview = async (id) => {
     setErrors({});
-    let url = `/api/reviews/${id}/delete`;
+    let url = `${API_URL}/api/reviews/${id}/delete`;
     try {
       const token = localStorage.getItem("token");
       if (!token) {

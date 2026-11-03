@@ -7,8 +7,11 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import CategoryList from "../componentes/customer/CategoryList.jsx";
 import BrandList from "../componentes/customer/BrandList.jsx";
+import {API_URL} from "../services/api"
+
 
 function Shop() {
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -49,7 +52,7 @@ function Shop() {
         brand: selectedFilters.brand || "",
       });
 
-      const res = await fetch(`/api/shop?${params.toString()}`, {
+      const res = await fetch(`${API_URL}/api/shop?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -57,12 +60,6 @@ function Shop() {
       });
       // console.log("Response",res)
       const data = await res.json();
-
-      // console.log("FULL API RESPONSE:", data);
-      // console.log("data.products:", data.products);
-      // console.log("Is products an array:", Array.isArray(data.products));
-      // console.log("Is array:", Array.isArray(data.products));
-
       setProducts(Array.isArray(data.products) ? data.products : []);
       setPagination(data.pagination);
     } catch (err) {
@@ -75,13 +72,12 @@ function Shop() {
       ...filters,
       ...changes,
     };
-
     setFilters(nextFilters);
     getProducts(1, nextFilters);
   };
   const getCategory = async () => {
     try {
-      const res = await fetch(`/api/categories`, {
+      const res = await fetch(`${API_URL}/api/categories`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -98,7 +94,7 @@ function Shop() {
 
   const getBrands = async () => {
     try {
-      const res = await fetch(`/api/brands`, {
+      const res = await fetch(`${API_URL}/api/brands`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

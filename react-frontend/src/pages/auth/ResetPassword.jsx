@@ -2,6 +2,7 @@ import {Link, useNavigate, useParams} from 'react-router-dom'
 import {useState} from "react";
 import logo from  '../../assets/images/bhala-logo.jpg'
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
+import {API_URL} from "../../services/api"
 function ResetPassword(props) {
 
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function ResetPassword(props) {
     const handleReset = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`/api/auth/reset-password/${token}`, {
+            const res = await fetch(`${API_URL}/api/auth/reset-password/${token}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

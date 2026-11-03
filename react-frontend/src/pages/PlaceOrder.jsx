@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import noProductImage from "../assets/images/noproduct.png";
 import { toast } from "react-toastify";
+import {API_URL} from "../services/api"
 
 function PlaceOrder() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ function PlaceOrder() {
           navigate("/login");
           return;
         }
-        const { data } = await axios.get("/api/shipping/selected", {
+        const { data } = await axios.get(`${API_URL}/api/shipping/selected`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -70,7 +71,7 @@ function PlaceOrder() {
         navigate("/login");
         return;
       }
-      const { data } = await axios.post("/api/user/orders", payload, {
+      const { data } = await axios.post(`${API_URL}/api/user/orders`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

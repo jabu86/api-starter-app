@@ -2,6 +2,7 @@ import {Link, useNavigate} from 'react-router-dom'
 import {useState} from "react";
 import logo from  '../../assets/images/bhala-logo.jpg'
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
+import {API_URL} from "../../services/api"
 function Forgot(props) {
 
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Forgot(props) {
         e.preventDefault()
         setErrors({})
         try {
-            const res = await fetch('/api/auth/forgot-password', {
+            const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

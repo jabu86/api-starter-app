@@ -5,6 +5,7 @@ import ShippingList from "../componentes/customer/ShippingList";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import CheckoutStep from "../componentes/customer/CheckoutStep";
+import {API_URL} from "../services/api"
 function Shipping() {
   const navigate = useNavigate();
   // const [userShippingAddress, setUserShippingAddress] = useState({});
@@ -23,7 +24,7 @@ function Shipping() {
         navigate("/login");
         return;
       }
-      const { data } = await axios.get("/api/shipping", {
+      const { data } = await axios.get(`${API_URL}/api/shipping`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -50,9 +51,9 @@ function Shipping() {
   const addShippingAddress = async (form) => {
     let url = "";
     if (isEditing) {
-      url = `/api/shipping/${form.id}/edit`;
+      url = `${API_URL}/api/shipping/${form.id}/edit`;
     } else {
-      url = `/api/shipping/`;
+      url = `${API_URL}/api/shipping/`;
     }
 
     const payload = {
@@ -128,7 +129,7 @@ function Shipping() {
   const handleSelectAddress = async (address) => {
     try {
       setSelectedAddress(address);
-      const url = `/api/shipping/${address.id}/update`;
+      const url = `${API_URL}/api/shipping/${address.id}/update`;
       const token = localStorage.getItem("token");
       if (!token) {
         navigate("/login");
@@ -173,7 +174,7 @@ function Shipping() {
     if (!selectedAddress) {
       return;
     }
-    const url = `/api/shipping/checkout`;
+    const url = `${API_URL}/api/shipping/checkout`;
     const token = localStorage.getItem("token");
     try {
       if (!token) {
@@ -204,7 +205,7 @@ function Shipping() {
   };
 
   const handleDeleteShippingAddress = async (id) => {
-    const url = `/api/shipping/${id}/delete`;
+    const url = `${API_URL}/api/shipping/${id}/delete`;
     const token = localStorage.getItem("token");
     setErrors({});
     try {

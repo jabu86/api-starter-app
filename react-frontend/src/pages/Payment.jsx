@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CheckoutStep from "../componentes/customer/CheckoutStep";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {API_URL} from "../services/api"
 
 function Payment() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Payment() {
           navigate("/login");
           return;
         }
-        const { data } = await axios.get("/api/shipping/selected", {
+        const { data } = await axios.get(`${API_URL}/api/shipping/selected`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

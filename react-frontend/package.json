@@ -39,5 +39,5 @@
     "globals": "^17.4.0",
     "vite": "^8.0.0"
   },
-  "proxy": "http://localhost:8000"
+  "proxy": "https://api-starter-app-1.onrender.com"
 }

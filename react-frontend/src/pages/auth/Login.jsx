@@ -3,6 +3,7 @@ import {useAuth} from "../../context/AuthContext.jsx";
 import {useState} from "react";
 import logo from  '../../assets/images/bhala-logo.jpg'
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
+import {API_URL} from "../../services/api"
 function Login(props) {
     const {login} = useAuth();
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Login(props) {
         e.preventDefault();
         setErrors({});
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

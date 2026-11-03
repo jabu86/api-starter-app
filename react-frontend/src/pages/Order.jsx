@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import noProductImage from "../assets/images/noproduct.png";
 import { useAuth } from "../context/AuthContext.jsx";
+import {API_URL} from "../services/api"
 function Order() {
   const navigate = useNavigate();
   const { id: orderId } = useParams();
@@ -22,7 +23,7 @@ function Order() {
         navigate("/login");
         return;
       }
-      const { data } = await axios.get(`/api/orders/${orderId}`, {
+      const { data } = await axios.get(`${API_URL}/api/orders/${orderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +66,7 @@ function Order() {
         navigate("/login");
         return;
       }
-      const { data } = await axios.post(`/api/orders/${orderId}/mark-delivered`,{},{
+      const { data } = await axios.post(`${API_URL}/api/orders/${orderId}/mark-delivered`,{},{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +100,7 @@ function Order() {
         return;
       }
       const { data } = await axios.post(
-        `/api/user/orders/${orderId}/pay`,
+        `${API_URL}/api/user/orders/${orderId}/pay`,
         { orderId },
         {
           headers: {
