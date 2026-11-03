@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import RatingStars from "./customer/RatingStars";
+import {API_URL} from "../services/api";
 
 // import React from "react";
 function ReviewList({ reviews, handleUpdateReview, handleDeleteReview }) {
@@ -25,7 +26,7 @@ function ReviewList({ reviews, handleUpdateReview, handleDeleteReview }) {
                     <div className="row">
                       <img
                         className="rounded-circle"
-                        src={`http://localhost:8000/images${review?.user?.profile?.image ? review?.user?.profile?.image : "/images/profile/profile.png"}`}
+                        src={`${API_URL}/images${review?.user?.profile?.image ? review?.user?.profile?.image : "/images/profile/profile.png"}`}
                         alt={review.user.name}
                         width={40}
                       />
