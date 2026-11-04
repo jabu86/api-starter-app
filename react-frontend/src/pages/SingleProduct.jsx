@@ -322,7 +322,7 @@ function SingleProdcut() {
                 product.images.map((img) => (
                   <li key={img.id} className="border list-group-item mb-2">
                     <img
-                      src={`http://localhost:8000${img.thumbnail}`}
+                      src={`${API_URL}${img.thumbnail}`}
                       width={50}
                       onClick={() => setMainImage(img)}
                       style={{ cursor: "pointer" }}
@@ -340,7 +340,7 @@ function SingleProdcut() {
                 ) : (
                   <img
                     className="main-image"
-                    src={`http://localhost:8000${mainImage && mainImage.image}`}
+                    src={`${API_URL}${mainImage && mainImage.image}`}
                   />
                 )}
               </li>

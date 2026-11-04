@@ -1,5 +1,5 @@
 import {useState, useEffect} from "react";
-
+import {API_URL} from "../../services/api"
 function ProductForm(
     {
         initialData ,
@@ -327,7 +327,7 @@ useEffect(() => {
                         >
 
                             <img
-                                src={`http://localhost:8000${img.image}`}
+                                src={`${API_URL}${img.image}`}
                                 alt=""
                                 width="100"
                                 height="100"

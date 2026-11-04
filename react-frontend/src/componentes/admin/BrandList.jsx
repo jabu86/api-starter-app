@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import admin_loader from "../../assets/images/admin_loader.gif";
 import Pagination from "../../componentes/admin/Pagination";
+import {API_URL} from "../../services/api";
 function BrandList({
   brands,
   handleEditBrand,
@@ -23,7 +24,7 @@ function BrandList({
             <td>{brand.name}</td>
             <td>
               <img
-                src={`http://localhost:8000/images${brand.image}`}
+                src={`${API_URL}/images${brand.image}`}
                 width={100}
                 alt={brand.name}
               />{" "}
