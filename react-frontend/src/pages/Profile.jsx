@@ -61,7 +61,7 @@ function Profile() {
       setImageUrl(
         data.user.profile == null
           ? staticImageUrl
-          : `${API_URL}/images/${data?.user?.profile.image}`,
+          : `${API_URL}/images${data?.user?.profile.image}`,
       );
 
       setUser(data.user);
