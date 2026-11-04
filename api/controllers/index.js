@@ -1,4 +1,4 @@
-const { Op, where } = require("sequelize");
+const { Op, literal } = require("sequelize");
 
 const {
   Category,
@@ -7,8 +7,9 @@ const {
   Products,
   Sizes,
   Colors,
-  ShippingAddress,
   Reviews,
+  OrderItem,
+  Order
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -180,10 +181,10 @@ exports.products = async (req, res) => {
         },
         {
           price: sequelize.where(
-              sequelize.cast(sequelize.col("price"), "TEXT"),
-              {
-                [Op.like]: `%${searchTerm}%`,
-              }
+            sequelize.cast(sequelize.col("price"), "TEXT"),
+            {
+              [Op.like]: `%${searchTerm}%`,
+            },
           ),
         },
       ];
@@ -266,15 +267,12 @@ exports.products = async (req, res) => {
         "product_id",
         [
           sequelize.fn(
-              "AVG",
-              sequelize.cast(sequelize.col("ratings"), "INTEGER")
+            "AVG",
+            sequelize.cast(sequelize.col("ratings"), "INTEGER"),
           ),
           "averageRating",
         ],
-        [
-          sequelize.fn("COUNT", sequelize.col("id")),
-          "totalReviews",
-        ],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
       ],
       where: {
         product_id: ids,
@@ -290,7 +288,6 @@ exports.products = async (req, res) => {
         totalReviews: Number(rating.totalReviews),
       };
     });
-    
 
     //Get the actual products + relationships
     const rows = await Products.findAll({
@@ -425,15 +422,12 @@ exports.product = async (req, res) => {
       attributes: [
         [
           sequelize.fn(
-              "AVG",
-              sequelize.cast(sequelize.col("ratings"), "INTEGER")
+            "AVG",
+            sequelize.cast(sequelize.col("ratings"), "INTEGER"),
           ),
           "averageRating",
         ],
-        [
-          sequelize.fn("COUNT", sequelize.col("id")),
-          "totalReviews",
-        ],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
       ],
       raw: true,
     });
@@ -449,151 +443,199 @@ exports.product = async (req, res) => {
   }
 };
 
-exports.shipping = async (req, res) => {
+//@desc  Get latest products
+//@route GET /api/latest
+//@access Public
+exports.getLatestProducts = async (req, res) => {
   try {
-    //check if user has an address or addresses
-    //return the address that user has created or already created
-
-    //Get user address
-    const shippingAddress = await ShippingAddress.findAll({
-      where: {
-        user_id: req.user.id,
-      },
-      order: [
-        // ["is_default", "DESC"],
-        ["createdAt", "DESC"],
+    const products = await Products.findAll({
+      where: { active: true },
+      include: [
+        {
+          model: product_images,
+          as: "images",
+          where: { active: true },
+          required: false,
+        },
+        // { model: Category, as: "category" },
+        // { model: Brand, as: "brand" },
       ],
+      order: [["createdAt", "DESC"]],
+      limit: 5,
     });
 
-    if (shippingAddress.length === 0) {
-      return res.status(200).json({
-        hasAddress: false,
-        shippingAddress,
-        message:
-          "You don't have a shipping address. Please add an address before continuing.",
-        success: true,
+    if (!products || products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No latest products found",
       });
     }
+
     return res.status(200).json({
-      hasAddress: true,
-      shippingAddress,
       success: true,
+      products,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve latest products",
+    });
   }
 };
 
-exports.selectedShippingAddress = async (req, res) => {
+// @desc  Get featured brands
+// @route GET /api/featured-brands
+// @access Public
+exports.featuredBrands = async (req, res) => {
   try {
-    //Get user address
-    const shippingAddress = await ShippingAddress.findOne({
-      where: {
-        user_id: req.user.id,
-        is_default: true,
-      },
-    });
-
-    //check if user has an address or addresses
-    if (!shippingAddress) {
+    //Get all brands and order by name ascending
+    const brands = await Brand.findAll();
+    //check if brands is empty or null and return a message if it is
+    if (!brands || brands.length === 0) {
       return res.status(200).json({
-        message: "Shipping address not found.",
-        hasAddress: false,
-        shippingAddress: null,
+        message: "Brands not found.",
+
+        brands: null,
         success: false,
       });
     }
     return res.status(200).json({
       hasAddress: true,
-      shippingAddress,
+      brands,
       success: true,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "error",
+      message: "Error loading brands",
       error: error,
-      success: false,
     });
   }
 };
 
-exports.addShippingAddress = async (req, res) => {
+//@desc  Get top rated products
+//@route GET /api/top-rated
+//@access Public
+exports.getTopRatedProducts = async (req, res) => {
   try {
-    const { address, address_2, city, country, province, postal_code } =
-      req.body;
-    //check how many address does a user have
-    //if is the first address set default value to true
-    //if a user has more than one address set the default value to false
-    //if more than 3 length not allowed to add more
-
-    const checkUserShippingAddress = await ShippingAddress.count({
-      where: {
-        user_id: req.user.id,
+    const products = await Products.findAll({
+      where: { active: true },
+      id:{
+        [Op.in]: sequelize.literal(`(
+          SELECT product_id
+          FROM "Reviews"
+          GROUP BY product_id
+          ORDER BY AVG(CAST(ratings AS INTEGER)) DESC
+          LIMIT 5
+        )`),
       },
+      include: [ 
+        {
+          model: product_images,
+          as: "images",
+          where: { active: true },
+          required: false,
+        },
+       ],
+        order: [
+        [
+          literal(`(
+            SELECT AVG(CAST(r.ratings AS NUMERIC))
+            FROM "Reviews" AS r
+            WHERE r.product_id = "Products".id
+          )`),
+          "DESC",
+        ],
+      ],
+      
+      limit: 5,
+      subQuery: false, // Ensure proper handling of the include with limit and offset
     });
 
-    if (checkUserShippingAddress >= 3) {
+    if (!products || products.length === 0) {
       return res.status(404).json({
-        message:
-          "You can only have a maximum of 3 shipping addresses. Please choose from the addresses or you can edit and update address.",
-        success: true,
+        success: false,
+        message: "No top-rated products found",
       });
     }
 
-    const is_default = checkUserShippingAddress === 0;
-    const shippingAddress = await ShippingAddress.create({
-      user_id: req.user.id,
-      address,
-      address_2,
-      city,
-      country,
-      province,
-      postal_code,
-      is_default,
-    });
     return res.status(200).json({
-      hasAddress: true,
-      message: "Shipping address created successfully.",
-      shippingAddress,
       success: true,
+      products,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
-      message: "Unable to add shipping address",
       success: false,
+      message: "Unable to retrieve top-rated products",
+      error: error,
     });
   }
 };
 
-exports.editShippingAddress = async (req, res) => {
+//@desc  Get best-selling products
+//@route GET /api/best-selling
+//@access Public
+
+
+exports.getTopSellingProducts = async (req, res) => {
   try {
-    const { address, address_2, city, country, province, postal_code } =
-      req.body;
-    const id = req.params.id;
-    const shippingAddress = await ShippingAddress.findByPk(id);
+    const products = await OrderItem.findAll({
+      attributes: [
+        "product_id",
+        [
+          sequelize.fn("SUM", sequelize.col("OrderItem.quantity")),
+          "totalSold"
+        ]
+      ],
 
-    shippingAddress.address = address;
-    shippingAddress.address_2 = address_2;
-    shippingAddress.city = city;
-    shippingAddress.country = country;
-    shippingAddress.province = province;
-    shippingAddress.postal_code = postal_code;
-    await shippingAddress.save();
-    return res.status(200).json({
-      message: "Shipping address updated successfully.",
-      shippingAddress,
-      success: true,
+      include: [
+        {
+          model: Products,
+          as: "product",
+          attributes: ["id", "name", "price", "slug"],
+          required: true
+        },
+        {
+          model: Order,
+          as: "orders",
+          attributes: [],
+          where: {
+            is_paid: true
+          },
+          required: true
+        }
+      ],
+
+      group: [
+        "OrderItem.product_id",
+        "product.id"
+      ],
+
+      order: [
+        [sequelize.literal('"totalSold"'), "DESC"]
+      ],
+
+      limit: 10,
+      subQuery: false
     });
+
+    return res.status(200).json({
+      success: true,
+      products
+    });
+
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
     return res.status(500).json({
-      message: "Unable to add shipping address",
+      message: "Error retrieving best-selling products.",
       success: false,
+      error: error.message
     });
   }
 };
-
+/*
 exports.updateDefaultValute = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
@@ -771,3 +813,4 @@ exports.checkout = async (req, res) => {
     });
   }
 };
+*/
