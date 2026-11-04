@@ -3,7 +3,7 @@ import noProductImage from "../assets/images/noproduct.png";
 import { Link } from "react-router-dom";
 import Cart from "../componentes/customer/Cart";
 import { useNavigate } from "react-router-dom";
-
+import {API_URL} from "../services/api"
 export const CartItem = () => {
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("cartItems");
@@ -71,7 +71,7 @@ export const CartItem = () => {
                       <img
                         src={
                           activeImage
-                            ? `http://localhost:8000${activeImage.image}`
+                            ? `${API_URL}${activeImage.image}`
                             : noProductImage
                         }
                         alt={cart.name}

@@ -189,7 +189,7 @@ function Order() {
                           <div className="col-md-2">
                             {activeImage ? (
                               <img
-                                src={`http://localhost:8000${activeImage.image}`}
+                                src={`${API_URL}${activeImage.image}`}
                                 alt={product?.name || "Product"}
                                 width="100"
                               />

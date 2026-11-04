@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import noProductImage from "../../assets/images/noproduct.png";
 import { useAuth } from "../../context/AuthContext";
-
+import {API_URL} from "../../services/api";
 function Cart({ cartItems = [], handleRemoveCartItem }) {
   // const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -48,7 +48,7 @@ function Cart({ cartItems = [], handleRemoveCartItem }) {
                   <Link to={`/shop/${item.slug}`}>
                     {activeImage ? (
                       <img
-                        src={`http://localhost:8000${activeImage.thumbnail}`}
+                        src={`${API_URL}${activeImage.thumbnail}`}
                         className="cart-img"
                         alt={item.name}
                         width={50}
