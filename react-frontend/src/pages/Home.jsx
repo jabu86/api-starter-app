@@ -2,9 +2,11 @@ import { useState } from "react";
 import { API_URL } from "../services/api";
 import noProductImage from "../assets/images/noproduct.png";
 import Slider from "../componentes/customer/Slider";
-
+import FeatureBrandSlider from "../componentes/customer/FeatureBrandSlider";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
   const [latestProducts, setLatestProducts] = useState([]);
   const [featuredBrands, setFeaturedBrands] = useState([]);
   const [topRatedProducts, setTopRatedProducts] = useState([]);
@@ -30,7 +32,7 @@ function Home() {
       throw new Error("Failed to fetch featured brands");
     }
     const data = await response.json();
-    setFeaturedBrands(data);
+    setFeaturedBrands(data.brands || []);
        
     }catch (error) {
       console.error("Error fetching featured brands:", error);
@@ -64,11 +66,14 @@ function Home() {
     }
   };
 
+
+  const loadBrandProducts = (brand) => {
+    // Implement the logic to load products for the selected brand
+    console.log("Selected brand:", brand);
+    navigate(`/shop?brand=${encodeURIComponent(brand.name)}`);
+  }
  
-  console.log(latestProducts);
-  console.log(featuredBrands);
-  console.log(topRatedProducts);
-  console.log(bestSellingProducts);
+
   useState(() => {
     fetchLatestProducts();
     fetchFeaturedBrands();
@@ -91,7 +96,8 @@ function Home() {
         <Slider />
       </div>
       <div className="row mt-2">
-        <h2>Featured Brands</h2>
+        
+        <FeatureBrandSlider brands={featuredBrands} onBrandClick={loadBrandProducts}/>
        
       </div>
     </>

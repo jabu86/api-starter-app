@@ -5,7 +5,6 @@ $primary-color-lighter: #1d22d7;
 $link-hover-color: #c4c4c5;
 $header-color: #ececec;
 
-
 .header {
   @include header($primary-color, $header-color, space-between);
   margin-bottom: 2.5rem;
@@ -17,17 +16,16 @@ $header-color: #ececec;
     color: $header-color;
     li a {
       font-size: 17px;
-       color: $header-color;
-       
+      color: $header-color;
+
       &:hover {
         text-decoration: underline;
-         color: $link-hover-color;
-        }
-        &:active {
-          text-decoration: underline;
-          color: $link-hover-color;
+        color: $link-hover-color;
       }
-      
+      &:active {
+        text-decoration: underline;
+        color: $link-hover-color;
+      }
     }
   }
 
@@ -42,7 +40,7 @@ $header-color: #ececec;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.836);
       z-index: 1;
       right: 0;
-      
+
       a {
         color: $link-hover-color;
         padding: 12px 16px;
@@ -72,7 +70,7 @@ $header-color: #ececec;
 
 .main-wrapper {
   --bs-gutter-x: 5rem;
-  --bs-gutter-y: : 0;
+  --bs-gutter-y: 0;
   width: 100%;
   padding-right: calc(var(--bs-gutter-x) * 0.5);
   padding-left: calc(var(--bs-gutter-x) * 0.5);
@@ -185,94 +183,185 @@ $header-color: #ececec;
   }
 
   // Slider styles
-  
-.slider-container {
-  position: relative;
+
+  .slider-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #f5f5f5;
+    .slider-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+      .slider-item {
+        min-width: 100%;
+        height: 100%;
+        flex-shrink: 0;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+        }
+      }
+    }
+    .slider-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+      &:hover {
+        background: rgba(0, 0, 0, 0.85);
+      }
+      &.prev {
+        left: 15px;
+      }
+      &.next {
+        right: 15px;
+      }
+    }
+
+    .slider-indicators {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+      button {
+        width: 10px;
+        height: 10px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        padding: 0;
+        &.active {
+          background: #007bff;
+          width: 24px;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
+
+.brand-section {
   width: 100%;
-  height: 400px;
+  padding: 25px 0;
   overflow: hidden;
-  border-radius: 10px;
-  background: #f5f5f5;
+
+  .brand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .brand-controls {
+      display: flex;
+      gap: 10px;
+
+      button {
+        width: 38px;
+        height: 38px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+          background: #222;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .brand-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding: 5px 2px 15px;
+    justify-content:center;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .brand-card {
+      flex: 0 0 160px;
+      text-align: center;
+      cursor: pointer;
+      scroll-snap-align: start;
+
+      .brand-image {
+        height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        background: #fff;
+        transition: 0.3s;
+
+        img {
+          max-width: 100%;
+          max-height: 75px;
+          object-fit: contain;
+        }
+      }
+
+      h4 {
+        margin-top: 12px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      &:hover .brand-image {
+        border-color: #222;
+        transform: translateY(-3px);
+      }
+    }
+  }
 }
 
-.slider-track {
-  display: flex;
-  height: 100%;
-  transition: transform 0.5s ease-in-out;
-}
+@media (max-width: 768px) {
+  .brand-section {
+    .brand-slider {
+      gap: 12px;
 
-.slider-item {
-  min-width: 100%;
-  height: 100%;
-  flex-shrink: 0;
-}
+      .brand-card {
+        flex: 0 0 125px;
 
-.slider-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* Navigation buttons */
-
-.slider-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s;
-}
-
-.slider-btn:hover {
-  background: rgba(0, 0, 0, 0.85);
-}
-
-.slider-btn.prev {
-  left: 15px;
-}
-
-.slider-btn.next {
-  right: 15px;
-}
-
-/* Indicators */
-
-.slider-indicators {
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
-  z-index: 2;
-}
-
-.slider-indicators button {
-  width: 10px;
-  height: 10px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  padding: 0;
-}
-
-.slider-indicators button.active {
-  background: #007bff;
-  width: 24px;
-  border-radius: 10px;
+        .brand-image {
+          height: 90px;
+        }
+      }
+    }
+  }
 }
 
 }

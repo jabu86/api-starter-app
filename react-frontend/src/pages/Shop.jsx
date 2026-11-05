@@ -3,33 +3,32 @@ import ProductCard from "../componentes/customer/ProductCard";
 import Filter from "../componentes/customer/Filter";
 import GlobalSearchBar from "../componentes/customer/GlobalSearchBar";
 import Cart from "../componentes/customer/Cart";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import CategoryList from "../componentes/customer/CategoryList.jsx";
 import BrandList from "../componentes/customer/BrandList.jsx";
-import {API_URL} from "../services/api"
-
+import { API_URL } from "../services/api";
 
 function Shop() {
+  const [searchParams] = useSearchParams();
+
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  
+
   const initialFilters = {
     search: "",
     size: "",
     sort: "",
     category: "",
     subCategoryId: "",
-    brand: "",
+    brand: searchParams.get("brand") || "",
   };
   const [filters, setFilters] = useState(initialFilters);
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-
-
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -178,6 +177,7 @@ function Shop() {
   const searchByBrand = (brandName) => {
     updateFilters({ brand: brandName });
   };
+
   return (
     <Fragment>
       <div className="row">

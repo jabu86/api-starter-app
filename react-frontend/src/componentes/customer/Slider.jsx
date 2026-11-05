@@ -1,8 +1,8 @@
 
-import React, { useState } from "react";
+import React, { useState , } from "react";
 import noProductImage from "../../assets/images/noproduct.png";
 import { API_URL } from "../../services/api";
-// import "./Slider.css";
+
 
 function Slider({ images: productImages = [] }) {
 
