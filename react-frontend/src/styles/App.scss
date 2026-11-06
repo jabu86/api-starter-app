@@ -193,17 +193,70 @@ $header-color: #ececec;
     background: #f5f5f5;
     .slider-track {
       display: flex;
-      height: 100%;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
       transition: transform 0.5s ease-in-out;
       .slider-item {
+         position: relative; // IMPORTANT
         min-width: 100%;
+        width: 100%;
         height: 100%;
-        flex-shrink: 0;
+        flex: 0 0 100%;
+        overflow: hidden;
         img {
+          position: absolute;
+          inset: 0;
           width: 100%;
           height: 100%;
-          object-fit: contain;
-          display: block;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        .slider-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.45) 50%,
+            rgba(0, 0, 0, 0.05) 100%
+          );
+        }
+
+        .slider-content {
+          position: relative;
+          z-index: 1;
+          max-width: 600px;
+          padding: 40px 80px;
+          color: #fff;
+          .slider-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 18px;
+          }
+          .slider-subtitle {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+          }
+
+          .slider-button {
+            display: inline-block;
+            padding: 13px 30px;
+            background: #fff;
+            color: #222;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            &:hover {
+              background: #222;
+              color: #fff;
+              transform: translateY(-3px);
+            }
+          }
         }
       }
     }
@@ -211,157 +264,211 @@ $header-color: #ececec;
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 42px;
-      height: 42px;
+      z-index: 3;
+      width: 45px;
+      height: 45px;
       border: none;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.55);
-      color: white;
+      background: rgba(255, 255, 255, 0.85);
+      color: #222;
       font-size: 20px;
       cursor: pointer;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
       &:hover {
-        background: rgba(0, 0, 0, 0.85);
+        background: #222;
+        color: #fff;
       }
       &.prev {
-        left: 15px;
+        left: 20px;
       }
       &.next {
-        right: 15px;
+        right: 20px;
       }
     }
 
     .slider-indicators {
       position: absolute;
-      bottom: 15px;
+      z-index: 3;
+      bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 8px;
-      z-index: 2;
+      gap: 10px;
       button {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
         border: none;
-        border-radius: 50%;
+        border-radius: 20px;
         background: rgba(255, 255, 255, 0.6);
         cursor: pointer;
         padding: 0;
+        transition: all 0.3s ease;
+        padding: 0;
         &.active {
-          background: #007bff;
-          width: 24px;
-          border-radius: 10px;
+          width: 30px;
+          background: #fff;
         }
       }
     }
   }
 
-.brand-section {
-  width: 100%;
-  padding: 25px 0;
-  overflow: hidden;
-
-  .brand-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    h2 {
-      font-size: 22px;
-      font-weight: 600;
-    }
-
-    .brand-controls {
-      display: flex;
-      gap: 10px;
-
-      button {
-        width: 38px;
-        height: 38px;
-        border: 1px solid #ddd;
-        border-radius: 50%;
-        background: white;
-        cursor: pointer;
-        transition: 0.3s;
-
-        &:hover {
-          background: #222;
-          color: white;
-        }
-      }
-    }
-  }
-
-  .brand-slider {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    padding: 5px 2px 15px;
-    justify-content:center;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    .brand-card {
-      flex: 0 0 160px;
-      text-align: center;
-      cursor: pointer;
-      scroll-snap-align: start;
-
-      .brand-image {
-        height: 110px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px;
-        border: 1px solid #eee;
-        border-radius: 10px;
-        background: #fff;
-        transition: 0.3s;
-
-        img {
-          max-width: 100%;
-          max-height: 75px;
-          object-fit: contain;
-        }
-      }
-
-      h4 {
-        margin-top: 12px;
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      &:hover .brand-image {
-        border-color: #222;
-        transform: translateY(-3px);
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
   .brand-section {
+    width: 100%;
+    padding: 25px 0;
+    overflow: hidden;
+
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h2 {
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      .brand-controls {
+        display: flex;
+        gap: 10px;
+
+        button {
+          width: 38px;
+          height: 38px;
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          background: white;
+          cursor: pointer;
+          transition: 0.3s;
+
+          &:hover {
+            background: #222;
+            color: white;
+          }
+        }
+      }
+    }
+
     .brand-slider {
-      gap: 12px;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      padding: 5px 2px 15px;
+      justify-content: center;
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       .brand-card {
-        flex: 0 0 125px;
+        flex: 0 0 160px;
+        text-align: center;
+        cursor: pointer;
+        scroll-snap-align: start;
 
         .brand-image {
-          height: 90px;
+          height: 110px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 15px;
+          border: 1px solid #eee;
+          border-radius: 10px;
+          background: #fff;
+          transition: 0.3s;
+
+          img {
+            max-width: 100%;
+            max-height: 75px;
+            object-fit: contain;
+          }
+        }
+
+        h4 {
+          margin-top: 12px;
+          font-size: 14px;
+          font-weight: 500;
+        }
+
+        &:hover .brand-image {
+          border-color: #222;
+          transform: translateY(-3px);
         }
       }
     }
   }
+
+  @media (max-width: 768px) {
+    .brand-section {
+      .brand-slider {
+        gap: 12px;
+
+        .brand-card {
+          flex: 0 0 125px;
+
+          .brand-image {
+            height: 90px;
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+  .slider-container {
+    height: 350px;
+    border-radius: 8px;
+  }
+
+  .slider-content {
+    padding: 30px 55px;
+  }
+
+  .slider-title {
+    font-size: 30px;
+  }
+
+  .slider-subtitle {
+    font-size: 15px;
+  }
+
+  .slider-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 16px;
+  }
+
+  .slider-btn.prev {
+    left: 10px;
+  }
+
+  .slider-btn.next {
+    right: 10px;
+  }
 }
 
+@media (max-width: 480px) {
+  .slider-container {
+    height: 300px;
+  }
+
+  .slider-content {
+    padding: 25px 45px;
+  }
+
+  .slider-title {
+    font-size: 25px;
+  }
+
+  .slider-subtitle {
+    font-size: 14px;
+  }
+
+  .slider-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
 }
