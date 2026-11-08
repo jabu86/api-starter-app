@@ -3,9 +3,14 @@ import noProductImage from "../../assets/images/noproduct.png";
 import Pagination from "./Pagination";
 import RatingStars from "./RatingStars";
 import { API_URL } from "../../services/api";
-function ProductCard({ products, addToCart, pagination, handlePageChange }) {
-  // console.log(products);
+function ProductCard({
+  products = [],
+  addToCart,
+  pagination,
+  handlePageChange,
+}) {
 
+  
   return (
     <div className="col-md-7 mb-4 product-wrapper">
       {/* Added g-4 here to control the gap between columns automatically */}
@@ -24,20 +29,22 @@ function ProductCard({ products, addToCart, pagination, handlePageChange }) {
                   to={`/shop/${product.slug}`}
                   className="product-image-link"
                 >
-                  {product.images.length === 0 ? (
-                    <div className="product-img" key={product.id}>
-                      <img src={noProductImage} className="card-img" />
+                  {product.images?.length > 0 ? (
+                    <div className="product-img">
+                      <img
+                        className="card-img"
+                        alt={product.name}
+                        src={`${API_URL}${product.images[0].image}`}
+                      />
                     </div>
                   ) : (
-                    product.images.map((img, index) => (
-                      <div className="product-img" key={index}>
-                        <img
-                          className="card-img"
-                          alt={`${product.name}`}
-                          src={`${API_URL}${img.image}`}
-                        />
-                      </div>
-                    ))
+                    <div className="product-img">
+                      <img
+                        src={noProductImage}
+                        className="card-img"
+                        alt="Product unavailable"
+                      />
+                    </div>
                   )}
                 </Link>
 

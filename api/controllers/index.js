@@ -1,4 +1,4 @@
-const { Op, literal } = require("sequelize");
+const { Op, literal, fn, col } = require("sequelize");
 
 const {
   Category,
@@ -9,7 +9,7 @@ const {
   Colors,
   Reviews,
   OrderItem,
-  Order
+  Order,
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -259,35 +259,6 @@ exports.products = async (req, res) => {
 
     // 2. Extract IDs
     const ids = productIds.map((product) => product.id);
-    // console.log(productIds);
-
-    //get average ratings for all the products
-    const ratings = await Reviews.findAll({
-      attributes: [
-        "product_id",
-        [
-          sequelize.fn(
-            "AVG",
-            sequelize.cast(sequelize.col("ratings"), "INTEGER"),
-          ),
-          "averageRating",
-        ],
-        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
-      ],
-      where: {
-        product_id: ids,
-      },
-      group: ["product_id"],
-      raw: true,
-    });
-
-    const ratingMap = {};
-    ratings.forEach((rating) => {
-      ratingMap[rating.product_id] = {
-        averageRating: Number(rating.averageRating),
-        totalReviews: Number(rating.totalReviews),
-      };
-    });
 
     //Get the actual products + relationships
     const rows = await Products.findAll({
@@ -306,11 +277,6 @@ exports.products = async (req, res) => {
           model: Brand,
           as: "brand",
         },
-        // {
-        //   model: Reviews,
-        //   as: "reviews",
-        // },
-
         {
           model: product_images,
           as: "images",
@@ -337,16 +303,8 @@ exports.products = async (req, res) => {
         },
       ],
     });
-
-    const productsWithRatings = rows.map((product) => {
-      const rating = ratingMap[product.id];
-
-      return {
-        ...product.toJSON(),
-        averageRating: rating?.averageRating ?? 0,
-        totalReviews: rating?.totalReviews ?? 0,
-      };
-    });
+    //get average ratings for all the products
+    const productsWithRatings = await averageRating(rows, ids);
 
     const totalPages = Math.ceil(count / limit);
     return res.status(200).json({
@@ -457,8 +415,6 @@ exports.getLatestProducts = async (req, res) => {
           where: { active: true },
           required: false,
         },
-        // { model: Category, as: "category" },
-        // { model: Brand, as: "brand" },
       ],
       order: [["createdAt", "DESC"]],
       limit: 5,
@@ -470,10 +426,14 @@ exports.getLatestProducts = async (req, res) => {
         message: "No latest products found",
       });
     }
+    const ids = products.map((product) => product.id);
+
+    //get average ratings for all the products
+    const productsWithRatings = await averageRating(products, ids);
 
     return res.status(200).json({
       success: true,
-      products,
+      products: productsWithRatings,
     });
   } catch (error) {
     console.error(error);
@@ -519,56 +479,53 @@ exports.featuredBrands = async (req, res) => {
 exports.getTopRatedProducts = async (req, res) => {
   try {
     const products = await Products.findAll({
-      where: { active: true },
-      id:{
-        [Op.in]: sequelize.literal(`(
-          SELECT product_id
-          FROM "Reviews"
-          GROUP BY product_id
-          ORDER BY AVG(CAST(ratings AS INTEGER)) DESC
-          LIMIT 5
-        )`),
+      where: {
+        active: true,
       },
-      include: [ 
+      attributes: {
+        include: [
+          [
+            fn("AVG", literal('CAST("reviews"."ratings" AS NUMERIC)')),
+            "averageRating",
+          ],
+          [fn("COUNT", col("reviews.id")), "totalReviews"],
+        ],
+      },
+      include: [
+        {
+          model: Reviews,
+          as: "reviews",
+          attributes: [],
+          required: true,
+        },
         {
           model: product_images,
           as: "images",
+          attributes: ["id", "image", "active"],
           where: { active: true },
           required: false,
         },
-       ],
-        order: [
-        [
-          literal(`(
-            SELECT AVG(CAST(r.ratings AS NUMERIC))
-            FROM "Reviews" AS r
-            WHERE r.product_id = "Products".id
-          )`),
-          "DESC",
-        ],
       ],
-      
-      limit: 5,
-      subQuery: false, // Ensure proper handling of the include with limit and offset
+      group: ["Products.id", "images.id"],
+      having: literal('COUNT(DISTINCT "reviews"."id") >= 3'),
+      order: [
+        [literal('"averageRating"'), "DESC"],
+        [literal('"totalReviews"'), "DESC"],
+      ],
+
+      limit: 8,
+      subQuery: false,
     });
 
-    if (!products || products.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No top-rated products found",
-      });
-    }
-
     return res.status(200).json({
-      success: true,
       products,
     });
   } catch (error) {
     console.error(error);
+
     return res.status(500).json({
-      success: false,
-      message: "Unable to retrieve top-rated products",
-      error: error,
+      message: "Failed to retrieve top-rated products",
+      error: error.message,
     });
   }
 };
@@ -576,241 +533,199 @@ exports.getTopRatedProducts = async (req, res) => {
 //@desc  Get best-selling products
 //@route GET /api/best-selling
 //@access Public
+// exports.getTopSellingProducts = async (req, res) => {
+//   try {
+//     const products = await OrderItem.findAll({
+//       attributes: [
+//         "product_id",
+//         [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
+//       ],
 
+//       include: [
+//         {
+//           model: Products,
+//           as: "product",
+//           attributes: ["id", "name", "price", "slug"],
+//           required: true,
+
+//         },
+//         {
+//           model: Order,
+//           as: "orders",
+//           attributes: [],
+//           where: {
+//             is_paid: true,
+//           },
+//           required: true,
+//         },
+//       ],
+
+//       group: ["OrderItem.product_id", "product.id"],
+
+//       order: [[sequelize.literal('"totalSold"'), "DESC"]],
+
+//       limit: 10,
+//       subQuery: false,
+//     });
+
+//     return res.status(200).json({
+//       success: true,
+//       products,
+//     });
+//   } catch (error) {
+//     console.error(error);
+
+//     return res.status(500).json({
+//       message: "Error retrieving best-selling products.",
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// };
 
 exports.getTopSellingProducts = async (req, res) => {
   try {
-    const products = await OrderItem.findAll({
+    // 1. Get products with more than 3 units sold
+    const topSelling = await OrderItem.findAll({
       attributes: [
         "product_id",
-        [
-          sequelize.fn("SUM", sequelize.col("OrderItem.quantity")),
-          "totalSold"
-        ]
+        [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
       ],
 
       include: [
         {
           model: Products,
           as: "product",
-          attributes: ["id", "name", "price", "slug"],
-          required: true
+          attributes: [],
+          where: {
+            active: true,
+          },
+          required: true,
         },
         {
           model: Order,
           as: "orders",
           attributes: [],
           where: {
-            is_paid: true
+            is_paid: true,
           },
-          required: true
-        }
+          required: true,
+        },
       ],
 
-      group: [
-        "OrderItem.product_id",
-        "product.id"
-      ],
+      group: ["OrderItem.product_id"],
 
-      order: [
-        [sequelize.literal('"totalSold"'), "DESC"]
-      ],
+      having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
+
+      order: [[sequelize.literal('"totalSold"'), "DESC"]],
 
       limit: 10,
-      subQuery: false
+      subQuery: false,
     });
 
+    // No qualifying products
+    if (topSelling.length === 0) {
+      return res.status(200).json({
+        success: true,
+        products: [],
+      });
+    }
+
+    const productIds = topSelling.map((item) => item.product_id);
+
+    // 2. Get products and their active images
+    const products = await Products.findAll({
+      where: {
+        id: productIds,
+      },
+
+      include: [
+        {
+          model: product_images,
+          as: "images",
+          where: {
+            active: true,
+          },
+          required: false,
+        },
+      ],
+    });
+    
+
+    // 3. Calculate average rating and review count
+    const productsWithRatings = await averageRating(products, productIds);
+
+    const result = topSelling
+      .map((soldItem) => {
+        const product = productsWithRatings.find(
+          (item) => Number(item.id) === Number(soldItem.product_id),
+        );
+
+        return product || null;
+      })
+      .filter(Boolean);
     return res.status(200).json({
       success: true,
-      products
+      products: result,
     });
-
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
       message: "Error retrieving best-selling products.",
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
 /*
-exports.updateDefaultValute = async (req, res) => {
-  const transaction = await sequelize.transaction();
+ *@desc  Calculate average rating for a product
+ *returns an object with averageRating and totalReviews
+ *@access Private
+ */
+const averageRating = async (products, ids) => {
   try {
-    const selectedId = req.params.id;
-    //get all the users shipping addresss
-    //set all of them to false
-    //than update address that is selected or
-    //update the other fields and keep the selected to true
+    const ratings = await Reviews.findAll({
+      attributes: [
+        "product_id",
+        [
+          sequelize.fn(
+            "AVG",
+            sequelize.cast(sequelize.col("ratings"), "NUMERIC"),
+          ),
+          "averageRating",
+        ],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+      ],
 
-    const selectedAddress = await ShippingAddress.findOne({
       where: {
-        user_id: req.user.id,
-        id: selectedId,
+        product_id: ids,
       },
-      transaction,
+
+      group: ["product_id"],
+      raw: true,
     });
 
-    if (!selectedAddress) {
-      await transaction.rollback();
-      return res.status(404).json({
-        message: "Shipping address not found",
-        success: false,
-      });
-    }
-    // console.log(selectedAddress);
+    const ratingMap = {};
 
-    // 2. Set all user's addresses to false
-    await ShippingAddress.update(
-      { is_default: false },
-      {
-        where: {
-          user_id: req.user.id,
-        },
-      },
-      transaction,
-    );
+    ratings.forEach((rating) => {
+      ratingMap[Number(rating.product_id)] = {
+        averageRating: Number(rating.averageRating),
+        totalReviews: Number(rating.totalReviews),
+      };
+    });
 
-    // 3. Set the selected address to true
-    await selectedAddress.update(
-      {
-        is_default: true,
-      },
-      { transaction },
-    );
-    await transaction.commit();
-    return res.status(200).json({
-      message: "Default shipping address updated",
-      shippingAddress: selectedAddress,
-      success: true,
+    return products.map((product) => {
+      const rating = ratingMap[Number(product.id)];
+
+      return {
+        ...product.toJSON(),
+        averageRating: rating?.averageRating ?? 0,
+        totalReviews: rating?.totalReviews ?? 0,
+      };
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Error updating default value",
-      success: false,
-    });
+    console.error(error);
+    throw new Error("Error calculating average ratings.");
   }
 };
-
-exports.deleteShippingAddress = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const addressId = req.params.id;
-    const address = await ShippingAddress.findOne({
-      where: {
-        id: addressId,
-        user_id: req.user.id,
-      },
-      transaction,
-    });
-
-    if (!address) {
-      await transaction.rollback();
-      return res.status(404).json({
-        message: "Shipping address not found.",
-        success: false,
-      });
-    }
-
-    // Remember whether the address being deleted is the default
-    const wasDefault = address.is_default;
-    // Delete it
-    await address.destroy({ transaction });
-
-    // If the deleted address was the default,
-    // choose another address as the new default
-    if (wasDefault) {
-      const newDefaultAddress = await ShippingAddress.findOne({
-        where: {
-          user_id: req.user.id,
-        },
-        order: [["createdAt", "ASC"]],
-        transaction,
-      });
-
-      if (newDefaultAddress) {
-        await newDefaultAddress.update(
-          {
-            is_default: true,
-          },
-          {
-            transaction,
-          },
-        );
-      }
-    }
-
-    await transaction.commit();
-
-    return res.status(200).json({
-      message: "Shipping address deleted successfully",
-      success: true,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: "Error removing shipping address",
-      success: false,
-    });
-  }
-};
-
-exports.checkout = async (req, res) => {
-  const transaction = await sequelize.transaction();
-  try {
-    const { id } = req.body;
-    const selectedAddress = await ShippingAddress.findOne({
-      where: {
-        user_id: req.user.id,
-        id: id,
-      },
-      transaction,
-    });
-
-    if (!selectedAddress) {
-      await transaction.rollback();
-      return res.status(404).json({
-        message: "Shipping address not found",
-        success: false,
-      });
-    }
-
-    // Remove default from all user's addresses
-    await selectedAddress.update(
-      {
-        is_default: false,
-      },
-      {
-        where: {
-          user_id: req.user.id,
-        },
-        transaction,
-      },
-    );
-
-    // Make the selected address the default
-    await selectedAddress.update(
-      {
-        is_default: true,
-      },
-      { transaction },
-    );
-
-    await transaction.commit();
-    return res.status(200).json({
-      url: "/payment",
-      success: true,
-    });
-  } catch (err) {
-    await transaction.rollback();
-    console.error(err);
-    return res.status(500).json({
-      message: "Error updating checkout default value",
-      success: false,
-    });
-  }
-};
-*/

@@ -27,7 +27,6 @@ const sliderContent = [
 function Slider() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-
   const totalSlides = sliderContent.length;
 
   const prevSlide = () => {
@@ -89,18 +88,14 @@ function Slider() {
               fetchPriority={index === 0 ? "high" : "auto"}
               draggable="false"
             />
-
             <div className="slider-overlay" />
-
             <div className="slider-content">
               <h1 className="slider-title">
                 {slide.heading}
               </h1>
-
               <p className="slider-subtitle">
                 {slide.subheading}
               </p>
-
               <Link
                 to={slide.buttonLink}
                 className="slider-button"
