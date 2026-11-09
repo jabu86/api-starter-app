@@ -1,34 +1,64 @@
-name: CI
+
+name: Ecommerce CI
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
+      - main
       - master
 
-permissions:
-  contents: read
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
-  verify:
-    name: Verify
+  test-api:
+    name: Test API
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: ./api
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: api/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify application
-        run: npm run verify
+      - name: Run tests
+        run: npm test --if-present
+
+  test-frontend:
+    name: Test React frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./react-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: react-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React application
+        run: npm run build
