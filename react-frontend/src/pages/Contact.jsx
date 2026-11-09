@@ -7,7 +7,7 @@ import { useState } from 'react'
 function Contact() {
     const [count, setCount] = useState(0)
 
-    return <h2>Contact Page</h2>;
+    return <h2>Contact Page This is a small change to deploy using ci/cd</h2>;
 }
 
 export default Contact
