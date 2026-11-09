@@ -6,12 +6,7 @@ import { useState } from "react";
 function Contact() {
   const [count, setCount] = useState(0);
 
-  return (
-    <div>
-      <h1>Hello world</h1>
-      <h1>This is a simple deploy ci/cd deployment test</h1>
-    </div>
-  );
+    return <h2>Contact Page This is a small change to deploy using ci/cd</h2>;
 }
 
 export default Contact;
