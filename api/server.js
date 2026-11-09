@@ -35,8 +35,6 @@ const orderRoutes = require("./routes/orders");
 const reviewsRoutes = require("./routes/reviews");
 const usersRoutes = require("./routes/users");
 const shippingRoutes = require("./routes/shipping");
-const { assert } = require("console");
-const { version } = require("os");
 
 app.use("/api", indexRoutes);
 app.use("/api/auth", authRoutes);
@@ -57,14 +55,7 @@ app.use(
   usersRoutes,
 );
 
-app.use('GET /api/version returns the current version', async() => {
-  const res = await fetch(`${process.env.URL}/api/version`);
-  assert.equal(res.status, 200);
-  assert.deepEqual(await res.json() , {
-    version : process.env.URL ?? 'development',
-  });
 
-})
 
 async function connectDB() {
   try {
