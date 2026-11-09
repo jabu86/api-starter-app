@@ -35,6 +35,7 @@ const orderRoutes = require("./routes/orders");
 const reviewsRoutes = require("./routes/reviews");
 const usersRoutes = require("./routes/users");
 const shippingRoutes = require("./routes/shipping");
+const { log } = require("console");
 
 app.use("/api", indexRoutes);
 app.use("/api/auth", authRoutes);
@@ -76,5 +77,7 @@ async function startSever() {
     );
   });
 }
+console.log('this is a test');
+
 
 startSever();
