@@ -1,0 +1,104 @@
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+    const createSlug = (text) => {
+        if (!text) return "";
+        return text
+            .toLowerCase()
+            .replace(/[^\w\s]/g, "")
+            .trim()
+            .split(/\s+/)
+            .join("-");
+    };
+  class Products extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define association here
+        Products.hasMany(models.product_images, {
+            foreignKey: "product_id",
+            as: "images"
+        });
+        Products.hasMany(models.product_colors, {
+            foreignKey: "product_id",
+            as: "productColors"
+        });
+        
+        Products.hasMany(models.product_size, {
+            foreignKey: "product_id",
+            as: "productSizes"
+        });
+
+        Products.belongsTo(models.Category, {
+            foreignKey: "category_id",
+            as: "category"
+        });
+
+        Products.hasMany(models.sub_category_product, {
+            foreignKey: "product_id",
+            as:"sub_category_products"
+        });
+
+        Products.belongsTo(models.Brand, {
+            foreignKey: "brand_id",
+            as: "brand"
+        });
+          Products.belongsToMany(models.Colors, {
+            through: models.product_colors,
+            foreignKey: "product_id",
+            otherKey: "color_id",
+            as: "colors"
+        });
+
+        Products.belongsToMany(models.Sizes, {
+            through: models.product_size,
+            foreignKey: "product_id",
+            otherKey: "size_id",
+            as: "sizes"
+        });
+        
+        Products.hasMany(models.OrderItem, {
+            foreignKey: "product_id",
+            as: "orderItems"
+        });
+
+         Products.hasMany(models.Reviews, {
+            foreignKey: "product_id",
+            as: "reviews"
+        });
+        
+    }
+  }
+  Products.init({
+    name: DataTypes.STRING,
+    category_id: DataTypes.INTEGER,
+    brand_id: DataTypes.INTEGER,
+    slug: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    price: DataTypes.STRING,
+    quantity: DataTypes.INTEGER,
+    in_stock: DataTypes.BOOLEAN,
+    active: DataTypes.BOOLEAN
+  }, {
+    sequelize,
+    modelName: 'Products',
+      tableName: 'products', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+      freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
+      hooks:{
+          beforeCreate: (product) => {
+              product.slug = createSlug(product.name);
+          },
+          beforeUpdate: (product) => {
+              if (product.changed("name")) {
+                  product.slug = createSlug(product.name);
+              }
+          }
+      }
+  });
+  return Products;
+};

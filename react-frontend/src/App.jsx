@@ -1,0 +1,129 @@
+import  {BrowserRouter, Routes, Route, Link} from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.css';
+import './styles/admin/App.scss'
+import './styles/App.scss'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// import './assets/css/fonts/Montserrat,Roboto.zip'
+//Index
+//customer or public
+import Home from "./pages/Home.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
+import Profile from './pages/Profile.jsx';
+import Shop from './pages/Shop.jsx';
+import SingleProduct from './pages/SingleProduct.jsx';
+import Shipping from './pages/Shipping';
+import Checkout from "./pages/Checkout.jsx";
+import Payment from "./pages/Payment.jsx";
+import CartItem from './pages/CartItem.jsx'
+import PlaceOrder from './pages/PlaceOrder.jsx'
+import Order from './pages/Order.jsx'
+
+
+//Auth
+import AuthLayout from "./layouts/AuthLayout.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Register from "./pages/auth/Register.jsx";
+import Forgot from "./pages/auth/Forgot.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
+//Admin
+import AdminLayout from "./layouts/AdminLayout.jsx";
+import Dashboard from "./pages/admin/Dashboad.jsx";
+import Products from "./pages/admin/Products.jsx";
+import Category from "./pages/admin/Categories.jsx";
+import SubCategories from "./pages/admin/SubCategories.jsx";
+import Brands from "./pages/admin/Brands.jsx";
+import Colors from "./pages/admin/Colors.jsx";
+import Sizes from "./pages/admin/Sizes.jsx"
+import Users from "./pages/admin/Users.jsx";
+import AdminOrders from "./pages/admin/Orders.jsx";
+
+
+
+import CustomerLayout from "./layouts/CustomerLayout.jsx";
+import ProtectedRouter from "./componentes/ProtectedRouter.jsx";
+import PublicRouter from "./componentes/PublicRouter.jsx";
+
+
+import { useState } from 'react'
+
+function App() {
+
+    // Modal control
+    const [sideBarOpen, setSetBarOpen] = useState(true)
+    const [show, setShow] = useState(false);
+    function handleSideBarClick(e){
+        setSetBarOpen(!sideBarOpen);
+    }
+    function handleOpenModal() {
+         setShow(!show);
+    }
+  return (
+    <>
+    <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme="colored"
+      />
+        <BrowserRouter>
+            <div>
+                <Routes>
+                    <Route exact element={
+                        <PublicRouter>
+                            <AuthLayout/>
+                        </PublicRouter>
+                    } >
+                        <Route  path="/login" element={<Login/>} />
+                        <Route  path="/register" element={<Register/>} />
+                        <Route  path="/forgot-password" element={<Forgot/>} />
+                        <Route  path="/reset-password/:token" element={<ResetPassword/>} />
+                    </Route>
+                    <Route path="/" exact element={
+                        <CustomerLayout />
+                    }>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/shop" element={<Shop />} />
+                        <Route path="/shop/:slug" element={<SingleProduct />} />
+                        <Route path="/cart" element={<CartItem />} />
+                    </Route>
+
+                    <Route path="/" exact element={
+                        <ProtectedRouter  allowedRoles={['user', 'admin' , 'customer']}>                            
+                            <CustomerLayout />
+                        </ProtectedRouter>
+                    }>                        
+                        <Route path="/profile/:name" element={<Profile />} />
+                        <Route path="/shipping" element={<Shipping />} />
+                        <Route path="/payment" element={<Payment />} />
+                        <Route path="/checkout" element={<Checkout />} />
+                        <Route path="/placeorder" element={<PlaceOrder />} />
+                        <Route path="/order/:id" element={<Order />} />
+                    </Route>
+
+                    <Route path="/admin" element={
+                        <ProtectedRouter  allowedRoles={['user', 'admin']}>
+                            <AdminLayout handleSideBarClick={handleSideBarClick} sideBarOpen={sideBarOpen} />
+                        </ProtectedRouter>
+                    } >
+                        <Route style={{ padding: "20px", flex: 1 }} path="/admin" element={<Dashboard />} />
+                        <Route path="/admin/products" element={<Products openModal={handleOpenModal} show={show} />}  />
+                        <Route path="/admin/brands" element={<Brands openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/categories" element={<Category openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/sub-categories/:slug" element={<SubCategories openModal={handleOpenModal} show={show}/>} />
+                        <Route path="/admin/colors" element={<Colors openModal={handleOpenModal} show={show} />}  />
+                        <Route path="/admin/sizes" element={<Sizes openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/orders" element={<AdminOrders openModal={handleOpenModal} show={show} />} />
+                        <Route path="/admin/users" element={<Users openModal={handleOpenModal} show={show} />} />
+                    </Route>
+                </Routes>
+            </div>
+        </BrowserRouter>  
+    </>
+  )
+}
+
+export default App

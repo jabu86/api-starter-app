@@ -1,0 +1,731 @@
+const { Op, literal, fn, col } = require("sequelize");
+
+const {
+  Category,
+  Brand,
+  product_images,
+  Products,
+  Sizes,
+  Colors,
+  Reviews,
+  OrderItem,
+  Order,
+} = require("../models");
+const sequelize = require("../config/database");
+
+exports.index = async (req, res) => {
+  try {
+    res.status(200).json({ message: "Index Page Like the Home Page" });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.home = (req, res) => {
+  try {
+    res.status(200).json({ message: "Home api contoller" });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.about = (req, res) => {
+  try {
+    res.status(200).json({ message: "About api contoller" });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.contact = (req, res) => {
+  try {
+    res.status(200).json({ message: "Contact us api contoller" });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+//@desc  Get category with sub categories
+//@route POST /api/category
+//@access Public
+exports.getCategory = async (req, res) => {
+  try {
+    const categories = await Category.findAll({
+      include: ["subCategory"],
+      order: [["name", "ASC"]],
+    });
+
+    if (!categories) {
+      return res.status(404).json({
+        message: "Category not found: ",
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Category found successfull. ",
+      categories,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Getting categoy Error: ",
+      err,
+    });
+  }
+};
+
+//@desc  Get brands
+//@route POST /api/brands
+//@access Public
+
+exports.getBrands = async (req, res) => {
+  try {
+    const brands = await Brand.findAll({
+      order: [["name", "ASC"]],
+    });
+    if (!brands) {
+      return res.status(404).json({
+        message: "Brand not found: ",
+        success: false,
+      });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Brand found successfull. ", brands });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Getting brand Error: ",
+      err,
+    });
+  }
+};
+
+//@desc  Get products , filter by category, sub category, size, sort and search
+//@route POST /api/shop
+//@access Public
+exports.products = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = (req.query.search || "").trim();
+    const sort = (req.query.sort || "").trim(); // Get sort parameter from query
+    const size = req.query.size || "";
+    const offset = (page - 1) * limit;
+    const categoryName = (req.query.category || "").trim(); // Get category name from query parameter
+    const subCategoryId = (req.query.subCategoryId || "").trim(); // Get sub category id from query parameter
+    // const subCategoryName = (req.query.subCategory || "").trim(); // Get sub category name from query parameter
+    const brandName = (req.query.brand || "").trim(); // Get brand name from query parameter
+
+    // return console.log("Query Parameters:", {
+    //   page,
+    //   limit,
+    //   search,
+    //   sort,
+    //   size,
+    //   categoryName,
+    // subCategoryId,
+    // subCategoryName,
+    // });
+
+    // ---------------------------------------
+    // 1. FIND PRODUCTS THAT MATCH SIZE
+    // ---------------------------------------
+
+    let sizeProductIds = null;
+    if (size) {
+      const sizeProducts = await Products.findAll({
+        attributes: ["id"],
+        include: [
+          {
+            model: Sizes,
+            as: "sizes",
+            attributes: [],
+            through: {
+              attributes: [],
+            },
+            where: {
+              slug: size,
+            },
+            required: true,
+          },
+        ],
+      });
+
+      sizeProductIds = sizeProducts.map((product) => product.id);
+
+      // console.log("Matching product IDs:", sizeProductIds);
+    }
+    // ---------------------------------------
+    // 2. BUILD PRODUCT WHERE
+    // ---------------------------------------
+
+    const productWhere = {
+      active: true,
+    };
+
+    if (search.trim()) {
+      const searchTerm = search.trim();
+      productWhere[Op.or] = [
+        {
+          name: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+        {
+          description: {
+            [Op.like]: `%${searchTerm}%`,
+          },
+        },
+        {
+          price: sequelize.where(
+            sequelize.cast(sequelize.col("price"), "TEXT"),
+            {
+              [Op.like]: `%${searchTerm}%`,
+            },
+          ),
+        },
+      ];
+    }
+
+    if (sizeProductIds !== null) {
+      productWhere.id = sizeProductIds;
+    }
+
+    let order = [["id", "DESC"]];
+
+    if (sort === "lowest") {
+      order = [["price", "ASC"]];
+    }
+
+    if (sort === "highest") {
+      order = [["price", "DESC"]];
+    }
+    // console.log(sort , 'sort')
+    // console.log(size , 'size')
+
+    //get category relationships and filter by category name if provided
+    //get sub category relationships and filter by product sub-category name if provided
+    const filterIncludes = [];
+
+    if (categoryName) {
+      filterIncludes.push({
+        association: "category",
+        attributes: [],
+        where: {
+          name: categoryName,
+        },
+        required: true,
+      });
+    }
+
+    if (subCategoryId) {
+      filterIncludes.push({
+        association: "sub_category_products",
+        attributes: [],
+        where: {
+          sub_category_id: Number(subCategoryId),
+        },
+        required: true,
+      });
+    }
+
+    if (brandName) {
+      filterIncludes.push({
+        association: "brand",
+        attributes: [],
+        where: {
+          name: brandName,
+        },
+        required: true,
+      });
+    }
+
+    // ---------------------------------------
+    // 3. FIND AND COUNT PRODUCTS
+    // ---------------------------------------
+    const { count, rows: productIds } = await Products.findAndCountAll({
+      where: productWhere,
+      attributes: ["id"],
+      include: filterIncludes,
+      limit,
+      offset,
+      order,
+      distinct: true,
+      subQuery: false, // Ensure proper handling of the include with limit and offset
+    });
+
+    // 2. Extract IDs
+    const ids = productIds.map((product) => product.id);
+
+    //Get the actual products + relationships
+    const rows = await Products.findAll({
+      where: {
+        id: ids,
+        active: true,
+      },
+      order,
+      include: [
+        {
+          model: Category,
+          as: "category",
+        },
+
+        {
+          model: Brand,
+          as: "brand",
+        },
+        {
+          model: product_images,
+          as: "images",
+          where: {
+            active: true,
+          },
+          required: false,
+        },
+
+        {
+          model: Colors,
+          as: "colors",
+          through: {
+            attributes: [],
+          },
+        },
+
+        {
+          model: Sizes,
+          as: "sizes",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+    //get average ratings for all the products
+    const productsWithRatings = await averageRating(rows, ids);
+
+    const totalPages = Math.ceil(count / limit);
+    return res.status(200).json({
+      products: productsWithRatings,
+      pagination: {
+        currentPage: page,
+        perPage: limit,
+        totalItems: count,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+      success: true,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Getting Product Error: ",
+      err,
+    });
+  }
+};
+
+//@desc  Get single products
+//@route POST /api/shop/slug
+//@access Public
+exports.product = async (req, res) => {
+  try {
+    const product = await Products.findOne({
+      where: { slug: req.params.slug },
+      include: [
+        {
+          model: Category,
+          as: "category",
+        },
+        {
+          model: Brand,
+          as: "brand",
+        },
+        {
+          model: product_images,
+          as: "images",
+
+          required: false,
+        },
+        {
+          model: Colors,
+          as: "colors",
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: Sizes,
+          as: "sizes",
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Not Found" });
+    }
+
+    //calculate product ratings
+    // Calculate product ratings
+    const ratingStats = await Reviews.findOne({
+      where: {
+        product_id: product.id,
+      },
+      attributes: [
+        [
+          sequelize.fn(
+            "AVG",
+            sequelize.cast(sequelize.col("ratings"), "INTEGER"),
+          ),
+          "averageRating",
+        ],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+      ],
+      raw: true,
+    });
+    return res.status(200).json({
+      success: true,
+      product,
+      averageRating: Number(ratingStats?.averageRating || 0),
+      totalReviews: Number(ratingStats?.totalReviews || 0),
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
+};
+
+//@desc  Get latest products
+//@route GET /api/latest
+//@access Public
+exports.getLatestProducts = async (req, res) => {
+  try {
+    const products = await Products.findAll({
+      where: { active: true },
+      include: [
+        {
+          model: product_images,
+          as: "images",
+          where: { active: true },
+          required: false,
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      limit: 5,
+    });
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No latest products found",
+      });
+    }
+    const ids = products.map((product) => product.id);
+
+    //get average ratings for all the products
+    const productsWithRatings = await averageRating(products, ids);
+
+    return res.status(200).json({
+      success: true,
+      products: productsWithRatings,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve latest products",
+    });
+  }
+};
+
+// @desc  Get featured brands
+// @route GET /api/featured-brands
+// @access Public
+exports.featuredBrands = async (req, res) => {
+  try {
+    //Get all brands and order by name ascending
+    const brands = await Brand.findAll();
+    //check if brands is empty or null and return a message if it is
+    if (!brands || brands.length === 0) {
+      return res.status(200).json({
+        message: "Brands not found.",
+
+        brands: null,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      hasAddress: true,
+      brands,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error loading brands",
+      error: error,
+    });
+  }
+};
+
+//@desc  Get top rated products
+//@route GET /api/top-rated
+//@access Public
+exports.getTopRatedProducts = async (req, res) => {
+  try {
+    const products = await Products.findAll({
+      where: {
+        active: true,
+      },
+      attributes: {
+        include: [
+          [
+            fn("AVG", literal('CAST("reviews"."ratings" AS NUMERIC)')),
+            "averageRating",
+          ],
+          [fn("COUNT", col("reviews.id")), "totalReviews"],
+        ],
+      },
+      include: [
+        {
+          model: Reviews,
+          as: "reviews",
+          attributes: [],
+          required: true,
+        },
+        {
+          model: product_images,
+          as: "images",
+          attributes: ["id", "image", "active"],
+          where: { active: true },
+          required: false,
+        },
+      ],
+      group: ["Products.id", "images.id"],
+      having: literal('COUNT(DISTINCT "reviews"."id") >= 3'),
+      order: [
+        [literal('"averageRating"'), "DESC"],
+        [literal('"totalReviews"'), "DESC"],
+      ],
+
+      limit: 8,
+      subQuery: false,
+    });
+
+    return res.status(200).json({
+      products,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to retrieve top-rated products",
+      error: error.message,
+    });
+  }
+};
+
+//@desc  Get best-selling products
+//@route GET /api/best-selling
+//@access Public
+// exports.getTopSellingProducts = async (req, res) => {
+//   try {
+//     const products = await OrderItem.findAll({
+//       attributes: [
+//         "product_id",
+//         [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
+//       ],
+
+//       include: [
+//         {
+//           model: Products,
+//           as: "product",
+//           attributes: ["id", "name", "price", "slug"],
+//           required: true,
+
+//         },
+//         {
+//           model: Order,
+//           as: "orders",
+//           attributes: [],
+//           where: {
+//             is_paid: true,
+//           },
+//           required: true,
+//         },
+//       ],
+
+//       group: ["OrderItem.product_id", "product.id"],
+
+//       order: [[sequelize.literal('"totalSold"'), "DESC"]],
+
+//       limit: 10,
+//       subQuery: false,
+//     });
+
+//     return res.status(200).json({
+//       success: true,
+//       products,
+//     });
+//   } catch (error) {
+//     console.error(error);
+
+//     return res.status(500).json({
+//       message: "Error retrieving best-selling products.",
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// };
+
+exports.getTopSellingProducts = async (req, res) => {
+  try {
+    // 1. Get products with more than 3 units sold
+    const topSelling = await OrderItem.findAll({
+      attributes: [
+        "product_id",
+        [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
+      ],
+
+      include: [
+        {
+          model: Products,
+          as: "product",
+          attributes: [],
+          where: {
+            active: true,
+          },
+          required: true,
+        },
+        {
+          model: Order,
+          as: "orders",
+          attributes: [],
+          where: {
+            is_paid: true,
+          },
+          required: true,
+        },
+      ],
+
+      group: ["OrderItem.product_id"],
+
+      having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
+
+      order: [[sequelize.literal('"totalSold"'), "DESC"]],
+
+      limit: 10,
+      subQuery: false,
+    });
+
+    // No qualifying products
+    if (topSelling.length === 0) {
+      return res.status(200).json({
+        success: true,
+        products: [],
+      });
+    }
+
+    const productIds = topSelling.map((item) => item.product_id);
+
+    // 2. Get products and their active images
+    const products = await Products.findAll({
+      where: {
+        id: productIds,
+      },
+
+      include: [
+        {
+          model: product_images,
+          as: "images",
+          where: {
+            active: true,
+          },
+          required: false,
+        },
+      ],
+    });
+    
+
+    // 3. Calculate average rating and review count
+    const productsWithRatings = await averageRating(products, productIds);
+
+    const result = topSelling
+      .map((soldItem) => {
+        const product = productsWithRatings.find(
+          (item) => Number(item.id) === Number(soldItem.product_id),
+        );
+
+        return product || null;
+      })
+      .filter(Boolean);
+    return res.status(200).json({
+      success: true,
+      products: result,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Error retrieving best-selling products.",
+      success: false,
+      error: error.message,
+    });
+  }
+};
+/*
+ *@desc  Calculate average rating for a product
+ *returns an object with averageRating and totalReviews
+ *@access Private
+ */
+const averageRating = async (products, ids) => {
+  try {
+    const ratings = await Reviews.findAll({
+      attributes: [
+        "product_id",
+        [
+          sequelize.fn(
+            "AVG",
+            sequelize.cast(sequelize.col("ratings"), "NUMERIC"),
+          ),
+          "averageRating",
+        ],
+        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+      ],
+
+      where: {
+        product_id: ids,
+      },
+
+      group: ["product_id"],
+      raw: true,
+    });
+
+    const ratingMap = {};
+
+    ratings.forEach((rating) => {
+      ratingMap[Number(rating.product_id)] = {
+        averageRating: Number(rating.averageRating),
+        totalReviews: Number(rating.totalReviews),
+      };
+    });
+
+    return products.map((product) => {
+      const rating = ratingMap[Number(product.id)];
+
+      return {
+        ...product.toJSON(),
+        averageRating: rating?.averageRating ?? 0,
+        totalReviews: rating?.totalReviews ?? 0,
+      };
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error calculating average ratings.");
+  }
+};

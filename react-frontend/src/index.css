@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 1.4;
+}
+
+
+
+body{
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings:
+            "wdth" 100;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+
+
+h1,h2,h3,h4,h5,h6{
+    font-family: inherit;
+    font-weight: 200;
+    line-height: 1.1;
+}
+
+p {
+    font-size: 1rem; /* 1 * 16 = 16px */
+}
+
+ul{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+
+.auth-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
