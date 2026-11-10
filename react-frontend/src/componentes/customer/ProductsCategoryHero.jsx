@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 
 function ProductsCategoryHero({categories}) {
-    console.log(categories);
+
     
   return (
         <div>
@@ -13,7 +13,7 @@ function ProductsCategoryHero({categories}) {
                     <div className="product-section-header">
                         <h3>{category.name}</h3>
 
-                        <Link to={`/shop?category=${category.id}`}>
+                        <Link to={`/shop?category=${encodeURIComponent(category.name)}`}>
                             View all
                         </Link>
                     </div>

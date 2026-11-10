@@ -10,7 +10,8 @@ import { API_URL } from "../services/api";
 
 function Shop() {
   const [searchParams] = useSearchParams();
-
+  console.log(searchParams.get('sort'));
+  
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -19,8 +20,8 @@ function Shop() {
   const initialFilters = {
     search: "",
     size: "",
-    sort: "",
-    category: "",
+    sort: searchParams.get('sort') ||  "",
+    category:searchParams.get('category') || "",
     subCategoryId: "",
     brand: searchParams.get("brand") || "",
   };
