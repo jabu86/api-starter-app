@@ -38,6 +38,8 @@ function Shop() {
     totalPages: 0,
   });
 
+
+  
   const getProducts = async (page = 1, selectedFilters = filters) => {
     try {
       const params = new URLSearchParams({
