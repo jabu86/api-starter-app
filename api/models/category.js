@@ -1,16 +1,14 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    const createSlug = (text) => {
-        return text
-            .toLowerCase()
-            .replace(/[^\w\s]/g, "")
-            .trim()
-            .split(/\s+/)
-            .join("-");
-    };
+  const createSlug = (text) => {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .trim()
+      .split(/\s+/)
+      .join("-");
+  };
   class Category extends Model {
     /**
      * Helper method for defining associations.
@@ -19,32 +17,38 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-        Category.hasMany(models.SubCategory, {
-            foreignKey: "category_id",
-            as: 'subCategory',
-        })
-
+      Category.hasMany(models.SubCategory, {
+        foreignKey: "category_id",
+        as: "subCategory",
+      });
+      Category.hasMany(models.sub_category_product, {
+        foreignKey: "category_id",
+        as: "productAssignments",
+      });
     }
   }
-  Category.init({
-    name: DataTypes.STRING,
-    slug: {type: DataTypes.STRING, unique: true },
-    description: DataTypes.STRING,
-  }, {
-    sequelize,
-    modelName: 'Category',
-      tableName: 'categories', // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
+  Category.init(
+    {
+      name: DataTypes.STRING,
+      slug: { type: DataTypes.STRING, unique: true },
+      description: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "Category",
+      tableName: "categories", // 🔑 FORCES Sequelize to query lowercase "users" in Postgres
       freezeTableName: true, // 💡 Stops Sequelize from auto-pluralizing or messing with case
-      hooks:{
-          beforeCreate: (category) => {
-              category.slug = createSlug(category.name);
-          },
-          beforeUpdate: (category) => {
-              if (category.changed("name")) {
-                  category.slug = createSlug(category.name);
-              }
+      hooks: {
+        beforeCreate: (category) => {
+          category.slug = createSlug(category.name);
+        },
+        beforeUpdate: (category) => {
+          if (category.changed("name")) {
+            category.slug = createSlug(category.name);
           }
-      }
-});
+        },
+      },
+    },
+  );
   return Category;
 };

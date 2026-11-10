@@ -10,6 +10,8 @@ const {
   Reviews,
   OrderItem,
   Order,
+  sub_category_product,
+  SubCategory,
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -104,7 +106,7 @@ exports.getBrands = async (req, res) => {
 };
 
 //@desc  Get products , filter by category, sub category, size, sort and search
-//@route POST /api/shop
+//@route GET /api/shop
 //@access Public
 exports.products = async (req, res) => {
   try {
@@ -329,7 +331,7 @@ exports.products = async (req, res) => {
 };
 
 //@desc  Get single products
-//@route POST /api/shop/slug
+//@route GET /api/shop/slug
 //@access Public
 exports.product = async (req, res) => {
   try {
@@ -650,7 +652,6 @@ exports.getTopSellingProducts = async (req, res) => {
         },
       ],
     });
-    
 
     // 3. Calculate average rating and review count
     const productsWithRatings = await averageRating(products, productIds);
@@ -678,6 +679,125 @@ exports.getTopSellingProducts = async (req, res) => {
     });
   }
 };
+
+//@desc get Products by there categories
+//@route GET /api/products-categories
+//@access Public
+
+// @desc Get products grouped by their categories
+// @route GET /api/products-categories
+// @access Public
+exports.getProductCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll({
+      attributes: ["id", "name", "slug"],
+      order: [["name", "DESC"]],
+      limit: 5,
+      include: [
+        {
+          model: SubCategory,
+          as: "subCategory",
+          attributes: ["id", "name", "slug"],
+          include: [
+            {
+              model: sub_category_product,
+              as: "productAssignments",
+              attributes: ["id", "product_id"],
+              include: [
+                {
+                  model: Products,
+                  as: "product",
+                  where: {
+                    active: true,
+                  },
+                  required: false,
+                  include: [
+                    {
+                      model: product_images,
+                      as: "images",
+                      where: {
+                        active: true,
+                      },
+                      required: false,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    // Collect products for each category and remove duplicates
+    const categoryProducts = categories.map((category) => {
+      const productsMap = new Map();
+
+      category.subCategory.forEach((subCategory) => {
+        subCategory.productAssignments.forEach((assignment) => {
+          const product = assignment.product;
+
+          if (product && !productsMap.has(Number(product.id))) {
+            productsMap.set(Number(product.id), product);
+          }
+        });
+      });
+
+      return {
+        category,
+        products: Array.from(productsMap.values()).slice(0, 10),
+      };
+    });
+
+    const categoriesWithProducts = categoryProducts.filter(
+      (item) => item.products.length > 0,
+    );
+
+    const allProductsMap = new Map();
+
+    categoriesWithProducts.forEach(({ products }) => {
+      products.forEach((product) => {
+        if (!allProductsMap.has(Number(product.id))) {
+          allProductsMap.set(Number(product.id), product);
+        }
+      });
+    });
+
+    const allProducts = Array.from(allProductsMap.values());
+
+    const productIds = allProducts.map((product) => product.id);
+
+    const ratedProducts = await averageRating(allProducts, productIds);
+
+    const ratedProductsMap = new Map(
+      ratedProducts.map((product) => [Number(product.id), product]),
+    );
+
+    const formattedCategories = categoriesWithProducts.map(
+      ({ category, products }) => ({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        products: products.map((product) =>
+          ratedProductsMap.get(Number(product.id)),
+        ),
+      }),
+    );
+
+    return res.status(200).json({
+      success: true,
+      products: formattedCategories,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve product categories",
+    });
+  }
+};
+
 /*
  *@desc  Calculate average rating for a product
  *returns an object with averageRating and totalReviews

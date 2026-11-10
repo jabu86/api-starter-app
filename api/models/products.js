@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "brand_id",
             as: "brand"
         });
-          Products.belongsToMany(models.Colors, {
+        Products.belongsToMany(models.Colors, {
             through: models.product_colors,
             foreignKey: "product_id",
             otherKey: "color_id",
