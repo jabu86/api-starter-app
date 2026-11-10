@@ -61,7 +61,7 @@ function Home() {
       <div className="row">
         <Slider />
       </div>
-      <div className="row  mb-5 justify-content-center">
+      <div className="row justify-content-center">
         <ProductSection title="Latest Products" products={latestProducts} link="/shop?sort=latest" />
         <ProductSection title="Top Rated Products" products={topRatedProducts} link="/shop?sort=rating" />
         <ProductSection title="Best Selling Products" products={bestSellingProducts} link="/shop?sort=best-selling" />

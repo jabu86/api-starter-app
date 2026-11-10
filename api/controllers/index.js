@@ -205,6 +205,47 @@ exports.products = async (req, res) => {
     if (sort === "highest") {
       order = [["price", "DESC"]];
     }
+
+    if (sort === "latest") {
+      order = [["createdAt", "DESC"]];
+    }
+
+    if (sort === "oldest") {
+      order = [["createdAt", "ASC"]];
+    }
+    let rankedProductIds = null;
+
+    if (sort === "rating") {
+      const ratings = await Reviews.findAll({
+        attributes: [
+          "product_id",
+          [
+            sequelize.fn(
+              "AVG",
+              sequelize.cast(sequelize.col("ratings"), "NUMERIC"),
+            ),
+            "averageRating",
+          ],
+          [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+        ],
+        group: ["product_id"],
+        
+        order: [
+          [sequelize.literal('"averageRating"'), "DESC"],
+          [sequelize.literal('"totalReviews"'), "DESC"],
+        ],
+      });
+
+      rankedProductIds = ratings.map((item) => item.product_id);
+      // return console.log(rankedProductIds, 'top rated')
+    }
+
+    if (sort === "best-selling") {
+      const sales = await bestSelling();
+      rankedProductIds = sales.map((item) => item.product_id);
+      // return console.log(rankedProductIds, 'top best selling')
+    }
+
     // console.log(sort , 'sort')
     // console.log(size , 'size')
 
@@ -244,6 +285,32 @@ exports.products = async (req, res) => {
         required: true,
       });
     }
+    let rankedOrder = order;
+
+    if (rankedProductIds !== null) {
+      // Apply ranking without removing your other filters
+      productWhere[Op.and] = [
+        ...(productWhere[Op.and] || []),
+        {
+          id: {
+            [Op.in]: rankedProductIds,
+          },
+        },
+      ];
+
+      if (rankedProductIds.length > 0) {
+        const caseConditions = rankedProductIds
+          .map((id, index) => `WHEN ${Number(id)} THEN ${index}`)
+          .join(" ");
+
+        rankedOrder = [
+          [
+            sequelize.literal(`CASE "Products"."id" ${caseConditions} END`),
+            "ASC",
+          ],
+        ];
+      }
+    }
 
     // ---------------------------------------
     // 3. FIND AND COUNT PRODUCTS
@@ -254,7 +321,7 @@ exports.products = async (req, res) => {
       include: filterIncludes,
       limit,
       offset,
-      order,
+      order : rankedOrder,
       distinct: true,
       subQuery: false, // Ensure proper handling of the include with limit and offset
     });
@@ -419,7 +486,7 @@ exports.getLatestProducts = async (req, res) => {
         },
       ],
       order: [["createdAt", "DESC"]],
-      limit: 5,
+      limit: 4,
     });
 
     if (!products || products.length === 0) {
@@ -515,7 +582,7 @@ exports.getTopRatedProducts = async (req, res) => {
         [literal('"totalReviews"'), "DESC"],
       ],
 
-      limit: 8,
+      limit: 4,
       subQuery: false,
     });
 
@@ -535,95 +602,11 @@ exports.getTopRatedProducts = async (req, res) => {
 //@desc  Get best-selling products
 //@route GET /api/best-selling
 //@access Public
-// exports.getTopSellingProducts = async (req, res) => {
-//   try {
-//     const products = await OrderItem.findAll({
-//       attributes: [
-//         "product_id",
-//         [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
-//       ],
-
-//       include: [
-//         {
-//           model: Products,
-//           as: "product",
-//           attributes: ["id", "name", "price", "slug"],
-//           required: true,
-
-//         },
-//         {
-//           model: Order,
-//           as: "orders",
-//           attributes: [],
-//           where: {
-//             is_paid: true,
-//           },
-//           required: true,
-//         },
-//       ],
-
-//       group: ["OrderItem.product_id", "product.id"],
-
-//       order: [[sequelize.literal('"totalSold"'), "DESC"]],
-
-//       limit: 10,
-//       subQuery: false,
-//     });
-
-//     return res.status(200).json({
-//       success: true,
-//       products,
-//     });
-//   } catch (error) {
-//     console.error(error);
-
-//     return res.status(500).json({
-//       message: "Error retrieving best-selling products.",
-//       success: false,
-//       error: error.message,
-//     });
-//   }
-// };
-
 exports.getTopSellingProducts = async (req, res) => {
   try {
     // 1. Get products with more than 3 units sold
-    const topSelling = await OrderItem.findAll({
-      attributes: [
-        "product_id",
-        [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
-      ],
-
-      include: [
-        {
-          model: Products,
-          as: "product",
-          attributes: [],
-          where: {
-            active: true,
-          },
-          required: true,
-        },
-        {
-          model: Order,
-          as: "orders",
-          attributes: [],
-          where: {
-            is_paid: true,
-          },
-          required: true,
-        },
-      ],
-
-      group: ["OrderItem.product_id"],
-
-      having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
-
-      order: [[sequelize.literal('"totalSold"'), "DESC"]],
-
-      limit: 10,
-      subQuery: false,
-    });
+   
+    const topSelling = await bestSelling();
 
     // No qualifying products
     if (topSelling.length === 0) {
@@ -745,7 +728,7 @@ exports.getProductCategories = async (req, res) => {
 
       return {
         category,
-        products: Array.from(productsMap.values()).slice(0, 10),
+        products: Array.from(productsMap.values()).slice(0, 4),
       };
     });
 
@@ -849,3 +832,40 @@ const averageRating = async (products, ids) => {
     throw new Error("Error calculating average ratings.");
   }
 };
+
+const bestSelling = async() => {
+     const topSelling = await OrderItem.findAll({
+      attributes: [
+        "product_id",
+        [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
+      ],
+
+      include: [
+        {
+          model: Products,
+          as: "product",
+          attributes: [],
+          where: {
+            active: true,
+          },
+          required: true,
+        },
+        {
+          model: Order,
+          as: "orders",
+          attributes: [],
+          where: {
+            is_paid: true,
+          },
+          required: true,
+        },
+      ],
+
+      group: ["OrderItem.product_id"],
+      having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
+      order: [[sequelize.literal('"totalSold"'), "DESC"]],
+      limit: 4,
+      subQuery: false,
+    });
+    return topSelling;
+}
