@@ -66,6 +66,12 @@ router.get('/top-rated', indexController.getTopRatedProducts);
  */
 router.get('/best-selling', indexController.getTopSellingProducts);
 
-
+/**
+ * @desc Get categories and there products
+ * @route GET /api/products-categories
+ * @access Public
+ */
+router.get('/products-categories', indexController.getProductCategories);
 
 module.exports = router
+

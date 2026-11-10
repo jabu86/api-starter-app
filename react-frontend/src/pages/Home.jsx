@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API_URL } from "../services/api";
 import Slider from "../componentes/customer/Slider";
 import FeatureBrandSlider from "../componentes/customer/FeatureBrandSlider";
+import ProductsCategoryHero from '../componentes/customer/ProductsCategoryHero'
 import { useNavigate } from "react-router-dom";
 import ProductSection from "../componentes/customer/ProductSection";
 
@@ -11,17 +12,19 @@ function Home() {
   const [featuredBrands, setFeaturedBrands] = useState([]);
   const [topRatedProducts, setTopRatedProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
+  const [productCategories, setProductCategories] = useState([]);
 
   const getHomeProducts = async () => {
     try {
-        const [latestRes, ratedRes , allBrandsRes , bestSellerRes] = await Promise.all([
+        const [latestRes, ratedRes , allBrandsRes , bestSellerRes, proCatRes] = await Promise.all([
           fetch(`${API_URL}/api/latest`),
           fetch(`${API_URL}/api/top-rated`),
           fetch(`${API_URL}/api/featured-brands`),
-          fetch(`${API_URL}/api/best-selling`)
+          fetch(`${API_URL}/api/best-selling`),
+          fetch(`${API_URL}/api/products-categories`)
         ]);
 
-        if (!latestRes.ok || !ratedRes.ok || !allBrandsRes || !bestSellerRes) {
+        if (!latestRes.ok || !ratedRes.ok || !allBrandsRes || !bestSellerRes || !proCatRes) {
           throw new Error("Failed to load homepage products");
         }
 
@@ -29,15 +32,13 @@ function Home() {
         const ratedData = await ratedRes.json();
         const brands = await allBrandsRes.json();
         const bestSeller = await bestSellerRes.json();
-        //  console.log(bestSeller , 'bestSeller');
-        // console.log("Latest Products:", latestData.products);
-        // console.log("Top Rated Products:", ratedData.products);
+        const productCategories = await proCatRes.json();
 
         setLatestProducts(latestData.products);
         setTopRatedProducts(ratedData.products);
         setFeaturedBrands(brands.brands);
         setBestSellingProducts(bestSeller.products);
-
+        setProductCategories(productCategories.products)
       } catch (error) {
         console.error(error);
       }
@@ -60,17 +61,22 @@ function Home() {
       <div className="row">
         <Slider />
       </div>
-      <div className="row mt-2">
+      <div className="row  mb-5 justify-content-center">
+        <ProductSection title="Latest Products" products={latestProducts} link="/shop?sort=latest" />
+        <ProductSection title="Top Rated Products" products={topRatedProducts} link="/shop?sort=rating" />
+        <ProductSection title="Best Selling Products" products={bestSellingProducts} link="/shop?sort=best-selling" />
+      </div>
+      
+      <div className="row">
+        <ProductsCategoryHero title="Shop by Categories" categories={productCategories} />
+      </div>
+      <div className="row">
         <FeatureBrandSlider
           brands={featuredBrands}
           onBrandClick={loadBrandProducts}
         />
       </div>
-      <div className="row mt-2 mb-5 justify-content-center">
-        <ProductSection title="Latest Products" products={latestProducts} link="/shop?sort=latest" />
-        <ProductSection title="Top Rated Products" products={topRatedProducts} link="/shop?sort=rating" />
-        <ProductSection title="Best Selling Products" products={bestSellingProducts} link="/shop?sort=best-selling" />
-      </div>
+    
     </>
   );
 }
