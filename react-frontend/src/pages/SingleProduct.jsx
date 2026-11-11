@@ -8,9 +8,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import RatingStars from "../componentes/customer/RatingStars";
 import {API_URL} from "../services/api"
+import { useCart } from "../context/CartContext";
 
 function SingleProdcut() {
   const navigate = useNavigate();
+  const { addToCart, cartItems, setCartItems } = useCart();
   const [product, setProduct] = useState({
     id: null,
     name: "",
@@ -26,10 +28,7 @@ function SingleProdcut() {
   const [mainImage, setMainImage] = useState(null);
   const { slug } = useParams();
 
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+ 
 
   const [form, setForm] = useState({
     id: "",
@@ -68,26 +67,6 @@ function SingleProdcut() {
     }
   };
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
-      }
-      return [
-        ...prevItems,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ];
-    });
-    // console.log(cartItmes , 'shop comp')
-  };
 
   const handleRemoveCartItem = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -293,10 +272,7 @@ function SingleProdcut() {
     }
   }, [product.id]);
 
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
-
+ 
   return (
     <div className="row gap-2 single-product-wrapper">
       <nav aria-label="breadcrumb">

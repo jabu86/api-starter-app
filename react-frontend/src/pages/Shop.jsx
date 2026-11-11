@@ -7,29 +7,25 @@ import { Link, useSearchParams } from "react-router-dom";
 import CategoryList from "../componentes/customer/CategoryList.jsx";
 import BrandList from "../componentes/customer/BrandList.jsx";
 import { API_URL } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 function Shop() {
+  const { addToCart, cartItems, setCartItems } = useCart();
   const [searchParams] = useSearchParams();
-  console.log(searchParams.get('sort'));
-  
-
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [isLoading , setIsLoading] =useState(true);
 
   const initialFilters = {
     search: "",
     size: "",
-    sort: searchParams.get('sort') ||  "",
-    category:searchParams.get('category') || "",
+    sort: searchParams.get("sort") || "",
+    category: searchParams.get("category") || "",
     subCategoryId: "",
     brand: searchParams.get("brand") || "",
   };
   const [filters, setFilters] = useState(initialFilters);
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
 
   const [pagination, setPagination] = useState({
     currentPage: 1,
@@ -38,9 +34,8 @@ function Shop() {
     totalPages: 0,
   });
 
-
-  
   const getProducts = async (page = 1, selectedFilters = filters) => {
+    setIsLoading(true)
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -61,10 +56,17 @@ function Shop() {
       });
       // console.log("Response",res)
       const data = await res.json();
-      setProducts(Array.isArray(data.products) ? data.products : []);
-      setPagination(data.pagination);
+      if(data.success){
+
+        setProducts(Array.isArray(data.products) ? data.products : []);
+        setPagination(data.pagination);
+      
+      }
     } catch (err) {
       console.log(err);
+      setProducts([])
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -132,38 +134,12 @@ function Shop() {
     updateFilters({ sort: selectedSort });
   };
 
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
-      }
-
-      return [
-        ...prevItems,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ];
-    });
-    // console.log(cartItmes , 'shop comp')
-  };
-
   useEffect(() => {
     // updateFilters(1, filters);
     getProducts(1, initialFilters);
     getCategory();
     getBrands();
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
 
   const handleRemoveCartItem = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
@@ -236,6 +212,7 @@ function Shop() {
           addToCart={addToCart}
           pagination={pagination}
           handlePageChange={handlePageChange}
+          isLoading={isLoading}
         />
 
         {/* shop cart */}

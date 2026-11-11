@@ -1,9 +1,13 @@
-
-import React from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 
-function ProductSection({ title, products = [], link }) {
+function ProductSection({
+  title,
+  products = [],
+  link,
+  addToCart,
+  isLoading
+}) {
   return (
     <section className="product-section">
 
@@ -15,13 +19,11 @@ function ProductSection({ title, products = [], link }) {
         </Link>
       </div>
 
-      {products.length > 0 ? (
-        <ProductCard
-          products={products}
-        />
-      ) : (
-        <p>No products available yet.</p>
-      )}
+      <ProductCard
+        products={products}
+        addToCart={addToCart}
+        isLoading={isLoading}
+      />
 
     </section>
   );
