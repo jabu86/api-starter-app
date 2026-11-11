@@ -1,9 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useState } from "react";
+import { useCart } from "../../context/CartContext";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function Header() {
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
   const [dropDown, setDropDown] = useState(false);
   const location = useLocation();
   const path = location.pathname;
@@ -13,12 +17,10 @@ function Header() {
     await logout();
     navigate("/login");
   };
-  
+
   const handleDropDown = () => {
     setDropDown(!dropDown);
   };
-  
-  
 
   return (
     <header className="header navbar navbar-expand-lg navbar-light">
@@ -30,30 +32,53 @@ function Header() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className={`nav-link ${path == "/shop" ? "active" : ""}`} to="/shop">
+            <Link
+              className={`nav-link ${path == "/shop" ? "active" : ""}`}
+              to="/shop"
+            >
               Shop
             </Link>
           </li>
           <li className="nav-item">
-            <Link className={`nav-link ${path == "/about" ? "active" : ""}`} to="/about">
+            <Link
+              className={`nav-link ${path == "/about" ? "active" : ""}`}
+              to="/about"
+            >
               About
             </Link>
           </li>
           <li className="nav-item">
-            <Link className={`nav-link ${path == "/contact" ? "active" : ""}`} to="/contact">
+            <Link
+              className={`nav-link ${path == "/contact" ? "active" : ""}`}
+              to="/contact"
+            >
               Contact
             </Link>
           </li>
-            </ul>
-            {!user ? (
+        </ul>
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <Link to="/cart" className="cart-link">
+              
+              <span className="badge bg-danger"><FontAwesomeIcon icon={faCartShopping} />{" "}{cartCount}</span>
+            </Link>
+          </li>
+        </ul>
+        {!user ? (
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link className={`nav-link ${path == "/login" ? "active" : ""}`} to="/login">
+              <Link
+                className={`nav-link ${path == "/login" ? "active" : ""}`}
+                to="/login"
+              >
                 Login
               </Link>
             </li>
             <li className="nav-item">
-              <Link className={`nav-link ${path == "/register" ? "active" : ""}`} to="/register">
+              <Link
+                className={`nav-link ${path == "/register" ? "active" : ""}`}
+                to="/register"
+              >
                 Register
               </Link>
             </li>
@@ -69,13 +94,16 @@ function Header() {
                   {(user.roles.includes("admin") ||
                     user.roles.includes("user")) && (
                     <li className="nav-item">
-                      <Link className="nav-link" to="/admin" >
+                      <Link className="nav-link" to="/admin">
                         Admin
                       </Link>
                     </li>
                   )}
                   <li className="nav-item">
-                    <Link className={`nav-link ${path == `/profile/${user.name}` ? "active" : ""}`} to={`/profile/${user.name}`}>
+                    <Link
+                      className={`nav-link ${path == `/profile/${user.name}` ? "active" : ""}`}
+                      to={`/profile/${user.name}`}
+                    >
                       Profile
                     </Link>
                   </li>

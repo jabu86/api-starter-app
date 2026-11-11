@@ -4,8 +4,11 @@ import App from './App.jsx'
 import {AuthProvider} from "./context/AuthContext.jsx";
 import 'bootstrap/dist/js/bootstrap.js';
 import  './index.css'
+import {CartProvider} from './context/CartContext.jsx'
 createRoot(document.getElementById('root')).render(
   <AuthProvider>
-    <App />
+    <CartProvider>
+      <App />
+    </CartProvider>
   </AuthProvider>,
 )

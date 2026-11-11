@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 
-function ProductsCategoryHero({categories}) {
+function ProductsCategoryHero({categories, addToCart, isLoading}) {
 
     
   return (
@@ -19,7 +19,7 @@ function ProductsCategoryHero({categories}) {
                     </div>
 
                     <div className="row">                         
-                        {category.products.length === 0 ? ('') : (<ProductCard products={category?.products} />)}
+                        {category.products.length === 0 ? ('') : (<ProductCard products={category?.products} addToCart={addToCart} isLoading={isLoading}/>)}
                     </div>
                 </section>
             ))}
