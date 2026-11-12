@@ -1,123 +1,205 @@
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCartShopping,
+  faBars,
+  faTimes,
+  faChevronDown,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo from '../../assets/images/bhala-logo.jpg'
 
 function Header() {
   const { user, logout } = useAuth();
   const { cartCount } = useCart();
+
+  const [menuOpen, setMenuOpen] = useState(false);
   const [dropDown, setDropDown] = useState(false);
+
   const location = useLocation();
   const path = location.pathname;
-
   const navigate = useNavigate();
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+    setDropDown(false);
+  };
+
   const handleLogout = async () => {
     await logout();
+    closeMenu();
     navigate("/login");
   };
 
-  const handleDropDown = () => {
-    setDropDown(!dropDown);
-  };
+  const isActive = (route) => path === route ? "active" : "";
 
   return (
-    <header className="header navbar navbar-expand-lg navbar-light">
-      <div className="collapse navbar-collapse">
-        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-          <li className="nav-item">
-            <Link className={`nav-link ${path == "/" ? "active" : ""}`} to="/">
-              Home
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              className={`nav-link ${path == "/shop" ? "active" : ""}`}
-              to="/shop"
-            >
-              Shop
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              className={`nav-link ${path == "/about" ? "active" : ""}`}
-              to="/about"
-            >
-              About
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link
-              className={`nav-link ${path == "/contact" ? "active" : ""}`}
-              to="/contact"
-            >
-              Contact
-            </Link>
-          </li>
-        </ul>
-        <ul className="navbar-nav">
-          <li className="nav-item">
-            <Link to="/cart" className="cart-link">
-              
-              <span className="badge bg-danger"><FontAwesomeIcon icon={faCartShopping} />{" "}{cartCount}</span>
-            </Link>
-          </li>
-        </ul>
-        {!user ? (
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${path == "/login" ? "active" : ""}`}
-                to="/login"
-              >
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${path == "/register" ? "active" : ""}`}
-                to="/register"
-              >
-                Register
-              </Link>
-            </li>
-          </ul>
-        ) : (
-          <ul className="dropdown">
-            <li className="nav-item">
-              <span onClick={handleDropDown}>{user.name}</span>
-            </li>
-            <div className="dropdown-item">
-              {dropDown && (
-                <>
-                  {(user.roles.includes("admin") ||
-                    user.roles.includes("user")) && (
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/admin">
-                        Admin
+    <header className="header">
+      <nav className="navbar navbar-expand-lg navbar-light">
+        <div className="container-fluid">
+
+          {/* Brand / Logo */}
+          <Link className="navbar-brand" to="/" onClick={closeMenu}>
+            <img src={logo}/>
+          </Link>
+
+          {/* Mobile menu button */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+            aria-controls="mainNavbar"
+          >
+            <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
+          </button>
+
+          {/* Navigation */}
+          <div
+            className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}
+            id="mainNavbar"
+          >
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${isActive("/")}`}
+                  to="/"
+                  onClick={closeMenu}
+                >
+                  Home
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${isActive("/shop")}`}
+                  to="/shop"
+                  onClick={closeMenu}
+                >
+                  Shop
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${isActive("/about")}`}
+                  to="/about"
+                  onClick={closeMenu}
+                >
+                  About
+                </Link>
+              </li>
+
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${isActive("/contact")}`}
+                  to="/contact"
+                  onClick={closeMenu}
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+
+            {/* Cart */}
+            <ul className="navbar-nav align-items-lg-center">
+              <li className="nav-item">
+                <Link
+                  to="/cart"
+                  className="nav-link cart-link"
+                  onClick={closeMenu}
+                  aria-label={`Shopping cart, ${cartCount} items`}
+                >
+                  <FontAwesomeIcon icon={faCartShopping} />
+                  <span className="cart-count">{cartCount}</span>
+                  <span className="d-lg-none ms-2">Cart</span>
+                </Link>
+              </li>
+            </ul>
+
+            {/* Authentication */}
+            {!user ? (
+              <ul className="navbar-nav">
+                <li className="nav-item">
+                  <Link
+                    className={`nav-link ${isActive("/login")}`}
+                    to="/login"
+                    onClick={closeMenu}
+                  >
+                    Login
+                  </Link>
+                </li>
+
+                <li className="nav-item">
+                  <Link
+                    className={`nav-link ${isActive("/register")}`}
+                    to="/register"
+                    onClick={closeMenu}
+                  >
+                    Register
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <div className="dropdown account-dropdown">
+                <button
+                  className="account-toggle"
+                  type="button"
+                  onClick={() => setDropDown(!dropDown)}
+                  aria-expanded={dropDown}
+                >
+                  {user.email}
+                  <FontAwesomeIcon
+                    icon={faChevronDown}
+                    className="ms-2"
+                  />
+                </button>
+
+                {dropDown && (
+                  <ul className="dropdown-menu show">
+                    {(user.roles.includes("admin") ||
+                      user.roles.includes("user")) && (
+                      <li>
+                        <Link
+                          className="dropdown-item"
+                          to="/admin"
+                          onClick={closeMenu}
+                        >
+                          Admin
+                        </Link>
+                      </li>
+                    )}
+
+                    <li>
+                      <Link
+                        className="dropdown-item"
+                        to={`/profile/${user.name}`}
+                        onClick={closeMenu}
+                      >
+                        Profile
                       </Link>
                     </li>
-                  )}
-                  <li className="nav-item">
-                    <Link
-                      className={`nav-link ${path == `/profile/${user.name}` ? "active" : ""}`}
-                      to={`/profile/${user.name}`}
-                    >
-                      Profile
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link className="nav-link" to="#" onClick={handleLogout}>
-                      Logout
-                    </Link>
-                  </li>
-                </>
-              )}
-            </div>
-          </ul>
-        )}
-      </div>
+
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
     </header>
   );
 }
