@@ -6,8 +6,8 @@ function ProductsCategoryHero({categories, addToCart, isLoading}) {
 
     
   return (
-        <div>
-            
+        <div className="pro-cat-wrapper">
+            <h2>Shop By Category</h2>
             {categories.map((category) => (
                 <section key={category.id} className="product-section">
                     <div className="product-section-header">
@@ -19,7 +19,7 @@ function ProductsCategoryHero({categories, addToCart, isLoading}) {
                     </div>
 
                     <div className="row">                         
-                        {category.products.length === 0 ? ('') : (<ProductCard products={category?.products} addToCart={addToCart} isLoading={isLoading}/>)}
+                    <ProductCard products={category?.products} addToCart={addToCart} isLoading={isLoading}/>
                     </div>
                 </section>
             ))}

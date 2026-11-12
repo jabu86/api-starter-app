@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { API_URL } from "../services/api";
 import Slider from "../componentes/customer/Slider";
 import FeatureBrandSlider from "../componentes/customer/FeatureBrandSlider";
@@ -14,11 +14,11 @@ function Home() {
   const [topRatedProducts, setTopRatedProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   const [productCategories, setProductCategories] = useState([]);
-  const [isLoading , setIsLoading] =useState(true);
-  const {addToCart} = useCart();
+  const [isLoading, setIsLoading] = useState(true);
+  const { addToCart } = useCart();
 
   const getHomeProducts = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const [latestRes, ratedRes, allBrandsRes, bestSellerRes, proCatRes] =
         await Promise.all([
@@ -52,8 +52,8 @@ function Home() {
       setProductCategories(productCategories.products);
     } catch (error) {
       console.error(error);
-    }finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,12 +67,16 @@ function Home() {
     getHomeProducts();
   }, []);
 
+  useEffect(() => {
+  document.title = `My Shop`;
+}, []);
+
   return (
     <>
       <div className="row mb-5">
         <Slider />
       </div>
-      <div className="row justify-content-center">
+      <div className="row">
         <ProductSection
           title="Latest Products"
           products={latestProducts}
@@ -109,6 +113,47 @@ function Home() {
           brands={featuredBrands}
           onBrandClick={loadBrandProducts}
         />
+      </div>
+      <div className="row mb-5 g-3">
+        <h2>Get in touch</h2>
+        <div className="col-md-6 border">GET IN TOUCH IMAGE</div>
+        <div className="col-md-6 border py-5">
+          <form>
+            <div className="form-group mb-2">
+              <label htmlFor="name"><strong>Name</strong></label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                className="form-control"
+                placeholder="Enter name"
+              />
+            </div>
+            <div className="form-group mb-2">
+              <label htmlFor="email"><strong>E-mail</strong></label>
+              <input
+                type="email"
+                name="email"
+                id="email"
+                className="form-control"
+                placeholder="Enter email"
+              />
+            </div>
+            <div className="form-group mb-2">
+              <label htmlFor="comment"><strong>Comment</strong></label>
+              <textarea
+                className="form-control"
+                name="comment"
+                id="comment"
+                placeholder="Enter Comment"
+                cols={5}
+              ></textarea>
+            </div>
+            <div className="form-group mb-2">
+              <button type="submit" className="btn btn-primary float-end">GET IN TOUCH</button>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );
