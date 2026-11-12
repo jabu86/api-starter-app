@@ -58,8 +58,12 @@ function Colors({ openModal, show }) {
   };
 
   useEffect(() => {
-    getColors(1, "");
+    document.title = `Admin > Colors`;
   }, []);
+  useState(() => {
+    getColors(1, "");
+
+  })
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

@@ -55,8 +55,11 @@ function Sizes({ openModal, show }) {
   };
 
   useEffect(() => {
-    getSizes(1, "");
+    document.title = `Admin > Sizes`;
   }, []);
+  useState(() => {
+    getSizes(1, "");
+  });
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

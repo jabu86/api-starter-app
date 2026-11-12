@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import noProductImage from "../assets/images/noproduct.png";
 import { toast } from "react-toastify";
 import {API_URL} from "../services/api"
-
+import { useCart } from "../context/CartContext";
 function PlaceOrder() {
   const navigate = useNavigate();
   const [shippingAddress, setShippingAddress] = useState(null);
@@ -13,12 +13,12 @@ function PlaceOrder() {
   const [paymentMethod, setPaymentMethod] = useState(() => {
     return localStorage.getItem("payment_method") || "";
   });
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+
+  const { cartItems, setCartItems } = useCart();
+ 
 
   useEffect(() => {
+    document.title = `Bhala| Place Order`;
     const getUserShippingAddress = async () => {
       try {
         const token = localStorage.getItem("token");

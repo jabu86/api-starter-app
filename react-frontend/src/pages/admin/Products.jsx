@@ -222,6 +222,11 @@ function Products({ openModal, show }) {
   };
 
   useEffect(() => {
+    document.title = `Admin > Products`;
+    
+  }, []);
+
+  useState(() => {
     getBrands();
     getCategories();
     getSubCategories();
@@ -231,8 +236,7 @@ function Products({ openModal, show }) {
     if (selectedProducts) {
       setImages(selectedProducts.images);
     }
-  }, [selectedProducts]);
-
+  }, [selectedProducts])
   const handleAddProduct = async (e) => {
     setErrors({});
     openModal(show);

@@ -135,6 +135,7 @@ function Shop() {
   };
 
   useEffect(() => {
+    document.title = `Bhala| Shop`;
     // updateFilters(1, filters);
     getProducts(1, initialFilters);
     getCategory();

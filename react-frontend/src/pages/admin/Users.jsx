@@ -82,9 +82,13 @@ function Users({ openModal, show }) {
 
 
   useEffect(() => {
+   document.title = `Admin> Users`;
+  }, []);
+
+  useState(() => {
     getUsers(1, "");
     getRoles()
-  }, []);
+  });
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

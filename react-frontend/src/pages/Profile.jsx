@@ -238,7 +238,9 @@ function Profile() {
     setShowDeleteUser(true);
   };
 
+
   useEffect(() => {
+    document.title = `Bhala| ${user?.name}`;
     getUserProfile();
     getUserOrders();
   }, []);

@@ -1,16 +1,14 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../componentes/admin/Modal.jsx";
 import CategoryList from "../../componentes/admin/CategoryList.jsx";
 import CategoryForm from "../../componentes/admin/CategoryForm.jsx";
 import SearchBar from "../../componentes/admin/SearchBar.jsx";
 import Swal from "sweetalert2";
-import Breadcrumb from '../../componentes/admin/Breadcrumb.jsx'
-import {
-  faDashboard,faLayerGroup,
-} from "@fortawesome/free-solid-svg-icons";
-import {useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
-import {API_URL} from "../../services/api";
+import Breadcrumb from "../../componentes/admin/Breadcrumb.jsx";
+import { faDashboard, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { API_URL } from "../../services/api";
 function Categories({ openModal, show }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -38,15 +36,18 @@ function Categories({ openModal, show }) {
         search: searchTerm || "",
       });
 
-      const res = await fetch(`${API_URL}/api/admin/categories?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${API_URL}/api/admin/categories?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
       const data = await res.json();
-      if(res.status === 401){
+      if (res.status === 401) {
         toast.error(data.message);
       }
       setPagination(data.pagination);
@@ -57,9 +58,11 @@ function Categories({ openModal, show }) {
   };
 
   useEffect(() => {
-    getCategories(1, "");
+    document.title = `Admin > Categories`;
   }, []);
-
+  useState(() => {
+    getCategories(1, "");
+  });
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);
     getCategories(page, search);
@@ -102,7 +105,7 @@ function Categories({ openModal, show }) {
       });
 
       const data = await res.json();
-      if(res.status === 401){
+      if (res.status === 401) {
         toast.error(data.message);
       }
 
@@ -167,7 +170,7 @@ function Categories({ openModal, show }) {
           },
         });
         const data = await res.json();
-        if(res.status === 401){
+        if (res.status === 401) {
           toast.error(data.message);
         }
         if (data.success) {
@@ -187,65 +190,72 @@ function Categories({ openModal, show }) {
   };
 
   return (
-      <>
-        <Breadcrumb route1={'/admin'} route2={'/admin/categories'} parentPage={'Dashboard'} page={'Categories'} icon1={faDashboard} icon2={faLayerGroup} />
-        <div className="row p-2">
-          <div className="col-md-8">
-            <SearchBar
-                search={search}
-                setSearch={setSearch}
-                getData={getCategories}
-            />
-          </div>
-          <div className="col-md-4">
-            <button
-                className="btn btn-primary float-end"
-                type="button"
-                onClick={() => handleAddCategory(show)}
-            >
-              Add Category
-            </button>
-          </div>
-        </div>
-        <div className="row p-2">
-          <div className="col-12 mb-1">
-        <table className="table table-responsive">
-          <caption>List of categories</caption>
-          <thead>
-            <tr>
-              <th>NAME</th>
-              <th className="text-center">ACTION</th>
-            </tr>
-          </thead>
-          <tbody className="table-group-divider">
-            <CategoryList
-              categories={categories}
-              handleEditCategory={handleEditCategory}
-              show={show}
-              handleDeleteCategory={handleDeleteCategory}
-              pagination={pagination}
-              handlePageChange={handlePageChange}
-            />
-          </tbody>
-        </table>
-      </div>
-      {show && (
-        <Modal
-          openModal={openModal}
-          show={show}
-          title={isEditing ? "Edit Category" : "Add Category"}
-          closeModal={() => openModal(false)}
-        >
-          <CategoryForm
-            errors={errors}
-            onSubmit={handleSaveCategory}
-            closeModal={openModal}
-            initialData={initialData}
+    <>
+      <Breadcrumb
+        route1={"/admin"}
+        route2={"/admin/categories"}
+        parentPage={"Dashboard"}
+        page={"Categories"}
+        icon1={faDashboard}
+        icon2={faLayerGroup}
+      />
+      <div className="row p-2">
+        <div className="col-md-8">
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            getData={getCategories}
           />
-        </Modal>
-      )}
-    </div>
-        </>
+        </div>
+        <div className="col-md-4">
+          <button
+            className="btn btn-primary float-end"
+            type="button"
+            onClick={() => handleAddCategory(show)}
+          >
+            Add Category
+          </button>
+        </div>
+      </div>
+      <div className="row p-2">
+        <div className="col-12 mb-1">
+          <table className="table table-responsive">
+            <caption>List of categories</caption>
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th className="text-center">ACTION</th>
+              </tr>
+            </thead>
+            <tbody className="table-group-divider">
+              <CategoryList
+                categories={categories}
+                handleEditCategory={handleEditCategory}
+                show={show}
+                handleDeleteCategory={handleDeleteCategory}
+                pagination={pagination}
+                handlePageChange={handlePageChange}
+              />
+            </tbody>
+          </table>
+        </div>
+        {show && (
+          <Modal
+            openModal={openModal}
+            show={show}
+            title={isEditing ? "Edit Category" : "Add Category"}
+            closeModal={() => openModal(false)}
+          >
+            <CategoryForm
+              errors={errors}
+              onSubmit={handleSaveCategory}
+              closeModal={openModal}
+              initialData={initialData}
+            />
+          </Modal>
+        )}
+      </div>
+    </>
   );
 }
 

@@ -61,8 +61,12 @@ function SubCategories({ show, openModal }) {
   };
 
   useEffect(() => {
-    getSubCategories(1, "");
+    document.title = `Admin > Sub Categories > ${slug}`;
   }, []);
+
+  useState(() => {
+    getSubCategories(1, "");
+  })
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

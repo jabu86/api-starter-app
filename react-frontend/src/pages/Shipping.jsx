@@ -257,8 +257,15 @@ function Shipping() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+    document.title = `Bhala| Shipping`;
+  }, []);
 
-    
+  useState(() => {    
     getUserShippingAddress();
   }, []);
 
