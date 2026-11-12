@@ -110,8 +110,13 @@ function Dashboard() {
     };
 
     useEffect(() => {
-        getDashboard();
+        document.title = `Admin > Dashboard`;
     },[])
+    
+    useState(() => {
+        
+        getDashboard();
+    })
 
     const monthlyChartData = {
         labels: monthlySales.map((item) => {

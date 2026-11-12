@@ -263,6 +263,7 @@ function SingleProdcut() {
   };
 
   useEffect(() => {
+    document.title = `Bhala| ${slug}`;
     getProduct();
   }, [slug]);
 

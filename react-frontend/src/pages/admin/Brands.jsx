@@ -57,8 +57,12 @@ function Brands({ openModal, show }) {
   };
 
   useEffect(() => {
-    getBrands(1, "");
+    document.title = `Admin > Brands`;
   }, []);
+
+  useState(() => {
+    getBrands(1, "");
+  })
 
    const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

@@ -68,8 +68,8 @@ function Home() {
   }, []);
 
   useEffect(() => {
-  document.title = `My Shop`;
-}, []);
+    document.title = `Bhala| Home`;
+  }, []);
 
   return (
     <>
@@ -120,7 +120,9 @@ function Home() {
         <div className="col-md-6 border py-5">
           <form>
             <div className="form-group mb-2">
-              <label htmlFor="name"><strong>Name</strong></label>
+              <label htmlFor="name">
+                <strong>Name</strong>
+              </label>
               <input
                 type="text"
                 name="name"
@@ -130,7 +132,9 @@ function Home() {
               />
             </div>
             <div className="form-group mb-2">
-              <label htmlFor="email"><strong>E-mail</strong></label>
+              <label htmlFor="email">
+                <strong>E-mail</strong>
+              </label>
               <input
                 type="email"
                 name="email"
@@ -140,7 +144,9 @@ function Home() {
               />
             </div>
             <div className="form-group mb-2">
-              <label htmlFor="comment"><strong>Comment</strong></label>
+              <label htmlFor="comment">
+                <strong>Comment</strong>
+              </label>
               <textarea
                 className="form-control"
                 name="comment"
@@ -150,7 +156,9 @@ function Home() {
               ></textarea>
             </div>
             <div className="form-group mb-2">
-              <button type="submit" className="btn btn-primary float-end">GET IN TOUCH</button>
+              <button type="submit" className="btn btn-primary float-end">
+                GET IN TOUCH
+              </button>
             </div>
           </form>
         </div>

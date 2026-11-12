@@ -11,6 +11,7 @@ function Payment() {
   const [checkingAddress, setCheckingAddress] = useState(true);
 
   useEffect(() => {
+    document.title = `Bhala| Payment`;
     const getUserShippingAddress = async () => {
       try {
         const token = localStorage.getItem("token");

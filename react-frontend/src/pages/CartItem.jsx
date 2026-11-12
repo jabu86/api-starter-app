@@ -4,17 +4,20 @@ import { Link } from "react-router-dom";
 import Cart from "../componentes/customer/Cart";
 import { useNavigate } from "react-router-dom";
 import {API_URL} from "../services/api"
+import { useCart } from "../context/CartContext";
+
 export const CartItem = () => {
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const { cartItems, setCartItems } = useCart();
+  // const [cartItems, setCartItems] = useState(() => {
+  //   const savedCart = localStorage.getItem("cartItems");
+  //   return savedCart ? JSON.parse(savedCart) : [];
+  // });
 
   const navigate = useNavigate();
 
   // Save cart changes to localStorage
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    document.title = `Bhala| Cart`;
     if (cartItems.length === 0) {
       navigate("/shop");
     }
@@ -36,10 +39,7 @@ export const CartItem = () => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const cartTotal = cartItems.reduce(
-    (total, item) => total + Number(item.price) * Number(item.quantity || 0),
-    0,
-  );
+ 
 
   return (
     <div className="row gap-2">

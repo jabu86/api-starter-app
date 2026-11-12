@@ -52,8 +52,11 @@ function Orders() {
   };
 
   useEffect(() => {
-    getOrders(1, "");
+    document.title = `Admin > Orders`;  
   }, []);
+  useState(() => {
+    getOrders(1, "");
+  });
 
   const handlePageChange = (page) => {
     // setCurrentPage(currentPage);

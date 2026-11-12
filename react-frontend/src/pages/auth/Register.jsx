@@ -1,114 +1,204 @@
-import {Link, useNavigate} from 'react-router-dom'
+
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/bhala-logo.jpg";
-import {useState} from "react";
+import hero from "../../assets/images/hero.png";
+import { useState } from "react";
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
-import {API_URL} from "../../services/api"
-function Register(props) {
+import { API_URL } from "../../services/api";
 
-    const [form, setForm] = useState({
-        name:'',
-        email:'',
-        password:'',
-        confirm_password:'',
-    });
-    const [errors, setErrors] = useState({})
-    const navigate = useNavigate();
+function Register() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  });
 
-    const handleRegiserer = async (e) => {
-        e.preventDefault();
-        setErrors({});
-        try {
-            const res = await fetch(`${API_URL}/api/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(form)
-            });
-            const data = await res.json()
-            if(res.status === 400 && data.errors){
-                const groupedErrors = data.errors.reduce((acc, err) =>{
-                    if(!acc[err.path]){
-                        acc[err.path] = [];
-                    }
-                    acc[err.path].push(err.msg);
-                    return acc;
-                },{})
-                setErrors(groupedErrors || {});
-                return;
-            }
-            if(data.success === true){
-                navigate("/login");
-            }
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-        }catch(err){
-            console.log(err);
-        }
+  const handleRegiserer = async (e) => {
+    e.preventDefault();
+    setErrors({});
 
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 400 && data.errors) {
+        const groupedErrors = data.errors.reduce((acc, err) => {
+          if (!acc[err.path]) {
+            acc[err.path] = [];
+          }
+          acc[err.path].push(err.msg);
+          return acc;
+        }, {});
+
+        setErrors(groupedErrors || {});
+        return;
+      }
+
+      if (data.success === true) {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    }
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
-    return (
-        <div className="auth-wrapper">
-            <AuthLeftContent image={logo}/>
-            <div className="auth-content">
-                <h1 className="h3 mb-3 fw-normal ">Sign up</h1>
-                <p><small>Please fill in this form to create an account.</small></p>
-                <form onSubmit={handleRegiserer}>
-                    <div className="form-floating mt-2">
-                        <input type="text"
-                               className={`form-control ${errors.name ? "is-invalid" : ""}`}
-                               id="name"
-                               value={form.name}
-                               name="name"
-                               onChange={handleChange}
-                        />
-                        <label htmlFor="name">Name</label>
-                        {errors.name && (<div className="text-danger">{errors.name[0]}</div>)}
-                    </div>
+  const content = [
+    "Shop all you can",
+    "A one stop shop for all your needs.",
+  ];
 
-                    <div className="form-floating mt-2">
-                        <input type="email"
-                               className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                               id="email"
-                               value={form.email}
-                               name="email"
-                               onChange={handleChange}
-                        />
-                        <label htmlFor="email">Email address</label>
-                        {errors.email && (<div className="text-danger">{errors.email[0]}</div>)}
-                    </div>
-                    <div className="form-floating mt-2">
-                        <input type="password"
-                               className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                               id="password" name="password"
-                               value={form.password}
-                               onChange={handleChange}
-                        />
-                        <label htmlFor="password">Password</label>
-                        {errors.password && (<div className="text-danger">{errors.password[0]}</div>)}
-                    </div>
-                    <div className="form-floating mt-2">
-                        <input type="password"
-                               className={`form-control ${errors.confirm_password ? "is-invalid" : ""}`}
-                               id="confirm-password" name="confirm_password"
-                               value={form.confirm_password}
-                               onChange={handleChange}
-                        />
-                        <label htmlFor="confirm-password">Confirm Password</label>
-                        {errors.confirm_password && (<div className="text-danger">{errors.confirm_password[0]}</div>)}
-                    </div>
-                    <button className="btn btn-primary w-100 py-2 mt-2" type="submit">Sign up</button>
-                    <p className="mt-1 mb-2 text-body-secondary text-center">Already have an account?  <Link to={'/login'} className="text-info">Sign In</Link>.</p>
-                    <p className="mt-1 mb-2 text-body-secondary text-center">Forgot password?  <Link to={'/forgot-password'} className="text-info">Reset</Link>.</p>
-                </form>
+  return (
+    <main className="auth-wrapper">
+
+      {/* Left branding panel */}
+      <section
+        className="auth-visual"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.8)), url(${hero})`,
+        }}
+      >
+        <AuthLeftContent
+          image={logo}
+          heading="Join Bhala"
+          content={content}
+        />
+      </section>
+
+      {/* Registration form */}
+      <section className="auth-content">
+        <div className="auth-form-container">
+
+          <div className="auth-heading">
+            <h1>Sign up</h1>
+            <p>Create an account to start shopping with us.</p>
+          </div>
+
+          <form onSubmit={handleRegiserer}>
+
+            <div className="form-floating mb-3">
+              <input
+                type="text"
+                className={`form-control ${errors.name ? "is-invalid" : ""}`}
+                id="name"
+                name="name"
+                placeholder="Your name"
+                value={form.name}
+                onChange={handleChange}
+                autoComplete="name"
+                required
+              />
+              <label htmlFor="name">Name</label>
+
+              {errors.name && (
+                <div className="invalid-feedback">
+                  {errors.name[0]}
+                </div>
+              )}
             </div>
 
+            <div className="form-floating mb-3">
+              <input
+                type="email"
+                className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                id="email"
+                name="email"
+                placeholder="name@example.com"
+                value={form.email}
+                onChange={handleChange}
+                autoComplete="email"
+                required
+              />
+              <label htmlFor="email">Email address</label>
+
+              {errors.email && (
+                <div className="invalid-feedback">
+                  {errors.email[0]}
+                </div>
+              )}
+            </div>
+
+            <div className="form-floating mb-3">
+              <input
+                type="password"
+                className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                id="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+              <label htmlFor="password">Password</label>
+
+              {errors.password && (
+                <div className="invalid-feedback">
+                  {errors.password[0]}
+                </div>
+              )}
+            </div>
+
+            <div className="form-floating mb-3">
+              <input
+                type="password"
+                className={`form-control ${errors.confirm_password ? "is-invalid" : ""}`}
+                id="confirm-password"
+                name="confirm_password"
+                placeholder="Confirm password"
+                value={form.confirm_password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+              <label htmlFor="confirm-password">
+                Confirm Password
+              </label>
+
+              {errors.confirm_password && (
+                <div className="invalid-feedback">
+                  {errors.confirm_password[0]}
+                </div>
+              )}
+            </div>
+
+            <button className="btn auth-submit w-100" type="submit">
+              Create account
+            </button>
+
+            <p className="auth-footer">
+              Already have an account?
+              <Link to="/login" className="auth-link ms-1">
+                Sign in
+              </Link>
+            </p>
+
+            <p className="auth-footer mt-2">
+              Forgot password?
+              <Link to="/forgot-password" className="auth-link ms-1">
+                Reset
+              </Link>
+            </p>
+
+          </form>
         </div>
-    )
+      </section>
+    </main>
+  );
 }
 
 export default Register;

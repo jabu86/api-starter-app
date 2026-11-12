@@ -41,12 +41,13 @@ function Order() {
     }
   };
 
-
-  // console.log();
-
   useEffect(() => {
-    getOrder();
+    document.title = `Bhala| Orders`;
   }, []);
+  useState(() => {
+    getOrder();
+
+  })
 
   if (checkinOrder) {
     return (
