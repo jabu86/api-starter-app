@@ -62,6 +62,7 @@ function Login() {
     "A one stop shop for all your needs.",
   ];
 
+  
   return (
     <main className="auth-wrapper">
       {/* Left branding panel */}
