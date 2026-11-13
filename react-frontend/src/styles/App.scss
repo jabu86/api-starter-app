@@ -236,9 +236,15 @@ $header-color: #ececec;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem;
+  padding: 0;
     background: #fff;
     color: #1e293b;
+    h1{
+      color: #000;
+    }
+    p{
+      color: #000;
+    }
   }
 
   .auth-form-container {

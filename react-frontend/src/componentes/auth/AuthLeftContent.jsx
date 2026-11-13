@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 
 function AuthLeftContent({image, heading , content})  {
     return (
-        <div className="auth-content text-center">
+        <div className="auth-content">
             <div>
                 <img className="img-fluid mt-5" src={image ? image : ''} alt="logo" width="200" height="100"/>
             </div>

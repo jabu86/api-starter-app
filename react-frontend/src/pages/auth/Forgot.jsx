@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/images/bhala-logo.jpg";
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
 import { API_URL } from "../../services/api";
 import hero from "../../assets/images/hero.png";
+ 
 function Forgot(props) {
   const navigate = useNavigate();
 
@@ -49,7 +50,11 @@ function Forgot(props) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const content = ["Shop all you can", "A one stop shop for all your needs."];
+  const content = ["Shop all you can.", "A one stop shop for all your needs."];
+  useEffect(() => {
+    document.title = `Bhala| Forgot Password`;
+
+  })
 
   return (
     <div className="auth-wrapper">
@@ -92,7 +97,7 @@ function Forgot(props) {
             <button className="btn auth-submit w-100" type="submit">
               Reset Password
             </button>
-            <div className="d-flex justify-content-between align-items-center">
+          
               <p className="auth-footer">
                 Already have an account?{" "}
                 <Link className="text-info" to="/login">
@@ -105,7 +110,7 @@ function Forgot(props) {
                   Sign up
                 </Link>
               </p>
-            </div>
+          
           </form>
         </div>
       </section>

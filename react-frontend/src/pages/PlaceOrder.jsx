@@ -6,6 +6,7 @@ import noProductImage from "../assets/images/noproduct.png";
 import { toast } from "react-toastify";
 import {API_URL} from "../services/api"
 import { useCart } from "../context/CartContext";
+
 function PlaceOrder() {
   const navigate = useNavigate();
   const [shippingAddress, setShippingAddress] = useState(null);
@@ -161,7 +162,7 @@ function PlaceOrder() {
                         <div className="col-md-2">
                           {activeImage ? (
                             <img
-                              src={`http://localhost:8000${activeImage.thumbnail}`}
+                              src={`${API_URL}${activeImage.thumbnail}`}
                               className="cart-img fluid rounded"
                               alt={item.name}
                               width={100}

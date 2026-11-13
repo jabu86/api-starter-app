@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/images/bhala-logo.jpg";
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
 import { API_URL } from "../../services/api";
@@ -48,8 +48,10 @@ function ResetPassword(props) {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const content = ["Shop all you can", "A one stop shop for all your needs."];
-
+  const content = ["Shop all you can.", "A one stop shop for all your needs."];
+  useEffect(() => {
+    document.title = `Bhala| Reset Password`;
+  });
   return (
     <div className="auth-wrapper">
       <section

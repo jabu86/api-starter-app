@@ -1,7 +1,7 @@
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/images/bhala-logo.jpg";
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
 import { API_URL } from "../../services/api";
@@ -58,10 +58,14 @@ function Login() {
   };
 
   const content = [
-    "Shop all you can",
+    "Shop all you can.",
     "A one stop shop for all your needs.",
   ];
 
+   useEffect(() => {
+      document.title = `Bhala| SignIn`;
+  
+    })
   
   return (
     <main className="auth-wrapper">
