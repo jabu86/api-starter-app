@@ -6,7 +6,7 @@ import ProductsCategoryHero from "../componentes/customer/ProductsCategoryHero";
 import { useNavigate } from "react-router-dom";
 import ProductSection from "../componentes/customer/ProductSection";
 import { useCart } from "../context/CartContext";
-
+import ContactForm from '../componentes/customer/ContactForm';
 function Home() {
   const navigate = useNavigate();
   const [latestProducts, setLatestProducts] = useState([]);
@@ -114,55 +114,7 @@ function Home() {
           onBrandClick={loadBrandProducts}
         />
       </div>
-      <div className="row mb-5 g-3">
-        <h2>Get in touch</h2>
-        <div className="col-md-6 border">GET IN TOUCH IMAGE</div>
-        <div className="col-md-6 border py-5">
-          <form>
-            <div className="form-group mb-2">
-              <label htmlFor="name">
-                <strong>Name</strong>
-              </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                className="form-control"
-                placeholder="Enter name"
-              />
-            </div>
-            <div className="form-group mb-2">
-              <label htmlFor="email">
-                <strong>E-mail</strong>
-              </label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                className="form-control"
-                placeholder="Enter email"
-              />
-            </div>
-            <div className="form-group mb-2">
-              <label htmlFor="comment">
-                <strong>Comment</strong>
-              </label>
-              <textarea
-                className="form-control"
-                name="comment"
-                id="comment"
-                placeholder="Enter Comment"
-                cols={5}
-              ></textarea>
-            </div>
-            <div className="form-group mb-2">
-              <button type="submit" className="btn btn-primary float-end">
-                GET IN TOUCH
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+     <ContactForm/>
     </>
   );
 }

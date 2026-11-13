@@ -1,8 +1,7 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/bhala-logo.jpg";
 import hero from "../../assets/images/hero.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthLeftContent from "../../componentes/auth/AuthLeftContent.jsx";
 import { API_URL } from "../../services/api";
 
@@ -57,14 +56,13 @@ function Register() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const content = [
-    "Shop all you can",
-    "A one stop shop for all your needs.",
-  ];
+  const content = ["Shop all you can.", "A one stop shop for all your needs."];
+  useEffect(() => {
+    document.title = `Bhala| SignUp`;
+  });
 
   return (
     <main className="auth-wrapper">
-
       {/* Left branding panel */}
       <section
         className="auth-visual"
@@ -72,24 +70,18 @@ function Register() {
           backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.8)), url(${hero})`,
         }}
       >
-        <AuthLeftContent
-          image={logo}
-          heading="Join Bhala"
-          content={content}
-        />
+        <AuthLeftContent image={logo} heading="Join Bhala" content={content} />
       </section>
 
       {/* Registration form */}
       <section className="auth-content">
         <div className="auth-form-container">
-
           <div className="auth-heading">
             <h1>Sign up</h1>
             <p>Create an account to start shopping with us.</p>
           </div>
 
           <form onSubmit={handleRegiserer}>
-
             <div className="form-floating mb-3">
               <input
                 type="text"
@@ -105,9 +97,7 @@ function Register() {
               <label htmlFor="name">Name</label>
 
               {errors.name && (
-                <div className="invalid-feedback">
-                  {errors.name[0]}
-                </div>
+                <div className="invalid-feedback">{errors.name[0]}</div>
               )}
             </div>
 
@@ -126,9 +116,7 @@ function Register() {
               <label htmlFor="email">Email address</label>
 
               {errors.email && (
-                <div className="invalid-feedback">
-                  {errors.email[0]}
-                </div>
+                <div className="invalid-feedback">{errors.email[0]}</div>
               )}
             </div>
 
@@ -147,9 +135,7 @@ function Register() {
               <label htmlFor="password">Password</label>
 
               {errors.password && (
-                <div className="invalid-feedback">
-                  {errors.password[0]}
-                </div>
+                <div className="invalid-feedback">{errors.password[0]}</div>
               )}
             </div>
 
@@ -165,9 +151,7 @@ function Register() {
                 autoComplete="new-password"
                 required
               />
-              <label htmlFor="confirm-password">
-                Confirm Password
-              </label>
+              <label htmlFor="confirm-password">Confirm Password</label>
 
               {errors.confirm_password && (
                 <div className="invalid-feedback">
@@ -193,7 +177,6 @@ function Register() {
                 Reset
               </Link>
             </p>
-
           </form>
         </div>
       </section>
