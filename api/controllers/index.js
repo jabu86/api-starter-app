@@ -12,6 +12,7 @@ const {
   Order,
   sub_category_product,
   SubCategory,
+  Contact,
 } = require("../models");
 const sequelize = require("../config/database");
 
@@ -39,11 +40,29 @@ exports.about = (req, res) => {
   }
 };
 
-exports.contact = (req, res) => {
+exports.contact = async (req, res) => {
   try {
-    res.status(200).json({ message: "Contact us api contoller" });
+    const { name, email, message } = req.body;
+    const contacts = await Contact.create({
+      name,
+      email,
+      message,
+    });
+    if (!contacts) {
+      return res
+        .status(404)
+        .json({ message: "Error createing contacts", success: false });
+    }
+    return res
+      .status(201)
+      .json({ message: "Message sent successfully.", success: true });
   } catch (err) {
     console.error(err);
+
+    return res.status(500).json({
+      message: "Error creating sending message: ",
+      err,
+    });
   }
 };
 
@@ -229,7 +248,7 @@ exports.products = async (req, res) => {
           [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
         ],
         group: ["product_id"],
-        
+
         order: [
           [sequelize.literal('"averageRating"'), "DESC"],
           [sequelize.literal('"totalReviews"'), "DESC"],
@@ -245,9 +264,6 @@ exports.products = async (req, res) => {
       rankedProductIds = sales.map((item) => item.product_id);
       // return console.log(rankedProductIds, 'top best selling')
     }
-
-    // console.log(sort , 'sort')
-    // console.log(size , 'size')
 
     //get category relationships and filter by category name if provided
     //get sub category relationships and filter by product sub-category name if provided
@@ -321,7 +337,7 @@ exports.products = async (req, res) => {
       include: filterIncludes,
       limit,
       offset,
-      order : rankedOrder,
+      order: rankedOrder,
       distinct: true,
       subQuery: false, // Ensure proper handling of the include with limit and offset
     });
@@ -605,7 +621,7 @@ exports.getTopRatedProducts = async (req, res) => {
 exports.getTopSellingProducts = async (req, res) => {
   try {
     // 1. Get products with more than 3 units sold
-   
+
     const topSelling = await bestSelling();
 
     // No qualifying products
@@ -833,39 +849,39 @@ const averageRating = async (products, ids) => {
   }
 };
 
-const bestSelling = async() => {
-     const topSelling = await OrderItem.findAll({
-      attributes: [
-        "product_id",
-        [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
-      ],
+const bestSelling = async () => {
+  const topSelling = await OrderItem.findAll({
+    attributes: [
+      "product_id",
+      [sequelize.fn("SUM", sequelize.col("OrderItem.quantity")), "totalSold"],
+    ],
 
-      include: [
-        {
-          model: Products,
-          as: "product",
-          attributes: [],
-          where: {
-            active: true,
-          },
-          required: true,
+    include: [
+      {
+        model: Products,
+        as: "product",
+        attributes: [],
+        where: {
+          active: true,
         },
-        {
-          model: Order,
-          as: "orders",
-          attributes: [],
-          where: {
-            is_paid: true,
-          },
-          required: true,
+        required: true,
+      },
+      {
+        model: Order,
+        as: "orders",
+        attributes: [],
+        where: {
+          is_paid: true,
         },
-      ],
+        required: true,
+      },
+    ],
 
-      group: ["OrderItem.product_id"],
-      having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
-      order: [[sequelize.literal('"totalSold"'), "DESC"]],
-      limit: 4,
-      subQuery: false,
-    });
-    return topSelling;
-}
+    group: ["OrderItem.product_id"],
+    having: sequelize.literal('SUM("OrderItem"."quantity") > 3'),
+    order: [[sequelize.literal('"totalSold"'), "DESC"]],
+    limit: 4,
+    subQuery: false,
+  });
+  return topSelling;
+};

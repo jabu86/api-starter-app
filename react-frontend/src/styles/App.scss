@@ -196,7 +196,7 @@ $header-color: #ececec;
   border-radius: 18px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 
   // Left branding section
   .auth-visual {
@@ -218,7 +218,9 @@ $header-color: #ececec;
       margin-bottom: 2rem;
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       color: #fff;
       font-weight: 700;
     }
@@ -236,13 +238,13 @@ $header-color: #ececec;
     display: flex;
     align-items: center;
     justify-content: center;
-  padding: 0;
+    padding: 0;
     background: #fff;
     color: #1e293b;
-    h1{
+    h1 {
       color: #000;
     }
-    p{
+    p {
       color: #000;
     }
   }
@@ -283,6 +285,11 @@ $header-color: #ececec;
     color: #64748b;
   }
 
+  .form-floating {
+    textarea{
+      min-height: 140px;
+    }
+  }
   .form-check-label {
     color: #64748b;
     font-size: 0.9rem;
@@ -362,7 +369,9 @@ $header-color: #ececec;
         margin-bottom: 0.75rem;
       }
 
-      h1, h2, h3 {
+      h1,
+      h2,
+      h3 {
         font-size: 1.4rem;
       }
 
