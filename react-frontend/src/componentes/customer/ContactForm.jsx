@@ -184,7 +184,7 @@ function ContactForm() {
                   type="submit"
                   className="btn auth-submit w-100 float-end"
                 >
-                  GET IN TOUCH
+                  Send Message
                 </button>
               </div>
             </form>
