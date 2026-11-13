@@ -71,6 +71,8 @@ function Home() {
     document.title = `Bhala| Home`;
   }, []);
 
+
+
   return (
     <>
       <div className="row mb-5">
