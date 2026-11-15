@@ -136,7 +136,6 @@ function ContactForm() {
                   className={`form-control ${errors.name ? "is-invalid" : ""}`}
                   placeholder="Enter name"
                   onChange={handleChange}
-                  
                 />
                 {errors?.name && (
                   <div className="text-danger">{errors?.name[0]}</div>
