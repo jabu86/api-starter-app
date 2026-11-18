@@ -3,4 +3,7 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY . .
-CMD ["npm" , "dev"]
+ARG DEFAULT_PORT=8000
+ENV PORT $DEFAULT_PORT
+EXPOSE $PORT
+CMD ["npm" , "start"]
