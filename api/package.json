@@ -4,7 +4,7 @@
   "description": "A e-commerce-api for all types of  webs",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon -L server.js",
     "dev": "nodemon server.js",
     "verify": "npm run start"
   },

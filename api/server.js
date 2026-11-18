@@ -57,6 +57,7 @@ app.use(
 
 
 
+
 async function connectDB() {
   try {
     await sequelize.authenticate();
