@@ -10,18 +10,20 @@ function ProductCard({
   addToCart,
   pagination,
   handlePageChange,
-  isLoading
+  isLoading,
+  cols,
+  cardCols
 }) {
+console.log(cols);
 
-  
   return (
-    <div className="col-md-7 mb-4 product-wrapper">
+    <div className={`col-md-${cardCols} mb-4 product-wrapper`}>
     <div className="row g-3">
 
       {isLoading ? (
         // Loading state
         Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className="col-md-3">
+          <div key={index} className={`col-md-${cols}`}>
             <div className="card border shadow mb-2 product-card">
               <div className="product-img">
                 <div className="image-skeleton">
@@ -48,7 +50,7 @@ function ProductCard({
       ) : (
         // Products loaded
         products.map((product) => (
-          <div key={product.id} className="col-md-3">
+          <div key={product.id} className={`col-md-${cols}`}>
             <div className="card border shadow mb-2 product-card">
               <Link
                 to={`/shop/${product.slug}`}

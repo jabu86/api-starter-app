@@ -7,8 +7,9 @@ import ReviewList from "../componentes/ReviewList";
 import axios from "axios";
 import { toast } from "react-toastify";
 import RatingStars from "../componentes/customer/RatingStars";
-import {API_URL} from "../services/api"
+import { API_URL } from "../services/api";
 import { useCart } from "../context/CartContext";
+import ProductCard from "../componentes/customer/ProductCard";
 
 function SingleProdcut() {
   const navigate = useNavigate();
@@ -27,14 +28,13 @@ function SingleProdcut() {
   });
   const [mainImage, setMainImage] = useState(null);
   const { slug } = useParams();
-
- 
-
   const [form, setForm] = useState({
     id: "",
     rating: "",
     review: "",
   });
+
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [showReview, setShowReview] = useState(true);
   const [showRatings, setShowRatings] = useState(false);
   const [reviews, setReviews] = useState([]);
@@ -43,8 +43,10 @@ function SingleProdcut() {
   const [errors, setErrors] = useState({});
   const [initialData, setInitialData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  /*
   const getProduct = async () => {
+    setIsLoading(true)
     try {
       const res = await fetch(`${API_URL}/api/shop/${slug}`, {
         method: "GET",
@@ -62,12 +64,40 @@ function SingleProdcut() {
       setTotalReviews(data.totalReviews);
       setMainImage(activeImage);
       setProduct(data.product);
+      setRelatedProducts(data.productsWithRatings);
     } catch (error) {
       console.log(error);
     }
   };
+*/
+  const getProduct = async () => {
+    setIsLoading(true);
 
+    try {
+      const res = await fetch(`${API_URL}/api/shop/${slug}`);
+      const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(data.message || "Unable to retrieve product");
+      }
+
+      const activeImage =
+        data.product.images.find((img) => img.active === true) ||
+        data.product.images[0] ||
+        null;
+
+      setAverageRatings(data.averageRating);
+      setTotalReviews(data.totalReviews);
+      setMainImage(activeImage);
+      setProduct(data.product);
+      setRelatedProducts(data.relatedProductsWithRatings || []);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleRemoveCartItem = (id) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
@@ -120,7 +150,9 @@ function SingleProdcut() {
 
   const addReviewRating = async (form) => {
     setErrors({});
-    let url = isEditing ? `${API_URL}/api/reviews/${form.id}/edit` : `${API_URL}/api/reviews`;
+    let url = isEditing
+      ? `${API_URL}/api/reviews/${form.id}/edit`
+      : `${API_URL}/api/reviews`;
     try {
       const payload = {
         ratings: form.rating,
@@ -167,8 +199,6 @@ function SingleProdcut() {
         setInitialData({});
         setIsEditing(false);
         setErrors({});
-
-        
       }
     } catch (error) {
       if (error.response?.status === 400 && error.response.data.errors) {
@@ -263,7 +293,7 @@ function SingleProdcut() {
   };
 
   useEffect(() => {
-    document.title = `Bhala| ${slug}`;
+    document.title = `Bhala | ${slug}`;
     getProduct();
   }, [slug]);
 
@@ -273,7 +303,8 @@ function SingleProdcut() {
     }
   }, [product.id]);
 
- 
+  console.log(relatedProducts);
+
   return (
     <div className="row gap-2 single-product-wrapper">
       <nav aria-label="breadcrumb">
@@ -375,10 +406,25 @@ function SingleProdcut() {
 
         <div className="row  border mt-4 rounded shadow p-2">
           <div className="col-md-12 mb-4">
-            <h3>Description</h3>
+            <h3 className="fw-semibold">Description</h3>
             <p>{product.description}</p>
           </div>
         </div>
+        {relatedProducts.length > 0 && (
+          <div className="row mt-4 border rounded shadow p-2">
+            <div className="col-md-12 mb-4">
+              <h3 className="fw-semibold">You may also like</h3>
+
+              <ProductCard
+                products={relatedProducts}
+                addToCart={addToCart}
+                isLoading={isLoading}
+                cols={2}
+                cardCols={12}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="row border rounded shadow mt-4">
           <div className="col-md-12 mb-4 p-2">

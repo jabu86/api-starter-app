@@ -214,6 +214,8 @@ function Shop() {
           pagination={pagination}
           handlePageChange={handlePageChange}
           isLoading={isLoading}
+          cols={3}
+          cardCols={7}
         />
 
         {/* shop cart */}

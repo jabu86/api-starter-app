@@ -418,8 +418,12 @@ exports.products = async (req, res) => {
 //@access Public
 exports.product = async (req, res) => {
   try {
+    // Get the main product
     const product = await Products.findOne({
-      where: { slug: req.params.slug },
+      where: {
+        slug: req.params.slug,
+        active: true,
+      },
       include: [
         {
           model: Category,
@@ -432,31 +436,34 @@ exports.product = async (req, res) => {
         {
           model: product_images,
           as: "images",
-
           required: false,
         },
         {
           model: Colors,
           as: "colors",
-          through: {
-            attributes: [],
-          },
+          through: { attributes: [] },
         },
         {
           model: Sizes,
           as: "sizes",
-          through: {
-            attributes: [],
-          },
+          through: { attributes: [] },
+        },
+        {
+          model: sub_category_product,
+          as: "sub_category_products",
+          attributes: ["sub_category_id"],
+          required: false,
         },
       ],
     });
 
     if (!product) {
-      return res.status(404).json({ message: "Not Found" });
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
     }
 
-    //calculate product ratings
     // Calculate product ratings
     const ratingStats = await Reviews.findOne({
       where: {
@@ -466,25 +473,88 @@ exports.product = async (req, res) => {
         [
           sequelize.fn(
             "AVG",
-            sequelize.cast(sequelize.col("ratings"), "INTEGER"),
+            sequelize.cast(sequelize.col("ratings"), "INTEGER")
           ),
           "averageRating",
         ],
-        [sequelize.fn("COUNT", sequelize.col("id")), "totalReviews"],
+        [
+          sequelize.fn("COUNT", sequelize.col("id")),
+          "totalReviews",
+        ],
       ],
       raw: true,
     });
+
+    // Get the product's subcategories
+    const subCategoryIds = product.sub_category_products.map(
+      (item) => item.sub_category_id
+    );
+
+    // Find related products
+    const relatedProducts = await Products.findAll({
+      where: {
+        active: true,
+        id: {
+          [Op.ne]: product.id,
+        },
+        [Op.or]: [
+          { category_id: product.category_id },
+          { brand_id: product.brand_id },
+          ...(subCategoryIds.length
+            ? [{
+                id: {
+                  [Op.in]: literal(`(
+                    SELECT product_id
+                    FROM sub_category_products
+                    WHERE sub_category_id IN (${subCategoryIds.join(",")})
+                  )`),
+                },
+              }]
+            : []),
+        ],
+      },
+
+      include: [
+        {
+          model: product_images,
+          as: "images",
+          where: { active: true },
+          required: false,
+        },
+        {
+          model: Brand,
+          as: "brand",
+        },
+      ],
+
+      limit: 6,
+      order: [["createdAt", "DESC"]],
+    });
+
+    
+    const ids = relatedProducts.map((product) => product.id);
+
+    //get average ratings for all the products
+    const relatedProductsWithRatings = await averageRating(relatedProducts, ids);
+
     return res.status(200).json({
       success: true,
       product,
       averageRating: Number(ratingStats?.averageRating || 0),
       totalReviews: Number(ratingStats?.totalReviews || 0),
+      relatedProductsWithRatings,
     });
+
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: error });
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to retrieve product",
+      error: error.message,
+    });
   }
-};
+}
 
 //@desc  Get latest products
 //@route GET /api/latest

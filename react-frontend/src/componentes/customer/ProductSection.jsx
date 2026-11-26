@@ -23,6 +23,8 @@ function ProductSection({
         products={products}
         addToCart={addToCart}
         isLoading={isLoading}
+        cols={3}
+        cardCols={7}
       />
 
     </section>
