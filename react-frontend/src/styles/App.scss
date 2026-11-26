@@ -424,6 +424,9 @@ $header-color: #ececec;
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
+  .contact-info{
+    align-items: center;
+  }
   .product-wrapper {
     .product-card {
       display: flex;

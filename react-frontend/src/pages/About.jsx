@@ -7,7 +7,7 @@ import { useState } from 'react'
 function About() {
     const [count, setCount] = useState(0)
 
-    return <h2>About Page</h2>;
+    return <h2>About  Dockerized</h2>;
 }
 
 export default About

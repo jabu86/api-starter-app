@@ -35,17 +35,17 @@ const orderRoutes = require("./routes/orders");
 const reviewsRoutes = require("./routes/reviews");
 const usersRoutes = require("./routes/users");
 const shippingRoutes = require("./routes/shipping");
-const { log } = require("console");
+
 
 app.use("/api", indexRoutes);
-app.use("/api/auth", authRoutes);
+ app.use("/api/auth", authRoutes);
 app.use("/api", orderRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/shipping", shippingRoutes);
 
 app.use(
   "/api/admin",
-  dashboardRoutes,
+  dashboardRoutes, 
   profileRoutes,
   categoryRoutes,
   brandRoutes,
@@ -55,10 +55,6 @@ app.use(
   orderRoutes,
   usersRoutes,
 );
-
-
-
-
 
 async function connectDB() {
   try {
