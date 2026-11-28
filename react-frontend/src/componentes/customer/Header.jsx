@@ -84,7 +84,7 @@ function Header() {
                 </Link>
               </li>
 
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link
                   className={`nav-link ${isActive("/about")}`}
                   to="/about"
@@ -92,7 +92,7 @@ function Header() {
                 >
                   About
                 </Link>
-              </li>
+              </li> */}
 
               <li className="nav-item">
                 <Link
